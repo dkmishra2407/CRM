@@ -1,0 +1,129 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .App {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f4f8;
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+    width: 100%;
+  }
+  
+  .welcome-section {
+    padding: 20px;
+    text-align: center;
+    background: linear-gradient(135deg, #78e0d6, #c25df5);
+    color: white;
+    height: 100vh;
+    width: 50vh;
+  }
+  
+  .brand-name {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+  
+  .icon {
+    font-size: 1.5rem;
+    margin-left: 0.2rem;
+  }
+  
+  .welcome-text {
+    margin: 10px 0 20px;
+    font-size: 1.2rem;
+  }
+  
+  .login-section {
+    padding: 30px 20px;
+    width: 100%;
+  }
+  
+  .login-section h3 {
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+    text-align: center;
+  }
+  
+  .input-group {
+    margin-bottom: 15px;
+  }
+  
+  .input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+  }
+  
+  .actions label {
+    display: flex;
+    align-items: center;
+  }
+  
+  .actions a {
+    text-decoration: none;
+    color: #007bff;
+  }
+  
+  .submit-group {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .submit-group button {
+    width: 48%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .submit-group button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Responsive Design */
+  @media screen and (max-width: 768px) {
+    .container {
+      max-width: 90%;
+    }
+  
+    .welcome-section, .login-section {
+      padding: 20px;
+    }
+  
+    .submit-group button {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  
+    .submit-group {
+      flex-direction: column;
+    }
+  }
+  
