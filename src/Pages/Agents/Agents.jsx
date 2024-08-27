@@ -3,10 +3,13 @@ import './Agents.css';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom'; 
 import Sidebar from '../../components/SideBar/SideBar';
+import AddSalesAgentForm from '../../components/AddAgents/AddAgents'; // Import the form component
 
 function Agent() {
   const [agents, setAgents] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+  const [selectedAgentId, setSelectedAgentId] = useState(null); // State to store the selected agent ID
   const navigate = useNavigate(); 
 
   useEffect(() => {
@@ -54,13 +57,19 @@ function Agent() {
   };
 
   const handleView = (id) => {
-    navigate(`/agent/${id}`); 
+    setSelectedAgentId(id); // Set the selected agent ID
+    setIsModalOpen(true); // Open the modal
   };
 
   const handleSearchKeyPress = (e) => {
     if (e.key === 'Enter') {
       searchFetchAgents(searchTerm);
     }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // Close the modal
+    setSelectedAgentId(null); // Clear the selected agent ID
   };
 
   return (
@@ -78,8 +87,8 @@ function Agent() {
         <div className="search-icon" onClick={() => searchFetchAgents(searchTerm)}>
           <span className="material-icons">search</span>
         </div>
-        <div className="search-icon">
-          <Link to="/AddAgent">Add Agent</Link>
+        <div className="search-icon" onClick={() => setIsModalOpen(true)}>
+          Add Agent
         </div>
       </div>
 
@@ -102,7 +111,7 @@ function Agent() {
                 <td>{agent.phoneNumber}</td>
                 <td>{agent.emailAddress}</td>
                 <td>
-                  <button className="action-btn view-btn" onClick={() => handleView(agent.customerId)}>View</button>
+                  <button className="action-btn view-btn" onClick={() => handleView(agent.customerId)}>Edit</button>
                   <button className="action-btn delete-btn" onClick={() => handleDelete(agent.customerId)}>Delete</button>
                 </td>
               </tr>
@@ -114,6 +123,14 @@ function Agent() {
           )}
         </tbody>
       </table>
+
+      {isModalOpen && (
+        <AddSalesAgentForm
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          agentId={selectedAgentId} // Pass the selected agent ID to the form
+        />
+      )}
     </div>
   );
 }

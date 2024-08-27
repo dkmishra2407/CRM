@@ -3,6 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import './AddProductForm.css';
 import 'react-toastify/dist/ReactToastify.css';
+import { FaTimes } from 'react-icons/fa';
 
 const AddProductForm = () => {
   const [sku, setSku] = useState('');
@@ -10,9 +11,11 @@ const AddProductForm = () => {
   const [siteId, setSiteId] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [quantity, setQuantity] = useState(1);
-  const [images, setImages] = useState([]); // Holds the uploaded images
+  const [images, setImages] = useState([]);
+  const [imageIds, setImageIds] = useState([]); // To store uploaded image IDs
   const [sites, setSites] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [showForm, setShowForm] = useState(true);
 
   useEffect(() => {
     // Fetch Sites
@@ -27,74 +30,144 @@ const AddProductForm = () => {
   }, []);
 
   const handleImageChange = (e) => {
-    setImages([...e.target.files]); // Store the selected images
+    setImages([...e.target.files]);
   };
 
   const handleQuantityChange = (amount) => {
     setQuantity(prevQuantity => Math.max(1, prevQuantity + amount));
   };
 
-  const AddProduct = async (e) => {
-    e.preventDefault();
-
+  const uploadImages = async () => {
     const formData = new FormData();
-    formData.append('sku', sku);
-    formData.append('name', name);
-    formData.append('site.siteId', siteId);
-    formData.append('category.categoryId', categoryId);
-    formData.append('productQuantity.availableQty', quantity);
-
     images.forEach((image) => {
       formData.append('images', image);
     });
+    formData.append('productId', 30);
 
     try {
-      await axios.post('http://localhost:7171/api/products', formData, {
+      const response = await axios.post('http://localhost:7171/api/products/upload-images', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      toast.success('Product added successfully');
-      // Optionally reset form fields here
-      setSku('');
-      setName('');
-      setSiteId('');
-      setCategoryId('');
-      setQuantity(1);
-      setImages([]);
+
+      const imageDetails = response.data.map(image => ({
+        id: image.id,
+        imageUrl: image.imageUrl,
+      }));
+
+      console.log("Images uploaded:", imageDetails);
+      setImageIds(imageDetails.map(detail => detail.id));
+
+      return imageDetails;
     } catch (error) {
-      console.error('There was an error adding the product!', error);
-      toast.error('Failed to add product. Please try again.');
+      console.error('Error uploading images:', error);
+      toast.error('Failed to upload images.');
+      throw error;
     }
   };
 
+  const addProduct = async (e) => {
+    e.preventDefault();
+
+    try {
+      const imageDetails = await uploadImages(); // Upload images and get their details (id and imageUrl)
+
+      const productData = {
+        sku,
+        name,
+        site: {
+          siteId
+        },
+        category: {
+          categoryId
+        },
+        productQuantity: {
+          availableQty: quantity
+        },
+        images: imageDetails // Add the array of image details (id and imageUrl)
+      };
+
+      const response = await axios.post('http://localhost:7171/api/products', productData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      toast.success('Product added successfully!');
+      console.log('Product added:', response.data);
+    } catch (error) {
+      console.error('Error adding product:', error);
+      toast.error('Failed to add product.');
+    }
+  };
+
+  const handleCloseForm = () => {
+    setShowForm(false);
+  };
+
+  if (!showForm) {
+    return null;
+  }
+
   return (
     <div className="product-form-container">
-      <h3 className="product-form-title">Add Product</h3>
-      <form className="product-form" onSubmit={AddProduct}>
+      <div className="product-form-header">
+        <h3 className="product-form-title">Add Product</h3>
+        <FaTimes className="close-icon" onClick={handleCloseForm} />
+      </div>
+      <form className="product-form" onSubmit={addProduct}>
         <label className="product-form-label">SKU ID</label>
-        <input type="text" placeholder="SKU ID" value={sku} onChange={(e) => setSku(e.target.value)} className="product-form-input" required />
+        <input
+          type="text"
+          placeholder="SKU ID"
+          value={sku}
+          onChange={(e) => setSku(e.target.value)}
+          className="product-form-input"
+          required
+        />
 
         <label className="product-form-label">Product Name</label>
-        <input type="text" placeholder="Product Name" value={name} onChange={(e) => setName(e.target.value)} className="product-form-input" required />
+        <input
+          type="text"
+          placeholder="Product Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="product-form-input"
+          required
+        />
 
         <div className="form-row">
           <div className="form-group">
             <label className="product-form-label">Site</label>
-            <select value={siteId} onChange={(e) => setSiteId(e.target.value)} className="product-form-input" required>
+            <select
+              value={siteId}
+              onChange={(e) => setSiteId(e.target.value)}
+              className="product-form-input"
+              required
+            >
               <option value="" disabled>Select a site</option>
-              {sites.map(site => (
-                <option key={site.siteId} value={site.siteId}>{site.siteName}</option>
+              {sites.map((site) => (
+                <option key={site.siteId} value={site.siteId}>
+                  {site.siteName}
+                </option>
               ))}
             </select>
           </div>
 
           <div className="form-group">
             <label className="product-form-label">Category</label>
-            <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="product-form-input" required>
+            <select
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              className="product-form-input"
+              required
+            >
               <option value="" disabled>Select a category</option>
-              {categories.map(category => (
-                <option key={category.categoryId} value={category.categoryId}>{category.categoryName}</option>
+              {categories.map((category) => (
+                <option key={category.categoryId} value={category.categoryId}>
+                  {category.categoryName}
+                </option>
               ))}
             </select>
           </div>
@@ -111,18 +184,34 @@ const AddProductForm = () => {
 
         <label className="product-form-label">Quantity</label>
         <div className="quantity-control">
-          <button type="button" onClick={() => handleQuantityChange(-1)} className="quantity-btn">-</button>
+          <button
+            type="button"
+            onClick={() => handleQuantityChange(-1)}
+            className="quantity-btn"
+          >
+            -
+          </button>
           <input
             type="number"
             value={quantity}
-            onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+            onChange={(e) =>
+              setQuantity(Math.max(1, parseInt(e.target.value) || 1))
+            }
             className="product-form-input quantity-input"
             required
           />
-          <button type="button" onClick={() => handleQuantityChange(1)} className="quantity-btn">+</button>
+          <button
+            type="button"
+            onClick={() => handleQuantityChange(1)}
+            className="quantity-btn"
+          >
+            +
+          </button>
         </div>
 
-        <button type="submit" className="product-form-submit-button">Save Product</button>
+        <button type="submit" className="product-form-submit-button">
+          Save Product
+        </button>
       </form>
     </div>
   );

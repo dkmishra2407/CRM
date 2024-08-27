@@ -9,10 +9,13 @@ import axios from 'axios';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { ThreeDots } from 'react-loader-spinner';
 import Categories from '../../components/Catagories/Catagories';
+import ProductDetailsModal from '../../components/ProductDetail/ProductDetal'; // Import the ProductDetailsModal
 
 function Generate() {
   const { state: { totalQuantity }, dispatch } = useCart();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isProductDetailsModalOpen, setIsProductDetailsModalOpen] = useState(false);
+  const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null); // Store selected product ID
   const [initialProducts, setInitialProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -40,7 +43,6 @@ function Generate() {
           availableQty: product.productQuantity?.availableQty || 0,
         }));
 
-        // Use a Set to avoid duplicates
         setInitialProducts(prevProducts => {
           const productSet = new Set(prevProducts.map(p => p.key));
           const newProducts = products.filter(p => !productSet.has(p.key));
@@ -78,12 +80,22 @@ function Generate() {
     }
   };
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
+  const handleOpenProductDetailsModal = (productId) => {
+    setSelectedProductId(productId); // Set the selected product ID
+    setIsProductDetailsModalOpen(true); // Open the modal
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handleCloseProductDetailsModal = () => {
+    setIsProductDetailsModalOpen(false);
+    setSelectedProductId(null); // Clear the selected product ID
+  };
+
+  const handleOpenAddProductModal = () => {
+    setIsAddProductModalOpen(true); // Open the Add Product modal
+  };
+
+  const handleCloseAddProductModal = () => {
+    setIsAddProductModalOpen(false);
   };
 
   const handleSearchChange = (event) => {
@@ -105,7 +117,7 @@ function Generate() {
               type="text"
               value={searchQuery}
               onChange={handleSearchChange}
-              placeholder="Search Customers / Invoice No / Quotation No"
+              placeholder="Search Products"
               className="search-bar"
             />
             <div className="search-icon">
@@ -114,7 +126,7 @@ function Generate() {
           </div>
 
           <div className="actions">
-            <button className="add-product-btn" onClick={handleOpenModal}>Add Product</button>
+            <button className="add-product-btn" onClick={handleOpenAddProductModal}>Add Product</button>
             <div className="cart-icon">
               <Link to="/mycart"><span className="material-icons gradient-text">shopping_cart</span></Link>
               <span className="cart-count">{totalQuantity}</span>
@@ -144,16 +156,24 @@ function Generate() {
               onIncrement={() => incrementQuantity(product)}
               onDecrement={() => decrementQuantity(product)}
               onAddToCart={() => addToCart(product)}
+              onClick={() => handleOpenProductDetailsModal(product.key)} // Open modal with product ID
             />
           ))}
         </InfiniteScroll>
       </div>
 
-      {isModalOpen && (
-        <div className="modal-overlay" onClick={handleCloseModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <AddProductForm />
-            <span className="material-symbols-outlined close-icon" onClick={handleCloseModal}>close</span>
+      {isProductDetailsModalOpen && selectedProductId && (
+        <div className="modal-overlay" onClick={handleCloseProductDetailsModal}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <ProductDetailsModal productId={selectedProductId} onClose={handleCloseProductDetailsModal} /> {/* Display product details */}
+          </div>
+        </div>
+      )}
+
+      {isAddProductModalOpen && (
+        <div className="modal-overlay" onClick={handleCloseAddProductModal}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <AddProductForm onClose={handleCloseAddProductModal} /> {/* Display Add Product Form */}
           </div>
         </div>
       )}

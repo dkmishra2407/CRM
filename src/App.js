@@ -14,7 +14,8 @@ import Agent from './Pages/Agents/Agents';
 import CreateInvoiceComponent from './Pages/Invoice/Invoice'
 import AddCatagories from "./components/AddCatagories/AddCatagories";
 import QuotationPage from './components/Quotation/Quotation';
-import Inventory from './Pages/Inventory/Inventory'
+import Inventory from './Pages/Inventory/Inventory';
+import Addsites from './components/Addsite/Addsite';
 import { ToastContainer } from 'react-toastify';
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           <Route path='/addcategories' element={<AddCatagories />}/>
           <Route path='/quotation' element={<QuotationPage />}/>
           <Route path='/inventory' element={<Inventory />}/>
+          <Route path='/addsites' element={<Addsites />}/>
         </Routes>
       </div>
     </Router>
