@@ -30,8 +30,7 @@ npm install
 
 
 
-
-Download all the dependencies
+npm ci
 
 
 
