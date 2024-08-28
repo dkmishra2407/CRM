@@ -16,6 +16,7 @@ import AddCatagories from "./components/AddCatagories/AddCatagories";
 import QuotationPage from './components/Quotation/Quotation';
 import Inventory from './Pages/Inventory/Inventory';
 import Addsites from './components/Addsite/Addsite';
+import Customer from './Pages/Customer/Customer';
 import { ToastContainer } from 'react-toastify';
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
           <Route path='/quotation' element={<QuotationPage />}/>
           <Route path='/inventory' element={<Inventory />}/>
           <Route path='/addsites' element={<Addsites />}/>
+          <Route path='/customer' element={<Customer />}/>
         </Routes>
       </div>
     </Router>

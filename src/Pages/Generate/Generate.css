@@ -1,11 +1,23 @@
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
 @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200");
 
+.App {
+  display: flex;
+  font-family: Arial, sans-serif;
+}
+
 .main-content {
   display: flex;
   flex-direction: column;
-  margin-left: 250px; /* Adjust depending on Sidebar width */
-  padding: 20px;
+  transition: margin-left 0.3s ease;
+}
+
+.main-content.open {
+  margin-left: 250px;
+}
+
+.main-content.closed {
+  margin-left: 60px;
 }
 
 .top-bar {
@@ -48,30 +60,11 @@
   align-items: center;
 }
 
-.add-product-btn {
-  padding: 10px 20px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-right: 20px;
-  transition: background-color 0.3s;
-}
-
-.add-product-btn:hover {
-  background-color: #218838;
-}
-
 .cart-icon {
   display: flex;
   align-items: center;
   cursor: pointer;
   position: relative;
-}
-
-.cart-icon .material-icons {
-  font-size: 24px;
 }
 
 .cart-count {
@@ -85,6 +78,19 @@
   right: -10px;
 }
 
+.categorybar {
+  display: flex;
+  transition: margin-left 0.3s ease;
+}
+
+.categorybar.open {
+  margin-left: 250px;
+}
+
+.categorybar.closed {
+  margin-left: 60px;
+}
+
 .product-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -96,62 +102,7 @@
   padding: 20px;
 }
 
-.App {
-  display: flex;
-  font-family: Arial, sans-serif;
-}
-
-.sidebar {
-  width: 250px;
-  background-color: #2c3e50;
-  color: white;
-  padding: 20px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  overflow-y: auto;
-}
-
-.profile {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.profile-img {
-  border-radius: 50%;
-  width: 80px;
-  height: 80px;
-}
-
-.profile-name {
-  margin-top: 10px;
-  font-size: 1.2em;
-}
-
-.menu {
-  list-style: none;
-  padding: 0;
-  margin-top: 20px;
-}
-
-.menu li {
-  display: flex;
-  align-items: center;
-  padding: 10px 0;
-  cursor: pointer;
-}
-
-.menu li span {
-  margin-right: 10px;
-}
-
-.categories {
-  width: 80vw;
-  margin-left: 50px;
-  color: black;
-}
-
+/* Modal styles */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -172,22 +123,4 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   width: 500px;
   position: relative;
-}
-
-.modal-body {
-  position: relative;
-}
-
-.close-icon {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  cursor: pointer;
-  font-size: 24px;
-  color: #dc3545;
-  transition: color 0.3s ease;
-}
-
-.close-icon:hover {
-  color: #a71d2a;
 }

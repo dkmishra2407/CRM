@@ -1,72 +1,100 @@
-.generate-container {
-    padding: 20px;
-    background-color: white;
-    color: black;
-    font-family: 'Arial', sans-serif;
-}
-
+/* Container for the search bar and add button */
 .search-bar-container {
     display: flex;
+    justify-content: space-between; /* Aligns search bar to the left and add button to the right */
     align-items: center;
     margin-bottom: 20px;
+    padding: 0 20px; /* Add some padding to align content better */
 }
 
+/* Search bar styling */
 .search-bar {
-    width: 100%;
+    flex-grow: 1;
     padding: 10px;
-    border: 1px solid #ddd;
-    background-color: white;
-    color: black;
+    border: 1px solid #ccc;
     border-radius: 5px;
-    transition: border-color 0.3s;
-}
-
-.search-bar:focus {
-    border-color: blue;
+    margin-right: 10px; /* Space between search bar and search icon */
 }
 
 .search-icon {
-    margin-left: 10px;
     cursor: pointer;
+    padding: 10px;
+    background-color: #007acc;
+    color: white;
+    border-radius: 5px;
 }
 
+/* Add Agent button */
+.add-agent-btn {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    display: inline-block;
+    text-align: right;
+}
+
+.add-agent-btn:hover {
+    background-color: #218838;
+}
+
+/* Table styling */
 .agent-table {
-    width: 100%;
+    width: calc(100% - 40px); /* Full width minus padding */
+    margin: 0 20px; /* Align table with search bar and add button */
     border-collapse: collapse;
-    margin-top: 20px;
-    margin-left: 300px;
 }
 
 .agent-table th,
 .agent-table td {
-    padding: 10px;
     border: 1px solid #ddd;
+    padding: 8px;
     text-align: left;
 }
 
 .agent-table th {
     background-color: #f2f2f2;
+    font-weight: bold;
 }
 
 .action-btn {
-    background-color: #007bff; /* Changed to blue for view */
-    color: white;
+    padding: 5px 10px;
+    margin-right: 5px;
     border: none;
-    padding: 5px 15px;
-    border-radius: 5px;
+    border-radius: 3px;
     cursor: pointer;
-    margin-right: 10px;
-    transition: background-color 0.3s ease;
+}
+
+.view-btn {
+    background-color: #007acc;
+    color: white;
 }
 
 .view-btn:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+    background-color: #005fa3;
 }
 
 .delete-btn {
-    background-color: #dc3545; /* Red for delete */
+    background-color: #dc3545;
+    color: white;
 }
 
 .delete-btn:hover {
-    background-color: #c82333; /* Darker red on hover */
+    background-color: #c82333;
+}
+
+/* Responsive container for the entire page */
+.generate-container {
+    transition: margin-left 0.3s ease;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    margin-left: 250px; /* Adjust based on sidebar width */
+}
+
+.generate-container.sidebar-closed {
+    margin-left: 60px; /* Adjust based on collapsed sidebar width */
 }

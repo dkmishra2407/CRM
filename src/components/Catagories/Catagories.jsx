@@ -68,11 +68,8 @@ export const Categories = () => {
           </span>
         ))}
       </Carousel>
-      <button className="filter-btn">
-        <span className="material-icons">filter_alt</span>
-        <span>Filter</span>
-      </button>
-      <button onClick={handleOpenModal}>Add Categories</button>
+      
+      {/* <button onClick={handleOpenModal}>Add Categories</button> */}
 
       {/* Modal */}
       {isModalOpen && (

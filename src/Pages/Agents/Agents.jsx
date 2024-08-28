@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import './Agents.css';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom'; 
 import Sidebar from '../../components/SideBar/SideBar';
-import AddSalesAgentForm from '../../components/AddAgents/AddAgents'; // Import the form component
+import AddSalesAgentForm from '../../components/AddAgents/AddAgents';
 
 function Agent() {
   const [agents, setAgents] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
-  const [selectedAgentId, setSelectedAgentId] = useState(null); // State to store the selected agent ID
-  const navigate = useNavigate(); 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedAgentId, setSelectedAgentId] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
     fetchAgents();
@@ -19,8 +18,7 @@ function Agent() {
   const fetchAgents = async () => {
     try {
       const response = await axios.get('http://localhost:7171/api/customers');
-      const agentsData = Array.isArray(response.data) ? response.data : [];
-      setAgents(agentsData);
+      setAgents(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       console.error('Failed to fetch agents', err);
       setAgents([]); 
@@ -35,8 +33,7 @@ function Agent() {
 
     try {
       const response = await axios.get(`http://localhost:7171/api/customers/${searchTerm}`);
-      const agentsData = Array.isArray(response.data) ? response.data : [response.data];
-      setAgents(agentsData);
+      setAgents(Array.isArray(response.data) ? response.data : [response.data]);
     } catch (err) {
       console.error('Failed to fetch agents', err);
       setAgents([]); 
@@ -44,12 +41,10 @@ function Agent() {
   };
 
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this agent?");
-    if (confirmDelete) {
+    if (window.confirm("Are you sure you want to delete this agent?")) {
       try {
         await axios.delete(`http://localhost:7171/api/customers/${id}`);
         setAgents(prevAgents => prevAgents.filter(agent => agent.customerId !== id));
-        console.log(`Deleted agent with ID: ${id}`);
       } catch (err) {
         console.error('Failed to delete agent', err);
       }
@@ -57,8 +52,8 @@ function Agent() {
   };
 
   const handleView = (id) => {
-    setSelectedAgentId(id); // Set the selected agent ID
-    setIsModalOpen(true); // Open the modal
+    setSelectedAgentId(id);
+    setIsModalOpen(true);
   };
 
   const handleSearchKeyPress = (e) => {
@@ -68,13 +63,18 @@ function Agent() {
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false); // Close the modal
-    setSelectedAgentId(null); // Clear the selected agent ID
+    setIsModalOpen(false);
+    setSelectedAgentId(null);
+  };
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
   return (
-    <div className="generate-container">
-      <Sidebar />
+    <div className={`generate-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      
       <div className="search-bar-container">
         <input
           type="text"
@@ -87,7 +87,7 @@ function Agent() {
         <div className="search-icon" onClick={() => searchFetchAgents(searchTerm)}>
           <span className="material-icons">search</span>
         </div>
-        <div className="search-icon" onClick={() => setIsModalOpen(true)}>
+        <div className="add-agent-btn" onClick={() => setIsModalOpen(true)}>
           Add Agent
         </div>
       </div>
@@ -128,7 +128,7 @@ function Agent() {
         <AddSalesAgentForm
           isOpen={isModalOpen}
           onClose={handleCloseModal}
-          agentId={selectedAgentId} // Pass the selected agent ID to the form
+          agentId={selectedAgentId}
         />
       )}
     </div>

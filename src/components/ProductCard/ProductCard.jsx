@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import './ProductCard.css';
 import { useCart } from '../../Context/card.context';
 
-const ProductCard = ({ sku, name, image, onClick }) => {
+const ProductCard = ({ sku, name, image, rate, category, availableQty, onClick }) => {
   const [quantity, setQuantity] = useState(1);
   const { dispatch } = useCart();
 
-  const product = { sku, name, image, quantity };
+  const product = { sku, name, image, rate, category: category.categoryName, quantity, availableQty }; // Extracting categoryName
 
-  const addToCart = () => {
+  const addToCart = (e) => {
+    e.stopPropagation(); // Prevent triggering the onClick event for the modal
     dispatch({ type: "ADD_TO_CART", payload: product });
   };
 
@@ -40,7 +41,7 @@ const ProductCard = ({ sku, name, image, onClick }) => {
         <span className="quantity">{quantity}</span>
         <button className="increment" onClick={incrementQuantity}>+</button>
       </div>
-      <button className="add-to-cart" onClick={(e) => { e.stopPropagation(); addToCart(); }}>Add to Cart</button>
+      <button className="add-to-cart" onClick={addToCart}>Add to Cart</button>
     </div>
   );
 };

@@ -9,18 +9,19 @@ import axios from 'axios';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { ThreeDots } from 'react-loader-spinner';
 import Categories from '../../components/Catagories/Catagories';
-import ProductDetailsModal from '../../components/ProductDetail/ProductDetal'; // Import the ProductDetailsModal
+import ProductDetailsModal from '../../components/ProductDetail/ProductDetal';
 
 function Generate() {
   const { state: { totalQuantity }, dispatch } = useCart();
   const [isProductDetailsModalOpen, setIsProductDetailsModalOpen] = useState(false);
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
-  const [selectedProductId, setSelectedProductId] = useState(null); // Store selected product ID
+  const [selectedProductId, setSelectedProductId] = useState(null);
   const [initialProducts, setInitialProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
     fetchProducts();
@@ -33,14 +34,16 @@ function Generate() {
       const data = response.data;
 
       if (data.length === 0) {
-        setHasMore(false); // Stop loading if no more data
+        setHasMore(false);
       } else {
         const products = data.map(product => ({
           name: product.name,
           sku: product.sku,
-          key: product.productId,  // Ensure this is unique
+          key: product.productId,
           image: product.images.length > 0 ? product.images[0].imageUrl : 'https://images.unsplash.com/photo-1541471943749-e5976783f6c3?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8dGlsZXN8ZW58MHx8MHx8fDA%3D',
           availableQty: product.productQuantity?.availableQty || 0,
+          rate: product.rate,
+          category: product.category.categoryName,
         }));
 
         setInitialProducts(prevProducts => {
@@ -51,7 +54,7 @@ function Generate() {
       }
     } catch (err) {
       console.error('Failed to fetch products', err);
-      setHasMore(false); // Stop loading in case of error
+      setHasMore(false);
     }
     setLoading(false);
   };
@@ -62,36 +65,18 @@ function Generate() {
     }
   };
 
-  const addToCart = (product) => {
-    dispatch({ type: "ADD_TO_CART", payload: product });
-  };
-
-  const incrementQuantity = (product) => {
-    const updatedQuantity = product.availableQty + 1;
-    dispatch({ type: "UPDATE_QUANTITY", payload: { ...product, availableQty: updatedQuantity } });
-  };
-
-  const decrementQuantity = (product) => {
-    if (product.availableQty > 1) {
-      const updatedQuantity = product.availableQty - 1;
-      dispatch({ type: "UPDATE_QUANTITY", payload: { ...product, availableQty: updatedQuantity } });
-    } else {
-      dispatch({ type: "REMOVE_FROM_CART", payload: product });
-    }
-  };
-
   const handleOpenProductDetailsModal = (productId) => {
-    setSelectedProductId(productId); // Set the selected product ID
-    setIsProductDetailsModalOpen(true); // Open the modal
+    setSelectedProductId(productId);
+    setIsProductDetailsModalOpen(true);
   };
 
   const handleCloseProductDetailsModal = () => {
     setIsProductDetailsModalOpen(false);
-    setSelectedProductId(null); // Clear the selected product ID
+    setSelectedProductId(null);
   };
 
   const handleOpenAddProductModal = () => {
-    setIsAddProductModalOpen(true); // Open the Add Product modal
+    setIsAddProductModalOpen(true);
   };
 
   const handleCloseAddProductModal = () => {
@@ -107,10 +92,14 @@ function Generate() {
     product.sku.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <div className="App">
-      <Sidebar />
-      <div className="main-content">
+      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`}>
         <div className="top-bar">
           <div className="search-bar-container">
             <input
@@ -126,16 +115,18 @@ function Generate() {
           </div>
 
           <div className="actions">
-            <button className="add-product-btn" onClick={handleOpenAddProductModal}>Add Product</button>
             <div className="cart-icon">
-              <Link to="/mycart"><span className="material-icons gradient-text">shopping_cart</span></Link>
+              <Link to="/mycart">
+                <span className="material-icons gradient-text">shopping_cart</span>
+              </Link>
               <span className="cart-count">{totalQuantity}</span>
             </div>
           </div>
         </div>
 
-        <div className="categories">
+        <div className={`categorybar ${isSidebarOpen ? 'open' : 'closed'}`}>
           <Categories />
+          <button className="add-product-btn" onClick={handleOpenAddProductModal}>Add Product</button>
         </div>
 
         <InfiniteScroll
@@ -152,11 +143,10 @@ function Generate() {
               sku={product.sku}
               name={product.name}
               image={product.image}
-              quantity={product.availableQty}
-              onIncrement={() => incrementQuantity(product)}
-              onDecrement={() => decrementQuantity(product)}
-              onAddToCart={() => addToCart(product)}
-              onClick={() => handleOpenProductDetailsModal(product.key)} // Open modal with product ID
+              rate={product.rate}
+              category={product.category}
+              availableQty={product.availableQty}
+              onClick={() => handleOpenProductDetailsModal(product.key)}
             />
           ))}
         </InfiniteScroll>
@@ -165,7 +155,7 @@ function Generate() {
       {isProductDetailsModalOpen && selectedProductId && (
         <div className="modal-overlay" onClick={handleCloseProductDetailsModal}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <ProductDetailsModal productId={selectedProductId} onClose={handleCloseProductDetailsModal} /> {/* Display product details */}
+            <ProductDetailsModal productId={selectedProductId} onClose={handleCloseProductDetailsModal} />
           </div>
         </div>
       )}
@@ -173,7 +163,7 @@ function Generate() {
       {isAddProductModalOpen && (
         <div className="modal-overlay" onClick={handleCloseAddProductModal}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <AddProductForm onClose={handleCloseAddProductModal} /> {/* Display Add Product Form */}
+            <AddProductForm onClose={handleCloseAddProductModal} />
           </div>
         </div>
       )}

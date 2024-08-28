@@ -1,69 +1,74 @@
-import React, { useState } from 'react';
-import { FaChevronLeft, FaChevronRight, FaTachometerAlt, FaUsers, FaBoxOpen, FaShoppingCart, FaDollarSign, FaChartPie, FaUserTie, FaStore } from 'react-icons/fa';
+import React from 'react';
 import './SideBar.css';
-import Agent from "../../Pages/Agents/Agents";
 import { Link } from 'react-router-dom';
-const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(true);
 
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
-
+const Sidebar = ({ isOpen, toggleSidebar }) => {
   return (
     <aside className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
       <div className="sidebar-header">
         <div className="logo">{isOpen ? "MyLogo" : "M"}</div>
-        <button className="toggle-btn gradient-text" onClick={toggleSidebar}>
-          {isOpen ? <FaChevronLeft /> : <FaChevronRight />}
+        <button className="toggle-btn" style={{color: 'white'}} onClick={toggleSidebar}>
+          <span className="material-icons">
+            {isOpen ? 'chevron_left' : 'chevron_right'}
+          </span>
         </button>
       </div>
       <ul className="sidebar-menu">
-      <Link to="/dashboard">
         <li>
-          <FaTachometerAlt className="gradient-text" /> {isOpen && "Dashboard"}
-        </li>
-        </Link>
-        <Link to="/agents">
-        <li>
-          <FaUsers className="gradient-text" /> {isOpen && "Customers"}
-        </li>
-        </Link>
-        <Link to="/inventory">
-        <li>
-          <FaBoxOpen className="gradient-text" /> {isOpen && "Inventory"}
-        </li>
-        </Link>
-        <Link to="/sales">
-        <li>
-          <FaShoppingCart className="gradient-text" /> {isOpen && "Sales"}
-        </li>
-        </Link>
-        <Link to="/purchase">
-        <li>
-          <FaDollarSign className="gradient-text" /> {isOpen && "Purchase"}
-        </li>
-        </Link>
-        <Link to="/expenses">
-        <li>
-          <FaChartPie className="gradient-text" /> {isOpen && "Expenses"}
-        </li>
-        </Link>
-        <Link to="/agents">
-        <li>
-          <FaUserTie className="gradient-text" /> {isOpen && "Agents"}
-        </li>
-        </Link>
-        <li>
-          <FaChartPie className="gradient-text" /> {isOpen && "Reports"}
+          <Link to="/dashboard" className="menu-link">
+            <span className="material-icons menu-icon">dashboard</span>
+            {isOpen && <span className="menu-text">Dashboard</span>}
+          </Link>
         </li>
         <li>
-          <FaStore className="gradient-text" /> {isOpen && "Web Store"}
+          <Link to="/customer" className="menu-link">
+            <span className="material-icons menu-icon">people</span>
+            {isOpen && <span className="menu-text">Customers</span>}
+          </Link>
+        </li>
+        <li>
+          <Link to="/inventory" className="menu-link">
+            <span className="material-icons menu-icon">inventory_2</span>
+            {isOpen && <span className="menu-text">Inventory</span>}
+          </Link>
+        </li>
+        <li>
+          <Link to="/sales" className="menu-link">
+            <span className="material-icons menu-icon">shopping_cart</span>
+            {isOpen && <span className="menu-text">Sales</span>}
+          </Link>
+        </li>
+        <li>
+          <Link to="/purchase" className="menu-link">
+            <span className="material-icons menu-icon">attach_money</span>
+            {isOpen && <span className="menu-text">Purchase</span>}
+          </Link>
+        </li>
+        <li>
+          <Link to="/expenses" className="menu-link">
+            <span className="material-icons menu-icon">pie_chart</span>
+            {isOpen && <span className="menu-text">Expenses</span>}
+          </Link>
+        </li>
+        <li>
+          <Link to="/agents" className="menu-link">
+            <span className="material-icons menu-icon">person</span>
+            {isOpen && <span className="menu-text">Agents</span>}
+          </Link>
+        </li>
+        <li>
+          <Link to="/reports" className="menu-link">
+            <span className="material-icons menu-icon">assessment</span>
+            {isOpen && <span className="menu-text">Reports</span>}
+          </Link>
+        </li>
+        <li>
+          <Link to="/store" className="menu-link">
+            <span className="material-icons menu-icon">store</span>
+            {isOpen && <span className="menu-text">Web Store</span>}
+          </Link>
         </li>
       </ul>
-      <div className="sidebar-footer">
-        <button className="footer-btn gradient-text">Custom Action</button>
-      </div>
     </aside>
   );
 };

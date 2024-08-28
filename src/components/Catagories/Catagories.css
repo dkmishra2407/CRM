@@ -1,10 +1,42 @@
+/* Ensure the sidebar and main content alignment */
+.sidebar {
+  width: 250px;
+  background-color: #2c3e50;
+  color: white;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow-y: auto;
+}
+
+.sidebar.closed {
+  width: 60px;
+}
+
+.main-content {
+  margin-left: 250px; /* Adjust this according to the sidebar width */
+  transition: margin-left 0.3s ease;
+}
+
+.main-content.closed {
+  margin-left: 60px; /* Adjust based on your collapsed sidebar width */
+}
+
+/* Categories Container */
 .categories-container {
   display: flex;
   align-items: center;
-  padding: 1rem 2rem;
+  padding: 1rem; /* Adjusted to only padding on top and bottom */
+  margin-left: 0; /* Ensure no left margin */
   background-color: #ffffff;
   border-bottom: 1px solid #ddd;
   overflow-x: hidden;
+  width: calc(100% - 250px); /* Adjust this based on sidebar width */
+}
+
+.categories-container.closed {
+  width: calc(100% - 60px); /* Adjust based on collapsed sidebar width */
 }
 
 .categories-carousel {
@@ -20,7 +52,6 @@
   color: #333;
   transition: background-color 0.3s, color 0.3s;
   white-space: nowrap;
-  margin-right: 10px;
 }
 
 .category-item:hover {
@@ -53,6 +84,7 @@
   margin-right: 8px;
 }
 
+/* Modal and Overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -70,8 +102,8 @@
   background: white;
   padding: 20px;
   border-radius: 8px;
-  width: 80%;
-  max-width: 500px;
+  width: 90%; /* Adjusted this to be 90% for better responsiveness */
+  max-width: 600px;
   position: relative;
 }
 
@@ -90,4 +122,3 @@
 .close-modal-btn:hover {
   background: #ff1c1c;
 }
-
