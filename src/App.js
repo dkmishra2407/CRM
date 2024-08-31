@@ -30,12 +30,12 @@ function App() {
           <Route path="/Dashboard" element={<Dashboard />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
-          <Route path="/genearate" element={<Generate />} />
+          <Route path="/webstore" element={<Generate />} />
           <Route path="/mycart" element={<MyCart />} />
           <Route path="/AddProduct" element={<AddProductForm />} />
           <Route path="/AddAgent" element={<AddSalesAgentForm/>}/>
           <Route path='/agents' element={<Agent />}/>
-          <Route path='/createinvoice' element={<CreateInvoiceComponent />}/>
+          <Route path='/mycart/createinvoice' element={<CreateInvoiceComponent />}/>
           <Route path='/addcategories' element={<AddCatagories />}/>
           <Route path='/quotation' element={<QuotationPage />}/>
           <Route path='/inventory' element={<Inventory />}/>

@@ -63,11 +63,23 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </Link>
         </li>
         <li>
-          <Link to="/store" className="menu-link">
+          <Link to="/webstore" className="menu-link">
             <span className="material-icons menu-icon">store</span>
             {isOpen && <span className="menu-text">Web Store</span>}
           </Link>
         </li>
+          <li>
+            <Link to="/addsites" className="menu-link">
+              <span className="material-icons menu-icon">place</span> {/* Icon for Sites */}
+              {isOpen && <span className="menu-text">Add Sites</span>}
+            </Link>
+          </li>
+          <li>
+            <Link to="/addcategories" className="menu-link">
+              <span className="material-icons menu-icon">label</span> {/* Icon for Categories */}
+              {isOpen && <span className="menu-text">Add Category</span>}
+            </Link>
+          </li>
       </ul>
     </aside>
   );

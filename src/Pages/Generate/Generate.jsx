@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './Generate.css';
+import AddProductForm from '../../components/AddProductForm/AddProductForm';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import { useCart } from '../../Context/card.context';
 import { Link } from 'react-router-dom';
-import AddProductForm from '../../components/AddProductForm/AddProductForm';
 import Sidebar from '../../components/SideBar/SideBar';
 import axios from 'axios';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -101,6 +101,7 @@ function Generate() {
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`}>
         <div className="top-bar">
+        <h1>STORE</h1>
           <div className="search-bar-container">
             <input
               type="text"
@@ -126,7 +127,6 @@ function Generate() {
 
         <div className={`categorybar ${isSidebarOpen ? 'open' : 'closed'}`}>
           <Categories />
-          <button className="add-product-btn" onClick={handleOpenAddProductModal}>Add Product</button>
         </div>
 
         <InfiniteScroll

@@ -236,24 +236,23 @@ function Customer() {
   return (
     <div className={`generate-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      
-      <div className="search-bar-container">
+      <h1 className="customers-page-title">CUSTOMERS</h1>
+      <div className="customer-search-container">
         <input
           type="text"
           placeholder="Search customer"
-          className="search-bar"
+          className="customer-search-bar"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           onKeyPress={handleSearchKeyPress}
         />
-        <div className="search-icon" onClick={() => searchFetchCustomers(searchTerm)}>
+        <div className="customer-search-icon" onClick={() => searchFetchCustomers(searchTerm)}>
           <span className="material-icons">search</span>
         </div>
-        <div className="add-customer-btn" onClick={() => setIsModalOpen(true)}>
+        <div className="customer-add-btn" onClick={() => setIsModalOpen(true)}>
           Add Customer
         </div>
       </div>
-
       <table className="customer-table">
         <thead>
           <tr>

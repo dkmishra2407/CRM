@@ -12,21 +12,36 @@ const AddProductForm = () => {
   const [categoryId, setCategoryId] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [images, setImages] = useState([]);
-  const [imageIds, setImageIds] = useState([]); // To store uploaded image IDs
   const [sites, setSites] = useState([]);
   const [categories, setCategories] = useState([]);
   const [showForm, setShowForm] = useState(true);
+  const [rate, setRate] = useState(0);
 
   useEffect(() => {
     // Fetch Sites
-    axios.get('http://localhost:7171/api/sites')
-      .then(response => setSites(response.data))
-      .catch(error => console.error('Error fetching sites:', error));
+    const fetchSites = async () => {
+      try {
+        const response = await axios.get('http://localhost:7171/api/sites');
+        setSites(response.data);
+      } catch (error) {
+        console.error('Error fetching sites:', error);
+        toast.error('Failed to fetch sites.');
+      }
+    };
 
     // Fetch Categories
-    axios.get('http://localhost:7171/api/categories')
-      .then(response => setCategories(response.data))
-      .catch(error => console.error('Error fetching categories:', error));
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('http://localhost:7171/api/categories');
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        toast.error('Failed to fetch categories.');
+      }
+    };
+
+    fetchSites();
+    fetchCategories();
   }, []);
 
   const handleImageChange = (e) => {
@@ -42,7 +57,6 @@ const AddProductForm = () => {
     images.forEach((image) => {
       formData.append('images', image);
     });
-    formData.append('productId', 30);
 
     try {
       const response = await axios.post('http://localhost:7171/api/products/upload-images', formData, {
@@ -57,8 +71,6 @@ const AddProductForm = () => {
       }));
 
       console.log("Images uploaded:", imageDetails);
-      setImageIds(imageDetails.map(detail => detail.id));
-
       return imageDetails;
     } catch (error) {
       console.error('Error uploading images:', error);
@@ -76,16 +88,17 @@ const AddProductForm = () => {
       const productData = {
         sku,
         name,
+        rate,
         site: {
-          siteId
+          siteId,
         },
         category: {
-          categoryId
+          categoryId,
         },
         productQuantity: {
-          availableQty: quantity
+          availableQty: quantity,
         },
-        images: imageDetails // Add the array of image details (id and imageUrl)
+        images: imageDetails, // Add the array of image details (id and imageUrl)
       };
 
       const response = await axios.post('http://localhost:7171/api/products', productData, {
@@ -96,6 +109,11 @@ const AddProductForm = () => {
 
       toast.success('Product added successfully!');
       console.log('Product added:', response.data);
+      setShowForm(false); // Automatically close the modal after saving
+
+      // Reload the page after saving the product
+      window.location.reload();
+
     } catch (error) {
       console.error('Error adding product:', error);
       toast.error('Failed to add product.');
@@ -208,6 +226,16 @@ const AddProductForm = () => {
             +
           </button>
         </div>
+
+        <label className="product-form-label">Rate</label>
+        <input
+          type="number"
+          value={rate}
+          onChange={(e) => setRate(Math.max(0, parseFloat(e.target.value) || 0))}
+          className="product-form-input"
+          placeholder="Rate"
+          required
+        />
 
         <button type="submit" className="product-form-submit-button">
           Save Product

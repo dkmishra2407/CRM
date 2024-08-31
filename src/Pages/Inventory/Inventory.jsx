@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Inventory.css';
-import ProductCard from '../../components/ProductCard/ProductCard';
+import ProductcardForInventory from '../../components/ProductcardForInventory/ProductcardForInventory';
 import { useCart } from '../../Context/card.context';
 import { Link } from 'react-router-dom';
 import AddProductForm from '../../components/AddProductForm/AddProductForm';
@@ -98,9 +98,10 @@ function Inventory() {
 
   return (
     <div className="App">
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+     <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`}>
         <div className="top-bar">
+        <h1 style={{ color: 'black' }}>INVENTORY</h1>
           <div className="search-bar-container">
             <input
               type="text"
@@ -113,20 +114,20 @@ function Inventory() {
               <span className="material-icons gradient-text">search</span>
             </div>
           </div>
-
-          <div className="actions">
-            <div className="cart-icon">
-              <Link to="/mycart">
-                <span className="material-icons gradient-text">shopping_cart</span>
-              </Link>
-              <span className="cart-count">{totalQuantity}</span>
-            </div>
           </div>
-        </div>
-
         <div className={`categorybar ${isSidebarOpen ? 'open' : 'closed'}`}>
           <Categories />
-          <button className="add-product-btn" onClick={handleOpenAddProductModal}>Add Product</button>
+          <button
+            className="add-product-btn"
+            onClick={handleOpenAddProductModal}
+            style={{
+              backgroundColor: '#28a745',
+              color: 'white',
+            }}
+          >
+            Add Product
+          </button>
+
         </div>
 
         <InfiniteScroll
@@ -138,7 +139,7 @@ function Inventory() {
           className="product-container"
         >
           {filteredProducts.map((product) => (
-            <ProductCard
+            <ProductcardForInventory
               key={product.key}
               sku={product.sku}
               name={product.name}

@@ -17,7 +17,7 @@ function Agent() {
 
   const fetchAgents = async () => {
     try {
-      const response = await axios.get('http://localhost:7171/api/customers');
+      const response = await axios.get('http://localhost:7171/api/associates');
       setAgents(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       console.error('Failed to fetch agents', err);
@@ -32,7 +32,7 @@ function Agent() {
     }
 
     try {
-      const response = await axios.get(`http://localhost:7171/api/customers/${searchTerm}`);
+      const response = await axios.get(`http://localhost:7171/api/associates/${searchTerm}`);
       setAgents(Array.isArray(response.data) ? response.data : [response.data]);
     } catch (err) {
       console.error('Failed to fetch agents', err);
@@ -43,7 +43,7 @@ function Agent() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this agent?")) {
       try {
-        await axios.delete(`http://localhost:7171/api/customers/${id}`);
+        await axios.delete(`http://localhost:7171/api/associates/${id}`);
         setAgents(prevAgents => prevAgents.filter(agent => agent.customerId !== id));
       } catch (err) {
         console.error('Failed to delete agent', err);
@@ -74,21 +74,21 @@ function Agent() {
   return (
     <div className={`generate-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      
-      <div className="search-bar-container">
+      <h1 className="customers-page-title">AGENTS</h1>
+      <div className="customer-search-container">
         <input
           type="text"
-          placeholder="Search agent"
-          className="search-bar"
+          placeholder="Search customer"
+          className="customer-search-bar"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           onKeyPress={handleSearchKeyPress}
         />
-        <div className="search-icon" onClick={() => searchFetchAgents(searchTerm)}>
+        <div className="customer-search-icon" onClick={() => searchFetchAgents(searchTerm)}>
           <span className="material-icons">search</span>
         </div>
-        <div className="add-agent-btn" onClick={() => setIsModalOpen(true)}>
-          Add Agent
+        <div className="customer-add-btn" onClick={() => setIsModalOpen(true)}>
+          Add Customer
         </div>
       </div>
 
@@ -97,19 +97,19 @@ function Agent() {
           <tr>
             <th>Id</th>
             <th>Name</th>
-            <th>Phone</th>
-            <th>Email</th>
+            <th>Username</th>
+            <th>Role</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {agents.length > 0 ? (
             agents.map((agent) => (
-              <tr key={agent.customerId}>
-                <td>{agent.customerId}</td>
-                <td>{agent.customerName || 'N/A'}</td>
-                <td>{agent.phoneNumber}</td>
-                <td>{agent.emailAddress}</td>
+              <tr key={agent.associateId}>
+                <td>{agent.associateId}</td>
+                <td>{agent.associateName || 'N/A'}</td>
+                <td>{agent.userName}</td>
+                <td>{agent.role.roleName}</td>
                 <td>
                   <button className="action-btn view-btn" onClick={() => handleView(agent.customerId)}>Edit</button>
                   <button className="action-btn delete-btn" onClick={() => handleDelete(agent.customerId)}>Delete</button>

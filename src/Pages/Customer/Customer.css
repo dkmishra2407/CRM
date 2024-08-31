@@ -7,6 +7,67 @@
     padding: 0 20px; /* Add some padding to align content better */
 }
 
+.customers-page-title {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: black;
+    text-align: left;
+    margin-left: 30px;
+  }
+  
+  .customer-search-container {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 700px;
+    width: 100%;
+    margin-bottom: 20px;
+    margin-left: 30px;
+  }
+  
+  .customer-search-bar {
+    flex-grow: 1;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ddd;
+    border-radius: 5px 0 0 5px;
+    outline: none;
+  }
+  
+  .customer-search-icon {
+    padding: 10px;
+    background-color: #00aaff;
+    border-radius: 0 5px 5px 0;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .customer-search-icon:hover {
+    background-color: #008bb5;
+  }
+  
+  .customer-add-btn {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 20px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .customer-add-btn:hover {
+    background-color: #218838;
+  }
+  
 /* Search bar styling */
 .search-bar {
     flex-grow: 1;

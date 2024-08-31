@@ -1,4 +1,36 @@
 /* Sidebar Styles */
+.my-cart-container {
+  display: flex;
+  transition: margin-left 0.3s ease;
+  width: 80%;
+}
+
+.my-cart-container.sidebar-open .my-cart {
+  margin-left: 250px; /* Adjusted based on sidebar width */
+}
+
+.my-cart-container.sidebar-closed .my-cart {
+  margin-left: 60px; /* Adjusted based on collapsed sidebar width */
+}
+
+.my-cart {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: #f7f7f7;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+  transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+.my-cart-container.sidebar-open .my-cart {
+  width: calc(100% - 200px); /* Adjusted for the open sidebar */
+}
+
+.my-cart-container.sidebar-closed .my-cart {
+  width: calc(100% - 60px); /* Adjusted for the closed sidebar */
+}
+
 .sidebar {
   position: fixed;
   top: 0;
@@ -190,7 +222,19 @@
   cursor: pointer;
   font-size: 16px;
 }
-
+.pagename {
+  position: absolute; /* Positioning it absolutely */
+  top: 0;            /* Aligns it to the top of the page */
+  left: 20%;         /* Moves it to the center of the page */
+  transform: translateX(-50%); /* Adjusts the position to truly center it */
+  text-align: center; /* Centers the text within the element */
+  width: 100%;       /* Ensures the width spans the full page */
+  margin: 0;        /* Removes any default margin */
+  padding: 20px 0;  /* Adds some padding for spacing */
+  font-size: 24px;  /* Sets the font size */
+  font-weight: bold; /* Makes the font bold */
+  margin-bottom: 20px;
+}
 .download-button {
   background-color: #28a745;
   color: white;
@@ -208,3 +252,4 @@
 .pay-button:hover {
   background-color: #e0a800;
 }
+

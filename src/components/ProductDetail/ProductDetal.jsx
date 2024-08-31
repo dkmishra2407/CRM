@@ -25,10 +25,17 @@ const ProductDetailsModal = ({ productId, onClose }) => {
           <FaTimes className="close-icon" onClick={onClose} /> {/* Close icon */}
         </div>
         <div className="modal-body">
+        <div className="product-section">
+              <h4>Images</h4>
+              <div className="product-images">
+                {product.images.map(image => (
+                  <img key={image.id} src={image.imageUrl} alt="Product" className="product-image" />
+                ))}
+              </div>
           <div className="product-info">
             <h4>SKU: {product.sku}</h4>
             <h2>{product.name}</h2>
-
+            <h3><strong>Rate:</strong>{product.rate}</h3>
             <div className="product-section">
               <h4>Site Information</h4>
               <p><strong>Site Name:</strong> {product.site.siteName}</p>
@@ -47,14 +54,6 @@ const ProductDetailsModal = ({ productId, onClose }) => {
               <h4>Quantity</h4>
               <p><strong>Available Quantity:</strong> {product.productQuantity.availableQty}</p>
             </div>
-
-            <div className="product-section">
-              <h4>Images</h4>
-              <div className="product-images">
-                {product.images.map(image => (
-                  <img key={image.id} src={image.imageUrl} alt="Product" className="product-image" />
-                ))}
-              </div>
             </div>
           </div>
         </div>

@@ -1,2 +1,147 @@
+.invoice-container {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
 
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
 
+.invoice-header h2 {
+  font-size: 28px;
+  color: #333;
+  font-weight: bold;
+}
+
+.customer-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.customer-info-left, .customer-info-right {
+  width: 48%;
+}
+
+.customer-info input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.details-section {
+  margin-bottom: 30px;
+}
+
+.details-section h3 {
+  font-size: 22px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.details-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.details-table th, .details-table td {
+  padding: 12px;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.details-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.product-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 4px;
+}
+
+.delete-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: red;
+  font-size: 18px;
+}
+
+.footer-section {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.footer-left {
+  width: 48%;
+}
+
+.footer-right {
+  width: 48%;
+  display: flex;
+  align-items: center;
+}
+
+.footer-right label {
+  margin-right: 12px;
+  font-size: 16px;
+}
+
+.gst-input {
+  width: 120px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.invoice-summary {
+  text-align: right;
+  margin-bottom: 30px;
+}
+
+.invoice-summary p {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.invoice-summary span {
+  color: #28a745;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.print-button, .save-button {
+  background-color: #28a745;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.print-button:hover, .save-button:hover {
+  background-color: #218838;
+}

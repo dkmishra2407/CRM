@@ -89,15 +89,15 @@ const AddCustomerForm = ({ isOpen, onClose }) => {
   if (!isOpen) return null; // Do not render the modal if it's not open
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <div className="modal-header">
-          <h2 className="form-title">Add Customer</h2>
-          <FaTimes className="close-icon" onClick={onClose} /> {/* Close icon */}
+    <div className="add-customer-modal-overlay">
+      <div className="add-customer-modal-content">
+        <div className="add-customer-modal-header">
+          <h2 className="add-customer-form-title">Add Customer</h2>
+          <FaTimes className="add-customer-close-icon" onClick={onClose} /> {/* Close icon */}
         </div>
-        <div className="form-fields">
-          <div className="left-section">
-            <div className="form-group">
+        <div className="add-customer-form-fields">
+          <div className="add-customer-left-section">
+            <div className="add-customer-form-group">
               <label>Customer ID</label>
               <input
                 type="text"
@@ -105,9 +105,9 @@ const AddCustomerForm = ({ isOpen, onClose }) => {
                 value={customerId}
                 onChange={(e) => setCustomerId(e.target.value)}
               />
-              {errors.customerId && <span className="error">{errors.customerId}</span>}
+              {errors.customerId && <span className="add-customer-error">{errors.customerId}</span>}
             </div>
-            <div className="form-group">
+            <div className="add-customer-form-group">
               <label>Customer Name</label>
               <input
                 type="text"
@@ -115,9 +115,9 @@ const AddCustomerForm = ({ isOpen, onClose }) => {
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
               />
-              {errors.customerName && <span className="error">{errors.customerName}</span>}
+              {errors.customerName && <span className="add-customer-error">{errors.customerName}</span>}
             </div>
-            <div className="form-group">
+            <div className="add-customer-form-group">
               <label>Site</label>
               <input
                 type="text"
@@ -125,9 +125,9 @@ const AddCustomerForm = ({ isOpen, onClose }) => {
                 value={site}
                 onChange={(e) => setSite(e.target.value)}
               />
-              {errors.site && <span className="error">{errors.site}</span>}
+              {errors.site && <span className="add-customer-error">{errors.site}</span>}
             </div>
-            <div className="form-group">
+            <div className="add-customer-form-group">
               <label>Contact</label>
               <input
                 type="text"
@@ -135,9 +135,9 @@ const AddCustomerForm = ({ isOpen, onClose }) => {
                 value={contact}
                 onChange={(e) => setContact(e.target.value)}
               />
-              {errors.contact && <span className="error">{errors.contact}</span>}
+              {errors.contact && <span className="add-customer-error">{errors.contact}</span>}
             </div>
-            <div className="form-group">
+            <div className="add-customer-form-group">
               <label>Address</label>
               <input
                 type="text"
@@ -145,9 +145,9 @@ const AddCustomerForm = ({ isOpen, onClose }) => {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
               />
-              {errors.address && <span className="error">{errors.address}</span>}
+              {errors.address && <span className="add-customer-error">{errors.address}</span>}
             </div>
-            <div className="form-group">
+            <div className="add-customer-form-group">
               <label>Email Address</label>
               <input
                 type="email"
@@ -155,9 +155,9 @@ const AddCustomerForm = ({ isOpen, onClose }) => {
                 value={emailAddress}
                 onChange={(e) => setEmailAddress(e.target.value)}
               />
-              {errors.emailAddress && <span className="error">{errors.emailAddress}</span>}
+              {errors.emailAddress && <span className="add-customer-error">{errors.emailAddress}</span>}
             </div>
-            <div className="form-group">
+            <div className="add-customer-form-group">
               <label>Customer Type</label>
               <select
                 value={customerType}
@@ -167,7 +167,7 @@ const AddCustomerForm = ({ isOpen, onClose }) => {
                 <option value="Wholesale">Wholesale</option>
               </select>
             </div>
-            <div className="form-group">
+            <div className="add-customer-form-group">
               <label>Tax Identification Number</label>
               <input
                 type="text"
@@ -175,24 +175,24 @@ const AddCustomerForm = ({ isOpen, onClose }) => {
                 value={taxIdentificationNumber}
                 onChange={(e) => setTaxIdentificationNumber(e.target.value)}
               />
-              {errors.taxIdentificationNumber && <span className="error">{errors.taxIdentificationNumber}</span>}
+              {errors.taxIdentificationNumber && <span className="add-customer-error">{errors.taxIdentificationNumber}</span>}
             </div>
           </div>
-          <div className="right-section">
-            <div className="image-preview">
+          <div className="add-customer-right-section">
+            <div className="add-customer-image-preview">
               <img
                 src={image || 'https://via.placeholder.com/150'}
                 alt="Selected"
-                className="selected-image"
+                className="add-customer-selected-image"
               />
             </div>
-            <input type="file" onChange={handleImageChange} className="image-input"/>
-            <button className="select-image-btn">Select Image</button>
+            <input type="file" onChange={handleImageChange} className="add-customer-image-input"/>
+            <button className="add-customer-select-image-btn">Select Image</button>
           </div>
         </div>
-        <div className="form-actions">
-          <button onClick={handleClear} className="clear-btn">CLEAR</button>
-          <button onClick={handleSave} className="save-btn" disabled={Object.keys(errors).length > 0}>SAVE</button>
+        <div className="add-customer-form-actions">
+          <button onClick={handleClear} className="add-customer-clear-btn">CLEAR</button>
+          <button onClick={handleSave} className="add-customer-save-btn" disabled={Object.keys(errors).length > 0}>SAVE</button>
         </div>
       </div>
     </div>

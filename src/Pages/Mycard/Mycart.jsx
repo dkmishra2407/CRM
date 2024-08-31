@@ -3,6 +3,10 @@ import './Mycart.css';
 import { useCart } from '../../Context/card.context';
 import Sidebar from '../../components/SideBar/SideBar';
 import axios from 'axios';
+import jsPDFInvoiceTemplate, { OutputType, jsPDF } from 'jspdf-invoice-template';
+import { Link } from 'react-router-dom';
+import SadhguruTilesLogo from './logos/sadhgurtiles.jpeg'; // Replace with actual path
+import DTSLogo from './logos/company_logo.png'; // Replace with actual path
 
 const MyCart = () => {
   const { state: { ShoppingCart } } = useCart();
@@ -16,7 +20,7 @@ const MyCart = () => {
   });
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Sidebar state
 
-  const subtotal = ShoppingCart.reduce((acc, item) => acc + item.rate * item.quantity, 0);
+  const subtotal = ShoppingCart.reduce((acc, item) => acc + (item.rate || 0) * (item.quantity || 0), 0);
   const amountReceived = 0; // Example value, adjust as needed
   const balanceDue = subtotal - amountReceived;
 
@@ -40,6 +44,109 @@ const MyCart = () => {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen); // Toggle sidebar state
+  };
+
+  const handleDownload = () => {
+    const props = {
+      outputType: OutputType.Save,
+      returnJsPDFDocObject: false,
+      fileName: `Quotation_${customerId || 'Unknown'}`,
+      orientationLandscape: false,
+      compress: true,
+      logo: {
+        src: SadhguruTilesLogo || '', // Default to empty string if logo is missing
+        type: 'JPEG',
+        width: 53.33,
+        height: 26.66,
+        margin: {
+          top: 0,
+          left: 0,
+        },
+      },
+      stamp: {
+        inAllPages: false,
+        src: DTSLogo || '',
+        type: 'PNG',
+        width: 20,
+        height: 20,
+        margin: {
+          top: 0,
+          left: 0,
+        },
+      },
+      business: {
+        name: "SADHGURU TILES & MARBLES",
+        address: "Sr. No. 1/3, Yojana Nagar, near HP Petrol Pump...",
+        phone: "0980101989 / 7620870603 / 9011719000",
+        email: "sadhgurutiles@gmail.com",
+        website: "www.sadhgurutiles.com", // Add your website if any
+      },
+      contact: {
+        label: "Invoice issued for:",
+        name: customerData.customerName || 'N/A',
+        address: customerData.shippingAddress || 'N/A',
+        phone: customerData.phoneNumber || 'N/A',
+        email: customerData.emailAddress || 'N/A',
+        otherInfo: "",
+      },
+      invoice: {
+        label: "Quotation #: ",
+        num: customerId || 'Unknown',
+        invDate: `Payment Date: ${new Date().toLocaleDateString()}`,
+        invGenDate: `Invoice Date: ${new Date().toLocaleDateString()}`,
+        headerBorder: true,
+        tableBodyBorder: true,
+        header: [
+          { title: "#", style: { width: 10 } },
+          { title: "SKU", style: { width: 30 } },
+          { title: "Product Name", style: { width: 80 } },
+          { title: "Category", style: { width: 30 } },
+          { title: "Rate (INR)", style: { width: 30 } },
+          { title: "Quantity", style: { width: 20 } },
+          { title: "Tax", style: { width: 20 } },
+          { title: "Total", style: { width: 30 } },
+        ],
+        table: ShoppingCart.map((item, index) => ([
+          index + 1,
+          item.sku?.toString() || 'N/A',
+          item.name?.toString() || 'N/A',
+          item.category?.toString() || 'N/A',
+          `Rs ${(item.rate || 0).toString()}`,
+          (item.quantity || 0).toString(),
+          `Rs ${(item.tax || 0).toString()}`,
+          `Rs ${(item.rate * item.quantity || 0).toString()}`,
+        ])),
+        additionalRows: [
+          {
+            col1: 'Subtotal:',
+            col2: `Rs ${subtotal}.00`,
+            col3: '',
+            style: { fontSize: 12, fontStyle: 'bold' },
+          },
+          {
+            col1: 'Amount Received:',
+            col2: `Rs ${amountReceived}.00`,
+            col3: '',
+            style: { fontSize: 12, fontStyle: 'bold' },
+          },
+          {
+            col1: 'Balance Due:',
+            col2: `Rs ${balanceDue}.00`,
+            col3: '',
+            style: { fontSize: 12, fontStyle: 'bold' },
+          },
+        ],
+        invDescLabel: "Invoice Note",
+        invDesc: "Thank you for your business! Please make the payment by the due date.",
+      },
+      footer: {
+        text: "The invoice is created on a computer and is valid without the signature and stamp.",
+      },
+      pageEnable: true,
+      pageLabel: "Page ",
+    };
+
+    jsPDFInvoiceTemplate(props);
   };
 
   return (
@@ -68,8 +175,8 @@ const MyCart = () => {
           <thead>
             <tr>
               <th>No</th>
-              <th>Products</th>
-              <th>Description</th>
+              <th>SKU</th>
+              <th>Product Name</th>
               <th>Category</th>
               <th>Rate (INR)</th>
               <th>Quantity</th>
@@ -87,9 +194,9 @@ const MyCart = () => {
                 </td>
                 <td>{item.name}</td>
                 <td>{item.category}</td>
-                <td>{item.rate}</td>
+                <td>Rs {item.rate}</td>
                 <td>{item.quantity}</td>
-                <td>{item.tax || 0}</td>
+                <td>Rs {item.tax || 0}</td>
                 <td>Rs {item.rate * item.quantity}</td>
               </tr>
             ))}
@@ -103,8 +210,10 @@ const MyCart = () => {
         </div>
 
         <div className="cart-buttons">
-          <button className="download-button">Download</button>
-          <button className="pay-button">Pay</button>
+          <button className="download-button" onClick={handleDownload}>Download</button>
+          <Link to="createinvoice">
+            <button className="pay-button">Pay</button>
+          </Link>
         </div>
       </div>
     </div>
