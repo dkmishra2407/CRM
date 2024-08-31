@@ -13,11 +13,12 @@
 
 .add-customer-modal-content {
   background: white;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 600px;
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 700px;
   width: 100%;
   position: relative;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .add-customer-modal-header {
@@ -30,20 +31,49 @@
 .add-customer-close-icon {
   cursor: pointer;
   font-size: 1.5rem;
+  color: #555;
+}
+
+.add-customer-form-title {
+  font-size: 1.8rem;
   color: #333;
 }
 
 .add-customer-form-fields {
   display: flex;
   justify-content: space-between;
+  gap: 20px;
 }
 
-.add-customer-left-section, .add-customer-right-section {
-  width: 45%;
+.add-customer-left-section,
+.add-customer-right-section {
+  flex: 1;
 }
 
 .add-customer-form-group {
   margin-bottom: 15px;
+}
+
+.add-customer-form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.add-customer-form-group input,
+.add-customer-form-group select {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  outline: none;
+}
+
+.add-customer-form-group input:focus,
+.add-customer-form-group select:focus {
+  border-color: #007acc;
 }
 
 .add-customer-error {
@@ -54,16 +84,19 @@
 
 .add-customer-form-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 15px;
   margin-top: 20px;
 }
 
-.add-customer-clear-btn, .add-customer-save-btn {
-  padding: 10px 20px;
+.add-customer-clear-btn,
+.add-customer-save-btn {
+  padding: 10px 25px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 1rem;
+  transition: background-color 0.3s ease;
 }
 
 .add-customer-clear-btn {
@@ -71,9 +104,17 @@
   color: white;
 }
 
+.add-customer-clear-btn:hover {
+  background-color: #c82333;
+}
+
 .add-customer-save-btn {
   background-color: #28a745;
   color: white;
+}
+
+.add-customer-save-btn:hover {
+  background-color: #218838;
 }
 
 .add-customer-save-btn[disabled] {
@@ -81,7 +122,15 @@
   cursor: not-allowed;
 }
 
+.add-customer-right-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .add-customer-image-preview {
+  width: 100%;
+  max-width: 150px;
   margin-bottom: 15px;
 }
 
@@ -89,6 +138,7 @@
   width: 100%;
   height: auto;
   border-radius: 5px;
+  border: 1px solid #ddd;
 }
 
 .add-customer-image-input {
@@ -102,4 +152,10 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.add-customer-select-image-btn:hover {
+  background-color: #005fa3;
 }

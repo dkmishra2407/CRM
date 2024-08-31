@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './AddCustomer.css';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { FaTimes } from 'react-icons/fa';
 
-const AddCustomerForm = ({ isOpen, onClose }) => {
-  const [customerId, setCustomerId] = useState('');
+const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
   const [customerName, setCustomerName] = useState('');
   const [site, setSite] = useState('');
   const [contact, setContact] = useState('');
@@ -16,8 +15,32 @@ const AddCustomerForm = ({ isOpen, onClose }) => {
   const [taxIdentificationNumber, setTaxIdentificationNumber] = useState('');
   const [image, setImage] = useState(null);
 
-  // Validation state
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    if (customerId) {
+      fetchCustomerData(customerId);
+    }
+  }, [customerId]);
+
+  const fetchCustomerData = async (id) => {
+    try {
+      const response = await axios.get(`http://localhost:7171/api/customers/${id}`);
+      const customer = response.data;
+
+      setCustomerName(customer.customerName);
+      setSite(customer.site);
+      setContact(customer.phoneNumber);
+      setAddress(customer.billingAddress);
+      setEmailAddress(customer.emailAddress);
+      setCustomerType(customer.customerType);
+      setTaxIdentificationNumber(customer.taxIdentificationNumber);
+      setImage(customer.imageUrl || null); // Assume there is an image URL field
+    } catch (err) {
+      console.error('Failed to fetch customer data', err);
+      toast.error('Failed to load customer data. Please try again.');
+    }
+  };
 
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -26,7 +49,6 @@ const AddCustomerForm = ({ isOpen, onClose }) => {
   };
 
   const handleClear = () => {
-    setCustomerId('');
     setCustomerName('');
     setSite('');
     setContact('');
@@ -35,12 +57,11 @@ const AddCustomerForm = ({ isOpen, onClose }) => {
     setCustomerType('Retail');
     setTaxIdentificationNumber('');
     setImage(null);
-    setErrors({}); // Clear errors
+    setErrors({});
   };
 
   const validateForm = () => {
     const newErrors = {};
-    if (!customerId) newErrors.customerId = 'Customer ID is required.';
     if (!customerName) newErrors.customerName = 'Customer Name is required.';
     if (!site) newErrors.site = 'Site is required.';
     if (!contact) newErrors.contact = 'Contact number is required.';
@@ -53,60 +74,55 @@ const AddCustomerForm = ({ isOpen, onClose }) => {
     if (!taxIdentificationNumber) newErrors.taxIdentificationNumber = 'Tax Identification Number is required.';
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; // Return true if no errors
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSave = async () => {
-    if (!validateForm()) return; // Validate before proceeding
+    if (!validateForm()) return;
 
     const customerData = {
-      customerId: customerId,
       customerName: customerName,
-      contactPerson: customerName,
+      site: site,
+      phoneNumber: contact,
       billingAddress: address,
       shippingAddress: address,
-      phoneNumber: contact,
       emailAddress: emailAddress,
       customerType: customerType,
       taxIdentificationNumber: taxIdentificationNumber,
+      imageUrl: image, // Assume there is an image URL field
     };
 
     try {
-      await axios.post('http://localhost:7171/api/customers', customerData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      toast.success('Customer Added Successfully!');
-      handleClear();  // Clear the form after saving
-      onClose();  // Close the modal after saving
+      if (customerId) {
+        await onUpdate(customerId, customerData);
+        toast.success('Customer Updated Successfully!');
+      } else {
+        await axios.post('http://localhost:7171/api/customers', customerData, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        toast.success('Customer Added Successfully!');
+      }
+      handleClear();
+      onClose();
     } catch (err) {
       console.error('Error saving the form', err);
-      toast.error('Failed to Add the Customer. Please try again.');
+      toast.error('Failed to save the customer. Please try again.');
     }
   };
 
-  if (!isOpen) return null; // Do not render the modal if it's not open
+  if (!isOpen) return null;
 
   return (
     <div className="add-customer-modal-overlay">
       <div className="add-customer-modal-content">
         <div className="add-customer-modal-header">
-          <h2 className="add-customer-form-title">Add Customer</h2>
-          <FaTimes className="add-customer-close-icon" onClick={onClose} /> {/* Close icon */}
+          <h2 className="add-customer-form-title">{customerId ? 'Edit Customer' : 'Add Customer'}</h2>
+          <FaTimes className="add-customer-close-icon" onClick={onClose} />
         </div>
         <div className="add-customer-form-fields">
           <div className="add-customer-left-section">
-            <div className="add-customer-form-group">
-              <label>Customer ID</label>
-              <input
-                type="text"
-                placeholder="Enter Customer Id"
-                value={customerId}
-                onChange={(e) => setCustomerId(e.target.value)}
-              />
-              {errors.customerId && <span className="add-customer-error">{errors.customerId}</span>}
-            </div>
             <div className="add-customer-form-group">
               <label>Customer Name</label>
               <input

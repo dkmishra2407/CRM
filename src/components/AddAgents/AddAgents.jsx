@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { FaTimes } from 'react-icons/fa';
 
-const AddSalesAgentForm = ({ isOpen, onClose, agent }) => {
+const AddSalesAgentForm = ({ isOpen, onClose, agentId }) => {
   const [agentName, setAgentName] = useState('');
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
@@ -13,18 +13,30 @@ const AddSalesAgentForm = ({ isOpen, onClose, agent }) => {
   const [roleDescription, setRoleDescription] = useState('');
   const [active, setActive] = useState(true);
 
-  // Define the errors state
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (agent) {
+    if (agentId) {
+      fetchAgentData(agentId);
+    }
+  }, [agentId]);
+
+  const fetchAgentData = async (id) => {
+    try {
+      const response = await axios.get(`http://localhost:7171/api/associates/${id}`);
+      const agent = response.data;
+
       setAgentName(agent.associateName);
       setUserName(agent.userName);
       setRole(agent.role.roleName);
       setRoleDescription(agent.role.roleDescription);
       setActive(agent.active);
+      setPassword(''); // Clear password field for security
+    } catch (err) {
+      console.error('Failed to fetch agent data', err);
+      toast.error('Failed to load agent data. Please try again.');
     }
-  }, [agent]);
+  };
 
   const handleClear = () => {
     setAgentName('');
@@ -33,14 +45,14 @@ const AddSalesAgentForm = ({ isOpen, onClose, agent }) => {
     setRole('');
     setRoleDescription('');
     setActive(true);
-    setErrors({}); // Clear errors
+    setErrors({});
   };
 
   const validateForm = () => {
     const newErrors = {};
     if (!agentName) newErrors.agentName = 'Agent Name is required.';
     if (!userName) newErrors.userName = 'Username is required.';
-    if (!password && !agent) newErrors.password = 'Password is required.';
+    if (!password && !agentId) newErrors.password = 'Password is required.';
     if (!role) newErrors.role = 'Role is required.';
     if (!roleDescription) newErrors.roleDescription = 'Role Description is required.';
 
@@ -54,12 +66,13 @@ const AddSalesAgentForm = ({ isOpen, onClose, agent }) => {
     try {
       const roleData = {
         roleName: role,
-        roleDescription: roleDescription
+        roleDescription: roleDescription,
       };
 
       let roleResponse;
-      if (agent) {
-        roleResponse = { data: { roleId: agent.role.roleId } }; 
+      if (agentId) {
+        // If editing, assume the role already exists and just use the current roleId
+        roleResponse = await axios.get(`http://localhost:7171/api/roles/${agentId}`);
       } else {
         roleResponse = await axios.post('http://localhost:7171/api/roles', roleData, {
           headers: {
@@ -70,16 +83,16 @@ const AddSalesAgentForm = ({ isOpen, onClose, agent }) => {
 
       const associateData = {
         role: {
-          roleId: roleResponse.data.roleId
+          roleId: roleResponse.data.roleId,
         },
         associateName: agentName,
         userName: userName,
-        password: password || agent.password,
-        active: active
+        password: password || undefined, // Send password only if it is set
+        active: active,
       };
 
-      if (agent) {
-        await axios.put(`http://localhost:7171/api/associates/${agent.associateId}`, associateData, {
+      if (agentId) {
+        await axios.put(`http://localhost:7171/api/associates/${agentId}`, associateData, {
           headers: {
             'Content-Type': 'application/json',
           },
@@ -109,7 +122,7 @@ const AddSalesAgentForm = ({ isOpen, onClose, agent }) => {
     <div className="modal-overlay">
       <div className="modal-content">
         <div className="modal-header">
-          <h2 className="form-title">{agent ? 'Edit Sales Agent' : 'Add Sales Agent'}</h2>
+          <h2 className="form-title">{agentId ? 'Edit Sales Agent' : 'Add Sales Agent'}</h2>
           <FaTimes className="close-icon" onClick={onClose} />
         </div>
         <div className="form-fields">

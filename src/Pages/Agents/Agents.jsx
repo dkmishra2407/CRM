@@ -51,7 +51,7 @@ function Agent() {
     }
   };
 
-  const handleView = (id) => {
+  const handleEdit = (id) => {
     setSelectedAgentId(id);
     setIsModalOpen(true);
   };
@@ -111,8 +111,8 @@ function Agent() {
                 <td>{agent.userName}</td>
                 <td>{agent.role.roleName}</td>
                 <td>
-                  <button className="action-btn view-btn" onClick={() => handleView(agent.customerId)}>Edit</button>
-                  <button className="action-btn delete-btn" onClick={() => handleDelete(agent.customerId)}>Delete</button>
+                  <button className="action-btn view-btn" onClick={() => handleEdit(agent.associateId)}>Edit</button>
+                  <button className="action-btn delete-btn" onClick={() => handleDelete(agent.associateId)}>Delete</button>
                 </td>
               </tr>
             ))
@@ -126,10 +126,10 @@ function Agent() {
 
       {isModalOpen && (
         <AddSalesAgentForm
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          agentId={selectedAgentId}
-        />
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        agentId={selectedAgentId}
+      />      
       )}
     </div>
   );
