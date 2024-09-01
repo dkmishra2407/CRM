@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './ProductcardForInventory.css';
 import { useCart } from '../../Context/card.context';
-
+import abc from './ABC.avif'
 const ProductcardForInventory = ({ sku, name, image, rate, category, availableQty, onClick }) => {
   const [quantity, setQuantity] = useState(1);
   const { dispatch } = useCart();
@@ -11,7 +11,7 @@ const ProductcardForInventory = ({ sku, name, image, rate, category, availableQt
   return (
     <div className="product-card" onClick={onClick}>
       <p className="product-sku">SKU - {sku}</p>
-      <img src={image} alt={name} className="product-image" />
+      <img src={abc} alt={name} className="product-image" />
       <h3 className="product-name">{name}</h3>
       <div className="product-rate">
         {Array.from({ length: 5 }, (_, index) => (

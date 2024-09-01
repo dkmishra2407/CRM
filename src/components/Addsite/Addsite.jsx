@@ -32,6 +32,11 @@ const Addsites = () => {
             siteCode,
         };
 
+        if(siteContact.length != 10){
+            alert("please enter Valid Phone Number");
+            toast.error('Failed to Add the Site. Please Enter 10 digit phone Number');
+        }
+
         try {
             await axios.post('http://localhost:7171/api/sites', siteData, {
                 headers: {

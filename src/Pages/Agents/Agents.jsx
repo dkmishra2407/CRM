@@ -25,26 +25,11 @@ function Agent() {
     }
   };
 
-  const searchFetchAgents = async (searchTerm) => {
-    if (!searchTerm.trim()) {
-      fetchAgents();
-      return;
-    }
-
-    try {
-      const response = await axios.get(`http://localhost:7171/api/associates/${searchTerm}`);
-      setAgents(Array.isArray(response.data) ? response.data : [response.data]);
-    } catch (err) {
-      console.error('Failed to fetch agents', err);
-      setAgents([]); 
-    }    
-  };
-
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this agent?")) {
       try {
         await axios.delete(`http://localhost:7171/api/associates/${id}`);
-        setAgents(prevAgents => prevAgents.filter(agent => agent.customerId !== id));
+        setAgents(prevAgents => prevAgents.filter(agent => agent.associateId !== id));
       } catch (err) {
         console.error('Failed to delete agent', err);
       }
@@ -56,10 +41,8 @@ function Agent() {
     setIsModalOpen(true);
   };
 
-  const handleSearchKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      searchFetchAgents(searchTerm);
-    }
+  const handleSearchTermChange = (e) => {
+    setSearchTerm(e.target.value);
   };
 
   const handleCloseModal = () => {
@@ -71,6 +54,13 @@ function Agent() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  // Filter agents based on search term
+  const filteredAgents = agents.filter(agent =>
+    agent.associateName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    agent.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (agent.phoneNumber && agent.phoneNumber.includes(searchTerm))
+  );
+
   return (
     <div className={`generate-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
@@ -78,17 +68,16 @@ function Agent() {
       <div className="customer-search-container">
         <input
           type="text"
-          placeholder="Search customer"
+          placeholder="Search by name, username, or phone"
           className="customer-search-bar"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyPress={handleSearchKeyPress}
+          onChange={handleSearchTermChange}
         />
-        <div className="customer-search-icon" onClick={() => searchFetchAgents(searchTerm)}>
+        <div className="customer-search-icon">
           <span className="material-icons">search</span>
         </div>
         <div className="customer-add-btn" onClick={() => setIsModalOpen(true)}>
-          Add Customer
+          Add Agent
         </div>
       </div>
 
@@ -103,8 +92,8 @@ function Agent() {
           </tr>
         </thead>
         <tbody>
-          {agents.length > 0 ? (
-            agents.map((agent) => (
+          {filteredAgents.length > 0 ? (
+            filteredAgents.map((agent) => (
               <tr key={agent.associateId}>
                 <td>{agent.associateId}</td>
                 <td>{agent.associateName || 'N/A'}</td>
@@ -126,10 +115,10 @@ function Agent() {
 
       {isModalOpen && (
         <AddSalesAgentForm
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        agentId={selectedAgentId}
-      />      
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          agentId={selectedAgentId}
+        />
       )}
     </div>
   );

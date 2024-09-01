@@ -1,27 +1,43 @@
 import React, { useState } from 'react';
 import './ProductCard.css';
 import { useCart } from '../../Context/card.context';
+import abc from './ABC.avif'; // Import the default image
 
 const ProductCard = ({ sku, name, image, rate, category, availableQty, onClick }) => {
   const [quantity, setQuantity] = useState(1);
   const { dispatch } = useCart();
-  console.log(rate)
-  const product = { sku, name, image, rate, category: category.categoryName, quantity, availableQty };
 
+  // Fallback to the default image if no image is provided
+  const productImage = abc;
+
+  // Product details to be dispatched with cart actions
+  const product = {
+    sku,
+    name,
+    image: abc,
+    rate,
+    category: category?.categoryName,
+    quantity,
+    availableQty,
+  };
+
+  // Handle adding the product to the cart
   const addToCart = (e) => {
-    e.stopPropagation();
+    e.stopPropagation(); // Prevent triggering the onClick event of the card
     dispatch({ type: "ADD_TO_CART", payload: product });
   };
 
+  // Handle incrementing the product quantity
   const incrementQuantity = (e) => {
-    e.stopPropagation();
+    e.stopPropagation(); // Prevent triggering the onClick event of the card
     const updatedQuantity = quantity + 1;
     setQuantity(updatedQuantity);
     dispatch({ type: "UPDATE_QUANTITY", payload: { ...product, quantity: updatedQuantity } });
   };
 
+  // Handle decrementing the product quantity
   const decrementQuantity = (e) => {
-    e.stopPropagation();
+    e.stopPropagation(); // Prevent triggering the onClick event of the card
     if (quantity > 1) {
       const updatedQuantity = quantity - 1;
       setQuantity(updatedQuantity);
@@ -34,7 +50,7 @@ const ProductCard = ({ sku, name, image, rate, category, availableQty, onClick }
   return (
     <div className="product-card" onClick={onClick}>
       <p className="product-sku">SKU - {sku}</p>
-      <img src={image} alt={name} className="product-image" />
+      <img src={abc} alt={name} className="product-image" />
       <h3 className="product-name">{name}</h3>
       <div className="product-rate">
         {Array.from({ length: 5 }, (_, index) => (

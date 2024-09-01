@@ -63,16 +63,12 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
   const validateForm = () => {
     const newErrors = {};
     if (!customerName) newErrors.customerName = 'Customer Name is required.';
-    if (!site) newErrors.site = 'Site is required.';
     if (!contact) newErrors.contact = 'Contact number is required.';
+    if ( contact.length != 10 ) newErrors.contact = 'Please Enter Valid Contact Number'
     if (!address) newErrors.address = 'Address is required.';
-    if (!emailAddress) {
-      newErrors.emailAddress = 'Email Address is required.';
-    } else if (!/\S+@\S+\.\S+/.test(emailAddress)) {
+    if (!/\S+@\S+\.\S+/.test(emailAddress)) {
       newErrors.emailAddress = 'Email Address is invalid.';
     }
-    if (!taxIdentificationNumber) newErrors.taxIdentificationNumber = 'Tax Identification Number is required.';
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -194,7 +190,7 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
               {errors.taxIdentificationNumber && <span className="add-customer-error">{errors.taxIdentificationNumber}</span>}
             </div>
           </div>
-          <div className="add-customer-right-section">
+          {/* <div className="add-customer-right-section">
             <div className="add-customer-image-preview">
               <img
                 src={image || 'https://via.placeholder.com/150'}
@@ -204,7 +200,7 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
             </div>
             <input type="file" onChange={handleImageChange} className="add-customer-image-input"/>
             <button className="add-customer-select-image-btn">Select Image</button>
-          </div>
+          </div> */}
         </div>
         <div className="add-customer-form-actions">
           <button onClick={handleClear} className="add-customer-clear-btn">CLEAR</button>

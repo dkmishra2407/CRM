@@ -39,21 +39,6 @@ function Customer() {
     }
   };
 
-  const searchFetchCustomers = async (searchTerm) => {
-    if (!searchTerm.trim()) {
-      fetchCustomers();
-      return;
-    }
-
-    try {
-      const response = await axios.get(`http://localhost:7171/api/customers/${searchTerm}`);
-      setCustomers(Array.isArray(response.data) ? response.data : [response.data]);
-    } catch (err) {
-      console.error('Failed to fetch customers', err);
-      setCustomers([]); 
-    }    
-  };
-
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this customer?")) {
       try {
@@ -70,10 +55,8 @@ function Customer() {
     setIsModalOpen(true);
   };
 
-  const handleSearchKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      searchFetchCustomers(searchTerm);
-    }
+  const handleSearchTermChange = (e) => {
+    setSearchTerm(e.target.value);
   };
 
   const handleCloseModal = () => {
@@ -85,6 +68,13 @@ function Customer() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  // Filter customers based on search term
+  const filteredCustomers = customers.filter(customer =>
+    customer.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    customer.phoneNumber.includes(searchTerm) ||
+    customer.emailAddress.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className={`generate-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
@@ -92,13 +82,12 @@ function Customer() {
       <div className="customer-search-container">
         <input
           type="text"
-          placeholder="Search customer"
+          placeholder="Search by name, phone, or email"
           className="customer-search-bar"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyPress={handleSearchKeyPress}
+          onChange={handleSearchTermChange}
         />
-        <div className="customer-search-icon" onClick={() => searchFetchCustomers(searchTerm)}>
+        <div className="customer-search-icon">
           <span className="material-icons">search</span>
         </div>
         <div className="customer-add-btn" onClick={() => setIsModalOpen(true)}>
@@ -116,8 +105,8 @@ function Customer() {
           </tr>
         </thead>
         <tbody>
-          {customers.length > 0 ? (
-            customers.map((customer) => (
+          {filteredCustomers.length > 0 ? (
+            filteredCustomers.map((customer) => (
               <tr key={customer.customerId}>
                 <td>{customer.customerId}</td>
                 <td>{customer.customerName || 'N/A'}</td>
@@ -131,7 +120,7 @@ function Customer() {
             ))
           ) : (
             <tr>
-              <td colSpan="5">No Customer found</td>
+              <td colSpan="5">No customers found</td>
             </tr>
           )}
         </tbody>

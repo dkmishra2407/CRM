@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaTimes } from 'react-icons/fa';
 import './ProductDetail.css';
-
+import abc from './ABC.avif'
 const ProductDetailsModal = ({ productId, onClose }) => {
   const [product, setProduct] = useState(null);
 
@@ -29,7 +29,7 @@ const ProductDetailsModal = ({ productId, onClose }) => {
               <h4>Images</h4>
               <div className="product-images">
                 {product.images.map(image => (
-                  <img key={image.id} src={image.imageUrl} alt="Product" className="product-image" />
+                  <img key={image.id} src={abc} alt="Product" className="product-image" />
                 ))}
               </div>
           <div className="product-info">
