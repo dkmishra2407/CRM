@@ -16,7 +16,8 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
   const [image, setImage] = useState(null);
 
   const [errors, setErrors] = useState({});
-
+  //  const AWS_backend_ip ="ec2-13-60-187-34.eu-north-1.compute.amazonaws.com";
+  const AWS_backend_ip ="13.60.187.34";
   useEffect(() => {
     if (customerId) {
       fetchCustomerData(customerId);
@@ -85,7 +86,6 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
       emailAddress: emailAddress,
       customerType: customerType,
       taxIdentificationNumber: taxIdentificationNumber,
-      imageUrl: image, // Assume there is an image URL field
     };
 
     try {
@@ -93,7 +93,7 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
         await onUpdate(customerId, customerData);
         toast.success('Customer Updated Successfully!');
       } else {
-        await axios.post('http://localhost:7171/api/customers', customerData, {
+        await axios.post(`http://${AWS_backend_ip}:7171/api/customers`, customerData, {
           headers: {
             'Content-Type': 'application/json',
           },

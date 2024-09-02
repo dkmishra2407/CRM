@@ -17,7 +17,7 @@ function Customer() {
 
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get('http://localhost:7171/api/customers');
+      const response = await axios.get('http://{{AWS_backend_ip}}:7171/api/customers');
       setCustomers(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       console.error('Failed to fetch customers', err);
@@ -27,7 +27,7 @@ function Customer() {
 
   const updateCustomer = async (id, updatedData) => {
     try {
-      await axios.put(`http://localhost:7171/api/customers/${id}`, updatedData);
+      await axios.put(`http://{{AWS_backend_ip}}:7171/api/customers/${id}`, updatedData);
       setCustomers(prevCustomers => 
         prevCustomers.map(customer => 
           customer.customerId === id ? { ...customer, ...updatedData } : customer
@@ -42,7 +42,7 @@ function Customer() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this customer?")) {
       try {
-        await axios.delete(`http://localhost:7171/api/customers/${id}`);
+        await axios.delete(`http://{{AWS_backend_ip}}:7171/api/customers/${id}`);
         setCustomers(prevCustomers => prevCustomers.filter(customer => customer.customerId !== id));
       } catch (err) {
         console.error('Failed to delete customer', err);
