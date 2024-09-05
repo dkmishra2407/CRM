@@ -21,7 +21,7 @@ const HomePage = () => {
         <img src={ellipse2} alt="Background Ellipse 2" className="ellipse ellipse-2" />
         <img src={ellipse3} alt="Background Ellipse 3" className="ellipse ellipse-3" />
       </div>
-      <h1 className="main-heading">The Leading <span>Billing Software</span></h1>
+      <h1 className="main-headin">The Leading <span>Billing Software</span></h1>
       <form className="email-signup-form">
         <div className='email-icon gradient-text'><img src={MailIcon} alt="Mail Icon" /></div>
         <input type="email" placeholder="Business E-mail address" className="email-input gradient-text"/>

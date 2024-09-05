@@ -5,10 +5,10 @@ import './ProductDetail.css';
 import abc from './ABC.avif'
 const ProductDetailsModal = ({ productId, onClose }) => {
   const [product, setProduct] = useState(null);
-
+  const apiUrl = process.env.REACT_APP_API_URL;
   useEffect(() => {
     // Fetch the product data based on the productId
-    axios.get(`http://localhost:7171/api/products/${productId}`)
+    axios.get(`${apiUrl}/api/products/${productId}`)
       .then(response => setProduct(response.data))
       .catch(error => console.error('Error fetching product data:', error));
   }, [productId]);

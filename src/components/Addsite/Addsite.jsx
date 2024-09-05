@@ -12,6 +12,7 @@ const Addsites = () => {
     const [siteCode, setSiteCode] = useState('');
     const [isSidebarOpen, setIsSidebarOpen] = useState(true); // State to control sidebar visibility
 
+    const apiUrl = process.env.REACT_APP_API_URL;
     const handleClear = () => {
         setSiteName('');
         setSiteAddress('');
@@ -38,7 +39,7 @@ const Addsites = () => {
         }
 
         try {
-            await axios.post('http://localhost:7171/api/sites', siteData, {
+            await axios.post(`${apiUrl}/api/sites`, siteData, {
                 headers: {
                     'Content-Type': 'application/json',
                 },

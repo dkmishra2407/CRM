@@ -8,17 +8,14 @@ const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+    setIsSidebarOpen(!isSidebarOpen); // Toggle sidebar when needed (triggered elsewhere)
   };
 
   return (
     <div className={`dashboard ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-      <Sidebar isOpen={isSidebarOpen} />
-      <div className="main-content">
+      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} /> {/* Sidebar toggles itself */}
+      <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`}>
         <div className="top-bar">
-          <button className="toggle-sidebar" onClick={toggleSidebar}>
-            {isSidebarOpen ? 'Close Sidebar' : 'Open Sidebar'}
-          </button>
           <input
             type="text"
             placeholder="Search Customers / Invoice No / Quotation No"

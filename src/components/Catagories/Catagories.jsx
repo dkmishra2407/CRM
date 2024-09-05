@@ -9,11 +9,11 @@ export const Categories = () => {
   const [categoryNames, setCategoryNames] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false); // State to handle modal visibility
-
+  const apiUrl = process.env.REACT_APP_API_URL;
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const { data } = await axios.get("http://localhost:7171/api/categories");
+        const { data } = await axios.get(`${apiUrl}/api/categories`);
         const names = data.map(category => category.categoryName);  // Extract only the categoryName
         setCategoryNames(names);
       } catch (err) {

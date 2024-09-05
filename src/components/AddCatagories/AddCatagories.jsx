@@ -9,7 +9,8 @@ const AddCatagories = () => {
     const [categoriename, setcategoriename] = useState('');
     const [categoriediscription, setcategoriediscription] = useState('');
     const [isSidebarOpen, setIsSidebarOpen] = useState(true); // State to control sidebar visibility
-
+    const apiUrl = process.env.REACT_APP_API_URL; // Use the API URL from the environment variables
+    
     const categoriesdata = {
         categoryName: categoriename,
         categoryDescription: categoriediscription,
@@ -23,7 +24,7 @@ const AddCatagories = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:7171/api/categories', categoriesdata, {
+            await axios.post(`${apiUrl}/api/categories`, categoriesdata, {
                 headers: {
                     'Content-Type': 'application/json',
                 },

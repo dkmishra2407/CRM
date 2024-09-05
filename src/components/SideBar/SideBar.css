@@ -51,7 +51,7 @@
 .menu-link {
   display: flex;
   align-items: center;
-  color: white;
+  color: white;  /* Ensures text and icons are white */
   text-decoration: none;
   width: 100%;
 }
@@ -60,6 +60,7 @@
   font-size: 24px;
   margin-right: 15px;
   transition: margin 0.3s ease, font-size 0.3s ease;
+  color: white; /* Sets the icon color explicitly to white */
 }
 
 .menu-text {
@@ -83,4 +84,12 @@
 
 .sidebar-menu li:hover {
   background-color: #1abc9c;
+}
+
+.sidebar-menu li:hover .menu-icon {
+  color: #ecf0f1; /* Change icon color on hover */
+}
+
+.sidebar-menu li:hover .menu-text {
+  color: #ecf0f1; /* Change text color on hover */
 }

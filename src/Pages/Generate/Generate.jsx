@@ -22,7 +22,7 @@ function Generate() {
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
+  const apiUrl = process.env.REACT_APP_API_URL;
   useEffect(() => {
     fetchProducts();
   }, [page]);
@@ -30,7 +30,7 @@ function Generate() {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:7171/api/products?page=${page}&limit=15`);
+      const response = await axios.get(`${apiUrl}/api/products?page=${page}&limit=15`);
       const data = response.data;
 
       if (data.length === 0) {

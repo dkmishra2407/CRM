@@ -10,6 +10,7 @@ function Customer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     fetchCustomers();
@@ -17,19 +18,19 @@ function Customer() {
 
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get('http://{{AWS_backend_ip}}:7171/api/customers');
+      const response = await axios.get(`${apiUrl}/api/customers`);
       setCustomers(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       console.error('Failed to fetch customers', err);
-      setCustomers([]); 
+      setCustomers([]);
     }
   };
 
   const updateCustomer = async (id, updatedData) => {
     try {
-      await axios.put(`http://{{AWS_backend_ip}}:7171/api/customers/${id}`, updatedData);
-      setCustomers(prevCustomers => 
-        prevCustomers.map(customer => 
+      await axios.put(`${apiUrl}/api/customers/${id}`, updatedData);
+      setCustomers((prevCustomers) =>
+        prevCustomers.map((customer) =>
           customer.customerId === id ? { ...customer, ...updatedData } : customer
         )
       );
@@ -40,10 +41,10 @@ function Customer() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this customer?")) {
+    if (window.confirm('Are you sure you want to delete this customer?')) {
       try {
-        await axios.delete(`http://{{AWS_backend_ip}}:7171/api/customers/${id}`);
-        setCustomers(prevCustomers => prevCustomers.filter(customer => customer.customerId !== id));
+        await axios.delete(`${apiUrl}/api/customers/${id}`);
+        setCustomers((prevCustomers) => prevCustomers.filter((customer) => customer.customerId !== id));
       } catch (err) {
         console.error('Failed to delete customer', err);
       }
@@ -68,11 +69,11 @@ function Customer() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Filter customers based on search term
-  const filteredCustomers = customers.filter(customer =>
-    customer.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.phoneNumber.includes(searchTerm) ||
-    customer.emailAddress.toLowerCase().includes(searchTerm.toLowerCase())
+  // Filter customers based on search term with null checks
+  const filteredCustomers = customers.filter((customer) =>
+    (customer.customerName && customer.customerName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (customer.phoneNumber && customer.phoneNumber.includes(searchTerm)) ||
+    (customer.emailAddress && customer.emailAddress.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
@@ -110,8 +111,8 @@ function Customer() {
               <tr key={customer.customerId}>
                 <td>{customer.customerId}</td>
                 <td>{customer.customerName || 'N/A'}</td>
-                <td>{customer.phoneNumber}</td>
-                <td>{customer.emailAddress}</td>
+                <td>{customer.phoneNumber || 'N/A'}</td>
+                <td>{customer.emailAddress || 'N/A'}</td>
                 <td>
                   <button className="action-btn view-btn" onClick={() => handleEdit(customer.customerId)}>Edit</button>
                   <button className="action-btn delete-btn" onClick={() => handleDelete(customer.customerId)}>Delete</button>

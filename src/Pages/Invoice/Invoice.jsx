@@ -19,6 +19,7 @@ const InvoicePage = () => {
   const [dueDate, setDueDate] = useState('');
   const [invoiceNo] = useState('1001');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   const subtotal = ShoppingCart.reduce((acc, item) => acc + (item.rate || 0) * (item.quantity || 0), 0);
   const amountReceived = 0; // Example value, adjust as needed
@@ -26,7 +27,7 @@ const InvoicePage = () => {
 
   const handleCustomer = async () => {
     try {
-      const response = await axios.get(`http://localhost:7171/api/customers/${customerId}`);
+      const response = await axios.get(`${apiUrl}/api/customers/${customerId}`);
       if (response.data) {
         const { customerName, billingAddress, shippingAddress, phoneNumber, emailAddress } = response.data;
         setCustomerData({

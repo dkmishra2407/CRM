@@ -10,14 +10,14 @@ function Agent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAgentId, setSelectedAgentId] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
+  const apiUrl = process.env.REACT_APP_API_URL;
   useEffect(() => {
     fetchAgents();
   }, []);
 
   const fetchAgents = async () => {
     try {
-      const response = await axios.get('http://localhost:7171/api/associates');
+      const response = await axios.get(`${apiUrl}/api/associates`);
       setAgents(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       console.error('Failed to fetch agents', err);
@@ -28,7 +28,7 @@ function Agent() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this agent?")) {
       try {
-        await axios.delete(`http://localhost:7171/api/associates/${id}`);
+        await axios.delete(`${apiUrl}/api/associates/${id}`);
         setAgents(prevAgents => prevAgents.filter(agent => agent.associateId !== id));
       } catch (err) {
         console.error('Failed to delete agent', err);

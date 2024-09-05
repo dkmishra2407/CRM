@@ -15,9 +15,10 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
   const [taxIdentificationNumber, setTaxIdentificationNumber] = useState('');
   const [image, setImage] = useState(null);
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const [errors, setErrors] = useState({});
-  //  const AWS_backend_ip ="ec2-13-60-187-34.eu-north-1.compute.amazonaws.com";
-  const AWS_backend_ip ="13.60.187.34";
+
   useEffect(() => {
     if (customerId) {
       fetchCustomerData(customerId);
@@ -26,7 +27,7 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
 
   const fetchCustomerData = async (id) => {
     try {
-      const response = await axios.get(`http://localhost:7171/api/customers/${id}`);
+      const response = await axios.get(`${apiUrl}/api/customers/${id}`);
       const customer = response.data;
 
       setCustomerName(customer.customerName);
@@ -65,7 +66,7 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
     const newErrors = {};
     if (!customerName) newErrors.customerName = 'Customer Name is required.';
     if (!contact) newErrors.contact = 'Contact number is required.';
-    if ( contact.length != 10 ) newErrors.contact = 'Please Enter Valid Contact Number'
+    if (contact.length !== 10) newErrors.contact = 'Please Enter Valid Contact Number';
     if (!address) newErrors.address = 'Address is required.';
     if (!/\S+@\S+\.\S+/.test(emailAddress)) {
       newErrors.emailAddress = 'Email Address is invalid.';
@@ -93,7 +94,7 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
         await onUpdate(customerId, customerData);
         toast.success('Customer Updated Successfully!');
       } else {
-        await axios.post(`http://${AWS_backend_ip}:7171/api/customers`, customerData, {
+        await axios.post(`${apiUrl}/api/customers`, customerData, {
           headers: {
             'Content-Type': 'application/json',
           },
@@ -190,17 +191,6 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
               {errors.taxIdentificationNumber && <span className="add-customer-error">{errors.taxIdentificationNumber}</span>}
             </div>
           </div>
-          {/* <div className="add-customer-right-section">
-            <div className="add-customer-image-preview">
-              <img
-                src={image || 'https://via.placeholder.com/150'}
-                alt="Selected"
-                className="add-customer-selected-image"
-              />
-            </div>
-            <input type="file" onChange={handleImageChange} className="add-customer-image-input"/>
-            <button className="add-customer-select-image-btn">Select Image</button>
-          </div> */}
         </div>
         <div className="add-customer-form-actions">
           <button onClick={handleClear} className="add-customer-clear-btn">CLEAR</button>

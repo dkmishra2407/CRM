@@ -19,14 +19,14 @@ const MyCart = () => {
     emailAddress: '',
   });
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Sidebar state
-
   const subtotal = ShoppingCart.reduce((acc, item) => acc + (item.rate || 0) * (item.quantity || 0), 0);
   const amountReceived = 0; // Example value, adjust as needed
   const balanceDue = subtotal - amountReceived;
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   const handleCustomer = async () => {
     try {
-      const response = await axios.get(`http://localhost:7171/api/customers/${customerId}`);
+      const response = await axios.get(`${apiUrl}/api/customers/${customerId}`);
       if (response.data) {
         const { customerName, billingAddress, shippingAddress, phoneNumber, emailAddress } = response.data;
         setCustomerData({

@@ -12,8 +12,9 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId }) => {
   const [role, setRole] = useState('');
   const [roleDescription, setRoleDescription] = useState('');
   const [active, setActive] = useState(true);
-
   const [errors, setErrors] = useState({});
+
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     if (agentId) {
@@ -23,7 +24,7 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId }) => {
 
   const fetchAgentData = async (id) => {
     try {
-      const response = await axios.get(`http://localhost:7171/api/associates/${id}`);
+      const response = await axios.get(`${apiUrl}/api/associates/${id}`);
       const agent = response.data;
 
       setAgentName(agent.associateName);
@@ -72,9 +73,9 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId }) => {
       let roleResponse;
       if (agentId) {
         // If editing, assume the role already exists and just use the current roleId
-        roleResponse = await axios.get(`http://localhost:7171/api/roles/${agentId}`);
+        roleResponse = await axios.get(`${apiUrl}/api/roles/${agentId}`);
       } else {
-        roleResponse = await axios.post('http://localhost:7171/api/roles', roleData, {
+        roleResponse = await axios.post(`${apiUrl}/api/roles`, roleData, {
           headers: {
             'Content-Type': 'application/json',
           },
@@ -92,14 +93,14 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId }) => {
       };
 
       if (agentId) {
-        await axios.put(`http://localhost:7171/api/associates/${agentId}`, associateData, {
+        await axios.put(`${apiUrl}/api/associates/${agentId}`, associateData, {
           headers: {
             'Content-Type': 'application/json',
           },
         });
         toast.success('Agent Updated Successfully!');
       } else {
-        await axios.post('http://localhost:7171/api/associates', associateData, {
+        await axios.post(`${apiUrl}/api/associates`, associateData, {
           headers: {
             'Content-Type': 'application/json',
           },
