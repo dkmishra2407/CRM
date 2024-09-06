@@ -35,11 +35,34 @@
 
 .form-fields {
   display: flex;
-  flex-direction: column; /* Adjusted to stack the form fields vertically */
+  flex-direction: column;
 }
 
 .form-group {
   margin-bottom: 15px;
+}
+
+label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="password"],
+select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+select:focus {
+  border-color: #4CAF50; /* Green */
+  outline: none;
 }
 
 .error {
@@ -54,7 +77,8 @@
   margin-top: 20px;
 }
 
-.clear-btn, .save-btn {
+.clear-btn,
+.save-btn {
   padding: 10px 20px;
   border: none;
   border-radius: 4px;
@@ -75,4 +99,18 @@
 .save-btn:disabled {
   background-color: #9E9E9E; /* Grey */
   cursor: not-allowed;
+}
+
+.dropdown {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 67%;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+.dropdown:focus {
+  border-color: #4CAF50; /* Green */
+  outline: none;
 }

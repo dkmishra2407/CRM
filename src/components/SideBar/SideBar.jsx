@@ -87,6 +87,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             {isOpen && <span className="menu-text">Add Category</span>}
           </Link>
         </li>
+        <li>
+          <Link to="/addroles" className="menu-link">
+            <span className="material-icons menu-icon">label</span>
+            {isOpen && <span className="menu-text">Add Role</span>}
+          </Link>
+        </li>
       </ul>
     </aside>
   );

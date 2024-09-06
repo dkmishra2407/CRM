@@ -13,8 +13,22 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId }) => {
   const [roleDescription, setRoleDescription] = useState('');
   const [active, setActive] = useState(true);
   const [errors, setErrors] = useState({});
-
+  const [roles, setRoles] = useState([]);
   const apiUrl = process.env.REACT_APP_API_URL;
+
+  useEffect(() => {
+    fetchRoles();
+  }, []);
+
+  const fetchRoles = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/roles`);
+      setRoles(response.data);
+    } catch (err) {
+      console.error('Failed to fetch roles', err);
+      toast.error('Failed to load roles. Please try again.');
+    }
+  };
 
   useEffect(() => {
     if (agentId) {
@@ -29,10 +43,10 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId }) => {
 
       setAgentName(agent.associateName);
       setUserName(agent.userName);
-      setRole(agent.role.roleName);
+      setRole(agent.role.roleId);
       setRoleDescription(agent.role.roleDescription);
       setActive(agent.active);
-      setPassword(''); // Clear password field for security
+      setPassword('');
     } catch (err) {
       console.error('Failed to fetch agent data', err);
       toast.error('Failed to load agent data. Please try again.');
@@ -55,7 +69,6 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId }) => {
     if (!userName) newErrors.userName = 'Username is required.';
     if (!password && !agentId) newErrors.password = 'Password is required.';
     if (!role) newErrors.role = 'Role is required.';
-    if (!roleDescription) newErrors.roleDescription = 'Role Description is required.';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -65,46 +78,19 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId }) => {
     if (!validateForm()) return;
 
     try {
-      const roleData = {
-        roleName: role,
-        roleDescription: roleDescription,
-      };
-
-      let roleResponse;
-      if (agentId) {
-        // If editing, assume the role already exists and just use the current roleId
-        roleResponse = await axios.get(`${apiUrl}/api/roles/${agentId}`);
-      } else {
-        roleResponse = await axios.post(`${apiUrl}/api/roles`, roleData, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-      }
-
       const associateData = {
-        role: {
-          roleId: roleResponse.data.roleId,
-        },
+        role: { roleId: role },
         associateName: agentName,
         userName: userName,
-        password: password || undefined, // Send password only if it is set
+        password: password || undefined,
         active: active,
       };
 
       if (agentId) {
-        await axios.put(`${apiUrl}/api/associates/${agentId}`, associateData, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+        await axios.put(`${apiUrl}/api/associates/${agentId}`, associateData);
         toast.success('Agent Updated Successfully!');
       } else {
-        await axios.post(`${apiUrl}/api/associates`, associateData, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+        await axios.post(`${apiUrl}/api/associates`, associateData);
         toast.success('Agent Added Successfully!');
       }
 
@@ -159,29 +145,39 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId }) => {
           </div>
           <div className="form-group">
             <label>Role</label>
-            <input
-              type="text"
-              placeholder="Role Name"
+            <select
               value={role}
-              onChange={(e) => setRole(e.target.value)}
-            />
+              onChange={(e) => {
+                const selectedRole = roles.find(r => r.roleId === Number(e.target.value));
+                setRole(e.target.value);
+                setRoleDescription(selectedRole ? selectedRole.roleDescription : '');
+              }}
+              className="dropdown"
+            >
+              <option value="">Select Role</option>
+              {roles.map((r) => (
+                <option key={r.roleId} value={r.roleId}>
+                  {r.roleName}
+                </option>
+              ))}
+            </select>
             {errors.role && <span className="error">{errors.role}</span>}
           </div>
           <div className="form-group">
             <label>Role Description</label>
             <input
               type="text"
-              placeholder="Role Description"
               value={roleDescription}
-              onChange={(e) => setRoleDescription(e.target.value)}
+              placeholder="Role Description"
+              readOnly
             />
-            {errors.roleDescription && <span className="error">{errors.roleDescription}</span>}
           </div>
           <div className="form-group">
             <label>Active</label>
             <select
               value={active}
               onChange={(e) => setActive(e.target.value === 'true')}
+              className="dropdown"
             >
               <option value="true">Active</option>
               <option value="false">Inactive</option>
