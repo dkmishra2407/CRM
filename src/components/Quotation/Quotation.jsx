@@ -4,6 +4,7 @@ import './Quotation.css';
 
 const QuotationForm = () => {
   // State to hold form data
+  const apiUrl = process.env.REACT_APP_API_URL;
   const [quotationNumber, setQuotationNumber] = useState('');
   const [quotationDate, setQuotationDate] = useState('');
   const [customerId, setCustomerId] = useState('');
@@ -50,7 +51,7 @@ const QuotationForm = () => {
     };
 
     try {
-      const response = await axios.post('http://localhost:7171/api/quotations', quotationData, {
+      const response = await axios.post(`${apiUrl}/api/quotations`, quotationData, {
         headers: {
           'Content-Type': 'application/json',
         },

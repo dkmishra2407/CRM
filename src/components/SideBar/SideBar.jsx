@@ -1,13 +1,20 @@
 import React from 'react';
 import './SideBar.css';
+import logo from './company_logo.png'; // Ensure the logo path is correct
 import { Link } from 'react-router-dom';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   return (
     <aside className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
       <div className="sidebar-header">
-        <div className="logo">{isOpen ? "MyLogo" : "M"}</div>
-        <button className="toggle-btn" style={{color: 'white'}} onClick={toggleSidebar}>
+        <div className="logo-container">
+          {isOpen ? (
+            <img src={logo} alt="Company Logo" className="logo" />
+          ) : (
+            <img src={logo} alt="Company Logo" className="logo-collapsed" />
+          )}
+        </div>
+        <button className="toggle-btn" onClick={toggleSidebar}>
           <span className="material-icons">
             {isOpen ? 'chevron_left' : 'chevron_right'}
           </span>
@@ -68,18 +75,18 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             {isOpen && <span className="menu-text">Web Store</span>}
           </Link>
         </li>
-          <li>
-            <Link to="/addsites" className="menu-link">
-              <span className="material-icons menu-icon">place</span> {/* Icon for Sites */}
-              {isOpen && <span className="menu-text">Add Sites</span>}
-            </Link>
-          </li>
-          <li>
-            <Link to="/addcategories" className="menu-link">
-              <span className="material-icons menu-icon">label</span> {/* Icon for Categories */}
-              {isOpen && <span className="menu-text">Add Category</span>}
-            </Link>
-          </li>
+        <li>
+          <Link to="/addsites" className="menu-link">
+            <span className="material-icons menu-icon">place</span>
+            {isOpen && <span className="menu-text">Add Sites</span>}
+          </Link>
+        </li>
+        <li>
+          <Link to="/addcategories" className="menu-link">
+            <span className="material-icons menu-icon">label</span>
+            {isOpen && <span className="menu-text">Add Category</span>}
+          </Link>
+        </li>
       </ul>
     </aside>
   );

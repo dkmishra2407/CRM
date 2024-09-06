@@ -17,6 +17,8 @@ const AddProductForm = () => {
   const [showForm, setShowForm] = useState(true);
   const [rate, setRate] = useState(0);
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     // Fetch Sites
     const fetchSites = async () => {
