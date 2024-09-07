@@ -49,7 +49,7 @@ const AddProductForm = () => {
   };
 
   const handleQuantityChange = (amount) => {
-    setQuantity(prevQuantity => Math.max(1, prevQuantity + amount));
+    setQuantity((prevQuantity) => Math.max(1, prevQuantity + amount));
   };
 
   const uploadImages = async () => {
@@ -65,7 +65,7 @@ const AddProductForm = () => {
         },
       });
 
-      const imageDetails = response.data.map(image => ({
+      const imageDetails = response.data.map((image) => ({
         id: image.id,
         imageUrl: image.imageUrl,
       }));
@@ -158,40 +158,38 @@ const AddProductForm = () => {
             />
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label className="product-form-label">Site</label>
-              <select
-                value={siteId}
-                onChange={(e) => setSiteId(e.target.value)}
-                className="product-form-input"
-                required
-              >
-                <option value="" disabled>Select a site</option>
-                {sites.map((site) => (
-                  <option key={site.siteId} value={site.siteId}>
-                    {site.siteName}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div className="form-group">
+            <label className="product-form-label">Site</label>
+            <select
+              value={siteId}
+              onChange={(e) => setSiteId(e.target.value)}
+              className="product-form-input dropdown"
+              required
+            >
+              <option value="" disabled>Select a site</option>
+              {sites.map((site) => (
+                <option key={site.siteId} value={site.siteId}>
+                  {site.siteName}
+                </option>
+              ))}
+            </select>
+          </div>
 
-            <div className="form-group">
-              <label className="product-form-label">Category</label>
-              <select
-                value={categoryId}
-                onChange={(e) => setCategoryId(e.target.value)}
-                className="product-form-input"
-                required
-              >
-                <option value="" disabled>Select a category</option>
-                {categories.map((category) => (
-                  <option key={category.categoryId} value={category.categoryId}>
-                    {category.categoryName}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div className="form-group">
+            <label className="product-form-label">Category</label>
+            <select
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              className="product-form-input dropdown"
+              required
+            >
+              <option value="" disabled>Select a category</option>
+              {categories.map((category) => (
+                <option key={category.categoryId} value={category.categoryId}>
+                  {category.categoryName}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="form-group">
@@ -205,47 +203,44 @@ const AddProductForm = () => {
             />
           </div>
 
-          <div className='quantity-rate'>
-            <div className="form-group">
-              <label className="product-form-label">Quantity</label>
-              <div className="quantity-control">
-                <button
-                  type="button"
-                  onClick={() => handleQuantityChange(-1)}
-                  className="quantity-btn"
-                >
-                  -
-                </button>
-                <input
-                  type="number"
-                  value={quantity}
-                  onChange={(e) =>
-                    setQuantity(Math.max(1, parseInt(e.target.value) || 1))
-                  }
-                  className="product-form-input quantity-input"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => handleQuantityChange(1)}
-                  className="quantity-btn"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label className="product-form-label">Rate</label>
+          <div className="form-group">
+            <label className="product-form-label">Quantity</label>
+            <div className="quantity-control">
+              <button
+                type="button"
+                onClick={() => handleQuantityChange(-1)}
+                className="quantity-btn"
+              >
+                -
+              </button>
               <input
                 type="number"
-                value={rate}
-                onChange={(e) => setRate(Math.max(0, parseFloat(e.target.value) || 0))}
-                className="product-form-input"
-                placeholder="Rate"
+                value={quantity}
+                onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                className="quantity-input"
                 required
               />
+              <button
+                type="button"
+                onClick={() => handleQuantityChange(1)}
+                className="quantity-btn"
+              >
+                +
+              </button>
             </div>
+          </div>
+
+
+          <div className="form-group">
+            <label className="product-form-label">Rate</label>
+            <input
+              type="number"
+              value={rate}
+              onChange={(e) => setRate(Math.max(0, parseFloat(e.target.value) || 0))}
+              className="product-form-input"
+              placeholder="Rate"
+              required
+            />
           </div>
 
           <button type="submit" className="product-form-submit-button">

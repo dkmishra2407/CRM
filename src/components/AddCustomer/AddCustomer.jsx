@@ -235,6 +235,7 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
               >
                 <option value="Retail">Retail</option>
                 <option value="Wholesale">Wholesale</option>
+                <option value="Wholesale">Walk-in</option>
               </select>
             </div>
             <div className="add-customer-form-group">

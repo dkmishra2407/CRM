@@ -50,9 +50,30 @@ function Sites() {
         await axios.delete(`${apiUrl}/api/sites/${id}`);
         setSites((prevSites) => prevSites.filter((site) => site.siteId !== id));
       } catch (err) {
-        console.error('Failed to delete site', err);
+        if (err.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.error('Failed to delete site', err.response.status, err.response.data);
+          if (err.response.status === 500) {
+            alert('Failed to delete site. Please try again later. If the issue persists, please contact support.');
+          } else {
+            alert('Failed to delete site. Please try again later.');
+          }
+        } else if (err.request) {
+          // The request was made but no response was received
+          // `err.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          console.error('Failed to delete site', err.request);
+          alert('Failed to delete site. Please try again later.');
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.error('Failed to delete site', err.message);
+          alert('Failed to delete site. Please try again later.');
+        }
       }
     }
+  
+
   };
 
   const handleEdit = (id) => {
