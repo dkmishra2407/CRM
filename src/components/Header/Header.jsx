@@ -1,16 +1,19 @@
 import React from 'react';
+import './Header.css'; // Import the CSS file for styling
+import { FaBell, FaUser, FaBolt } from 'react-icons/fa'; // Import icons
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   return (
     <header className="header">
-      <div className="logo">DigiTechno Sol ⚡</div>
-      <div className="search-bar">
-        <input type="text" placeholder="Search Customers / Invoice No / Quotation" />
-        <button><i className="fa fa-search"></i></button>
+      <div className="logo">
+        <span className="logo-text gradient-text">DigiTechno</span>
+        <span className="logo-sol gradient-text"> Sol</span>
+        <FaBolt className="logo-icon" />
       </div>
-      <div className="profile">
-        <img src="path-to-logo.png" alt="Profile" />
-        <span>Sadhguru Tiles</span>
+      <div className="header-icons">
+        <FaBell className="header-icon" />
+        <Link to='/login'><FaUser className="header-icon" /></Link>
       </div>
     </header>
   );

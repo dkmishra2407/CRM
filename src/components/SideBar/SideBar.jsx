@@ -22,6 +22,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       </div>
       <ul className="sidebar-menu">
         <li>
+          <Link to="/webstore" className="menu-link">
+            <span className="material-icons menu-icon">store</span>
+            {isOpen && <span className="menu-text">Web Store</span>}
+          </Link>
+        </li>
+        <li>
           <Link to="/dashboard" className="menu-link">
             <span className="material-icons menu-icon">dashboard</span>
             {isOpen && <span className="menu-text">Dashboard</span>}
@@ -39,42 +45,36 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             {isOpen && <span className="menu-text">Inventory</span>}
           </Link>
         </li>
-        <li>
+        {/* <li>
           <Link to="/sales" className="menu-link">
             <span className="material-icons menu-icon">shopping_cart</span>
             {isOpen && <span className="menu-text">Sales</span>}
           </Link>
-        </li>
-        <li>
+        </li> */}
+        {/* <li>
           <Link to="/purchase" className="menu-link">
             <span className="material-icons menu-icon">attach_money</span>
             {isOpen && <span className="menu-text">Purchase</span>}
           </Link>
-        </li>
-        <li>
+        </li> */}
+        {/* <li>
           <Link to="/expenses" className="menu-link">
             <span className="material-icons menu-icon">pie_chart</span>
             {isOpen && <span className="menu-text">Expenses</span>}
           </Link>
-        </li>
+        </li> */}
         <li>
           <Link to="/agents" className="menu-link">
             <span className="material-icons menu-icon">person</span>
             {isOpen && <span className="menu-text">Agents</span>}
           </Link>
         </li>
-        <li>
+        {/* <li>
           <Link to="/reports" className="menu-link">
             <span className="material-icons menu-icon">assessment</span>
             {isOpen && <span className="menu-text">Reports</span>}
           </Link>
-        </li>
-        <li>
-          <Link to="/webstore" className="menu-link">
-            <span className="material-icons menu-icon">store</span>
-            {isOpen && <span className="menu-text">Web Store</span>}
-          </Link>
-        </li>
+        </li> */}
         <li>
           <Link to="/addsites" className="menu-link">
             <span className="material-icons menu-icon">place</span>
@@ -91,6 +91,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           <Link to="/addroles" className="menu-link">
             <span className="material-icons menu-icon">label</span>
             {isOpen && <span className="menu-text">Add Role</span>}
+          </Link>
+        </li>
+        <li>
+          <Link to="/accesscontol" className="menu-link">
+            <span className="material-icons menu-icon">label</span>
+            {isOpen && <span className="menu-text">Access Control</span>}
           </Link>
         </li>
       </ul>

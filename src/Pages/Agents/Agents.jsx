@@ -3,14 +3,17 @@ import './Agents.css';
 import axios from 'axios';
 import Sidebar from '../../components/SideBar/SideBar';
 import AddSalesAgentForm from '../../components/AddAgents/AddAgents';
-
+import Header from '../../components/Header/Header';
 function Agent() {
   const [agents, setAgents] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAgentId, setSelectedAgentId] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const agentsPerPage = 10; // Show 10 agents per page
   const apiUrl = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     fetchAgents();
   }, []);
@@ -21,15 +24,17 @@ function Agent() {
       setAgents(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       console.error('Failed to fetch agents', err);
-      setAgents([]); 
+      setAgents([]);
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this agent?")) {
+    if (window.confirm('Are you sure you want to delete this agent?')) {
       try {
         await axios.delete(`${apiUrl}/api/associates/${id}`);
-        setAgents(prevAgents => prevAgents.filter(agent => agent.associateId !== id));
+        setAgents((prevAgents) =>
+          prevAgents.filter((agent) => agent.associateId !== id)
+        );
       } catch (err) {
         console.error('Failed to delete agent', err);
       }
@@ -43,6 +48,7 @@ function Agent() {
 
   const handleSearchTermChange = (e) => {
     setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to first page when searching
   };
 
   const handleCloseModal = () => {
@@ -54,17 +60,51 @@ function Agent() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Filter agents based on search term
-  const filteredAgents = agents.filter(agent =>
-    agent.associateName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    agent.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (agent.phoneNumber && agent.phoneNumber.includes(searchTerm))
+  // Pagination logic
+  const indexOfLastAgent = currentPage * agentsPerPage;
+  const indexOfFirstAgent = indexOfLastAgent - agentsPerPage;
+  const filteredAgents = agents
+    .filter(
+      (agent) =>
+        agent.associateName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        agent.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (agent.phoneNumber && agent.phoneNumber.includes(searchTerm))
+    )
+    .slice(indexOfFirstAgent, indexOfLastAgent);
+
+  const totalPages = Math.ceil(
+    agents.filter(
+      (agent) =>
+        agent.associateName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        agent.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (agent.phoneNumber && agent.phoneNumber.includes(searchTerm))
+    ).length / agentsPerPage
   );
 
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const previousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+
   return (
+    <>
+    <Header className="UniversalHeader"/>
     <div className={`generate-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      <h1 className="customers-page-title">AGENTS</h1>
+      <div className='heading-no-1'>
+        <h1 className="customers-page-title">Agents</h1>
+        <div className="add-agent-btn" onClick={() => setIsModalOpen(true)}>
+          Add Agent
+        </div>
+      </div>
       <div className="customer-search-container">
         <input
           type="text"
@@ -75,9 +115,6 @@ function Agent() {
         />
         <div className="customer-search-icon">
           <span className="material-icons">search</span>
-        </div>
-        <div className="customer-add-btn" onClick={() => setIsModalOpen(true)}>
-          Add Agent
         </div>
       </div>
 
@@ -100,8 +137,18 @@ function Agent() {
                 <td>{agent.userName}</td>
                 <td>{agent.role.roleName}</td>
                 <td>
-                  <button className="action-btn view-btn" onClick={() => handleEdit(agent.associateId)}>Edit</button>
-                  <button className="action-btn delete-btn" onClick={() => handleDelete(agent.associateId)}>Delete</button>
+                  <button
+                    className="action-btn view-btn"
+                    onClick={() => handleEdit(agent.associateId)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="action-btn delete-btn"
+                    onClick={() => handleDelete(agent.associateId)}
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))
@@ -113,6 +160,26 @@ function Agent() {
         </tbody>
       </table>
 
+      <div className="pagination-controls">
+        <button
+          className="pagination-btn"
+          onClick={previousPage}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span className="pagination-info">
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          className="pagination-btn"
+          onClick={nextPage}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
+
       {isModalOpen && (
         <AddSalesAgentForm
           isOpen={isModalOpen}
@@ -121,6 +188,7 @@ function Agent() {
         />
       )}
     </div>
+    </>
   );
 }
 

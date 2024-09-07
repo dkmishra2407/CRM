@@ -4,20 +4,23 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { FaTimes } from 'react-icons/fa';
+import { Box } from '@mui/material';
 
 const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
   const [customerName, setCustomerName] = useState('');
-  const [site, setSite] = useState('');
   const [contact, setContact] = useState('');
-  const [address, setAddress] = useState('');
+  const [site, setSite] = useState('');
+  const [shippingAddress, setShippingAddress] = useState('');
+  const [billingAddress, setBillingAddress] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
   const [customerType, setCustomerType] = useState('Retail');
   const [taxIdentificationNumber, setTaxIdentificationNumber] = useState('');
   const [image, setImage] = useState(null);
+  const [sameAsBilling, setSameAsBilling] = useState(false); // Track checkbox state
 
   const apiUrl = process.env.REACT_APP_API_URL;
-
   const [errors, setErrors] = useState({});
+  const [isFormValid, setIsFormValid] = useState(false); // Track form validity
 
   useEffect(() => {
     if (customerId) {
@@ -25,19 +28,26 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
     }
   }, [customerId]);
 
+  useEffect(() => {
+    if (sameAsBilling) {
+      setShippingAddress(billingAddress); // Copy billing to shipping when checkbox is checked
+    }
+  }, [sameAsBilling, billingAddress]); // Trigger whenever checkbox state or billing address changes
+
   const fetchCustomerData = async (id) => {
     try {
       const response = await axios.get(`${apiUrl}/api/customers/${id}`);
       const customer = response.data;
 
       setCustomerName(customer.customerName);
-      setSite(customer.site);
+      setSite(customer.site || '');
       setContact(customer.phoneNumber);
-      setAddress(customer.billingAddress);
+      setBillingAddress(customer.billingAddress);
+      setShippingAddress(customer.shippingAddress);
       setEmailAddress(customer.emailAddress);
       setCustomerType(customer.customerType);
       setTaxIdentificationNumber(customer.taxIdentificationNumber);
-      setImage(customer.imageUrl || null); // Assume there is an image URL field
+      setImage(customer.imageUrl || null);
     } catch (err) {
       console.error('Failed to fetch customer data', err);
       toast.error('Failed to load customer data. Please try again.');
@@ -52,41 +62,76 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
 
   const handleClear = () => {
     setCustomerName('');
-    setSite('');
     setContact('');
-    setAddress('');
+    setSite('');
+    setBillingAddress('');
+    setShippingAddress('');
     setEmailAddress('');
     setCustomerType('Retail');
     setTaxIdentificationNumber('');
     setImage(null);
+    setSameAsBilling(false); // Reset checkbox state
     setErrors({});
+    setIsFormValid(false);
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!customerName) newErrors.customerName = 'Customer Name is required.';
-    if (!contact) newErrors.contact = 'Contact number is required.';
-    if (contact.length !== 10) newErrors.contact = 'Please Enter Valid Contact Number';
-    if (!address) newErrors.address = 'Address is required.';
-    if (!/\S+@\S+\.\S+/.test(emailAddress)) {
-      newErrors.emailAddress = 'Email Address is invalid.';
+  const handleFieldChange = (field, value) => {
+    const newErrors = { ...errors };
+    if (field === 'customerName') setCustomerName(value);
+    if (field === 'contact') setContact(value);
+    if (field === 'site') setSite(value);
+    if (field === 'shippingAddress') setShippingAddress(value);
+    if (field === 'billingAddress') setBillingAddress(value);
+    if (field === 'emailAddress') setEmailAddress(value);
+    if (field === 'taxIdentificationNumber') setTaxIdentificationNumber(value);
+
+    // Field-level validation
+    switch (field) {
+      case 'customerName':
+        if (!value) newErrors.customerName = 'Customer Name is required.';
+        else delete newErrors.customerName;
+        break;
+      case 'contact':
+        if (!value) newErrors.contact = 'Contact number is required.';
+        else if (value.length !== 10) newErrors.contact = 'Please enter a valid 10-digit contact number.';
+        else delete newErrors.contact;
+        break;
+      case 'site':
+        if (!value) newErrors.site = 'Site is required.';
+        else delete newErrors.site;
+        break;
+      case 'shippingAddress':
+        if (!value && !sameAsBilling) newErrors.shippingAddress = 'Shipping address is required.';
+        else delete newErrors.shippingAddress;
+        break;
+      case 'billingAddress':
+        if (!value) newErrors.billingAddress = 'Billing address is required.';
+        else delete newErrors.billingAddress;
+        break;
+      case 'emailAddress':
+        if (!/\S+@\S+\.\S+/.test(value)) newErrors.emailAddress = 'Email Address is invalid.';
+        else delete newErrors.emailAddress;
+        break;
+      default:
+        break;
     }
+
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setIsFormValid(Object.keys(newErrors).length === 0); // Form is valid if no errors
   };
 
   const handleSave = async () => {
-    if (!validateForm()) return;
+    if (!isFormValid) return;
 
     const customerData = {
-      customerName: customerName,
-      site: site,
+      customerName,
+      site,
       phoneNumber: contact,
-      billingAddress: address,
-      shippingAddress: address,
-      emailAddress: emailAddress,
-      customerType: customerType,
-      taxIdentificationNumber: taxIdentificationNumber,
+      billingAddress,
+      shippingAddress,
+      emailAddress,
+      customerType,
+      taxIdentificationNumber,
     };
 
     try {
@@ -103,6 +148,7 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
       }
       handleClear();
       onClose();
+      window.location.reload();
     } catch (err) {
       console.error('Error saving the form', err);
       toast.error('Failed to save the customer. Please try again.');
@@ -126,19 +172,9 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
                 type="text"
                 placeholder="Customer Name"
                 value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
+                onChange={(e) => handleFieldChange('customerName', e.target.value)}
               />
               {errors.customerName && <span className="add-customer-error">{errors.customerName}</span>}
-            </div>
-            <div className="add-customer-form-group">
-              <label>Site</label>
-              <input
-                type="text"
-                placeholder="E.g Vishrantwadi / Lohagaon"
-                value={site}
-                onChange={(e) => setSite(e.target.value)}
-              />
-              {errors.site && <span className="add-customer-error">{errors.site}</span>}
             </div>
             <div className="add-customer-form-group">
               <label>Contact</label>
@@ -146,19 +182,40 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
                 type="text"
                 placeholder="Enter Contact No"
                 value={contact}
-                onChange={(e) => setContact(e.target.value)}
+                onChange={(e) => handleFieldChange('contact', e.target.value)}
+                maxLength={10}
               />
               {errors.contact && <span className="add-customer-error">{errors.contact}</span>}
             </div>
             <div className="add-customer-form-group">
-              <label>Address</label>
+              <label>Billing Address</label>
               <input
                 type="text"
-                placeholder="Enter Address"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Enter Billing Address"
+                value={billingAddress}
+                onChange={(e) => handleFieldChange('billingAddress', e.target.value)}
               />
-              {errors.address && <span className="add-customer-error">{errors.address}</span>}
+              {errors.billingAddress && <span className="add-customer-error">{errors.billingAddress}</span>}
+            </div>
+            <div className="checkbox">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={sameAsBilling}
+                  onChange={() => setSameAsBilling(!sameAsBilling)}
+                /> Same as Billing Address
+              </label>
+            </div>
+            <div className="add-customer-form-group">
+              <label>Shipping Address</label>
+              <input
+                type="text"
+                placeholder="Enter Shipping Address"
+                value={shippingAddress}
+                onChange={(e) => handleFieldChange('shippingAddress', e.target.value)}
+                disabled={sameAsBilling}
+              />
+              {errors.shippingAddress && <span className="add-customer-error">{errors.shippingAddress}</span>}
             </div>
             <div className="add-customer-form-group">
               <label>Email Address</label>
@@ -166,7 +223,7 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
                 type="email"
                 placeholder="Enter Email Address"
                 value={emailAddress}
-                onChange={(e) => setEmailAddress(e.target.value)}
+                onChange={(e) => handleFieldChange('emailAddress', e.target.value)}
               />
               {errors.emailAddress && <span className="add-customer-error">{errors.emailAddress}</span>}
             </div>
@@ -186,15 +243,21 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
                 type="text"
                 placeholder="Enter Tax Identification Number"
                 value={taxIdentificationNumber}
-                onChange={(e) => setTaxIdentificationNumber(e.target.value)}
+                onChange={(e) => handleFieldChange('taxIdentificationNumber', e.target.value)}
               />
               {errors.taxIdentificationNumber && <span className="add-customer-error">{errors.taxIdentificationNumber}</span>}
             </div>
           </div>
         </div>
         <div className="add-customer-form-actions">
-          <button onClick={handleClear} className="add-customer-clear-btn">CLEAR</button>
-          <button onClick={handleSave} className="add-customer-save-btn" disabled={Object.keys(errors).length > 0}>SAVE</button>
+          {/* <button onClick={handleClear} className="add-customer-clear-btn">CLEAR</button> */}
+          <button
+            onClick={handleSave}
+            className="add-customer-save-btn"
+            disabled={!isFormValid} // Disable the save button if form is invalid
+          >
+            Save Customer
+          </button>
         </div>
       </div>
     </div>

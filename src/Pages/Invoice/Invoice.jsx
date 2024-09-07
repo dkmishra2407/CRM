@@ -4,7 +4,7 @@ import Sidebar from '../../components/SideBar/SideBar';
 import { useCart } from '../../Context/card.context';
 import axios from 'axios';
 import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template';
-
+import Header from '../../components/Header/Header';
 const InvoicePage = () => {
   const { state: { ShoppingCart } } = useCart();
   const [customerId, setCustomerId] = useState('');
@@ -137,6 +137,8 @@ const InvoicePage = () => {
   };
 
   return (
+    <>
+    <Header className="UniversalHeader"/>
     <div className={`invoice-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <div className="invoice-page">
@@ -264,6 +266,7 @@ const InvoicePage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

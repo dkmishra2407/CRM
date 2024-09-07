@@ -3,13 +3,15 @@ import './Customer.css';
 import axios from 'axios';
 import Sidebar from '../../components/SideBar/SideBar';
 import AddCustomerForm from '../../components/AddCustomer/AddCustomer';
-
+import Header from '../../components/Header/Header';
 function Customer() {
   const [customers, setCustomers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const customersPerPage = 10; // Number of customers per page
   const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
@@ -44,7 +46,9 @@ function Customer() {
     if (window.confirm('Are you sure you want to delete this customer?')) {
       try {
         await axios.delete(`${apiUrl}/api/customers/${id}`);
-        setCustomers((prevCustomers) => prevCustomers.filter((customer) => customer.customerId !== id));
+        setCustomers((prevCustomers) =>
+          prevCustomers.filter((customer) => customer.customerId !== id)
+        );
       } catch (err) {
         console.error('Failed to delete customer', err);
       }
@@ -58,6 +62,7 @@ function Customer() {
 
   const handleSearchTermChange = (e) => {
     setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to the first page when searching
   };
 
   const handleCloseModal = () => {
@@ -69,17 +74,51 @@ function Customer() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Filter customers based on search term with null checks
-  const filteredCustomers = customers.filter((customer) =>
-    (customer.customerName && customer.customerName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (customer.phoneNumber && customer.phoneNumber.includes(searchTerm)) ||
-    (customer.emailAddress && customer.emailAddress.toLowerCase().includes(searchTerm.toLowerCase()))
+  // Pagination logic
+  const indexOfLastCustomer = currentPage * customersPerPage;
+  const indexOfFirstCustomer = indexOfLastCustomer - customersPerPage;
+
+  const filteredCustomers = customers
+    .filter(
+      (customer) =>
+        (customer.customerName && customer.customerName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (customer.phoneNumber && customer.phoneNumber.includes(searchTerm)) ||
+        (customer.emailAddress && customer.emailAddress.toLowerCase().includes(searchTerm.toLowerCase()))
+    )
+    .slice(indexOfFirstCustomer, indexOfLastCustomer);
+
+  const totalPages = Math.ceil(
+    customers.filter(
+      (customer) =>
+        (customer.customerName && customer.customerName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (customer.phoneNumber && customer.phoneNumber.includes(searchTerm)) ||
+        (customer.emailAddress && customer.emailAddress.toLowerCase().includes(searchTerm.toLowerCase()))
+    ).length / customersPerPage
   );
 
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const previousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   return (
+    <>
+    <Header className="UniversalHeader"/>
     <div className={`generate-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      <h1 className="customers-page-title">CUSTOMERS</h1>
+      <div className='heading-no-1'>
+        <h1 className="customers-page-title">Customers</h1>
+        <div className="customer-add-btn" onClick={() => setIsModalOpen(true)}>
+          Add Customer
+        </div>
+      </div>
       <div className="customer-search-container">
         <input
           type="text"
@@ -90,9 +129,6 @@ function Customer() {
         />
         <div className="customer-search-icon">
           <span className="material-icons">search</span>
-        </div>
-        <div className="customer-add-btn" onClick={() => setIsModalOpen(true)}>
-          Add Customer
         </div>
       </div>
       <table className="customer-table">
@@ -127,6 +163,17 @@ function Customer() {
         </tbody>
       </table>
 
+      {/* Pagination Controls */}
+      <div className="pagination-controls">
+        <button className="pagination-btn" onClick={previousPage} disabled={currentPage === 1}>
+          Previous
+        </button>
+        <span className="pagination-info">Page {currentPage} of {totalPages}</span>
+        <button className="pagination-btn" onClick={nextPage} disabled={currentPage === totalPages}>
+          Next
+        </button>
+      </div>
+
       {isModalOpen && (
         <AddCustomerForm
           isOpen={isModalOpen}
@@ -136,6 +183,7 @@ function Customer() {
         />
       )}
     </div>
+    </>
   );
 }
 

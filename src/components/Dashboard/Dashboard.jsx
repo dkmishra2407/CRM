@@ -3,6 +3,7 @@ import "./Dashboard.css";
 import CustomPieChart from "../Charts/charts";
 import CustomPieChart1 from "../Charts/chart2";
 import Sidebar from "../SideBar/SideBar";
+import Header from "../Header/Header";
 
 const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -12,16 +13,21 @@ const Dashboard = () => {
   };
 
   return (
+    <>
+    <Header className="UniversalHeader"/>
     <div className={`dashboard ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} /> {/* Sidebar toggles itself */}
       <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`}>
-        <div className="top-bar">
+      <div className='heading-no-1'>
+        <h1 className="customers-page-title">Dashboard</h1>
+        </div>
+        <div className="customer-search-container">
           <input
             type="text"
             placeholder="Search Customers / Invoice No / Quotation No"
-            className="search-bar"
+            className="customer-search-bar"
           />
-          <div className="search-icon">
+          <div className="customer-search-icon">
             <span className="material-symbols-outlined">search</span>
           </div>
         </div>
@@ -109,6 +115,7 @@ const Dashboard = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

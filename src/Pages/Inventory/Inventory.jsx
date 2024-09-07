@@ -10,7 +10,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { ThreeDots } from 'react-loader-spinner';
 import Categories from '../../components/Catagories/Catagories';
 import ProductDetailsModal from '../../components/ProductDetail/ProductDetal';
-
+import Header from '../../components/Header/Header';
 function Inventory() {
   const { state: { totalQuantity }, dispatch } = useCart();
   const [isProductDetailsModalOpen, setIsProductDetailsModalOpen] = useState(false);
@@ -98,11 +98,13 @@ function Inventory() {
   };
 
   return (
+    <>
+    <Header className="UniversalHeader"/>
     <div className="App">
      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`}>
         <div className="top-bar">
-        <h1 style={{ color: 'black' }}>INVENTORY</h1>
+          <h1 style={{ color: 'black' }}>Inventory</h1>
           <div className="search-bar-container">
             <input
               type="text"
@@ -115,7 +117,8 @@ function Inventory() {
               <span className="material-icons gradient-text">search</span>
             </div>
           </div>
-          </div>
+        </div>
+
         <div className={`categorybar ${isSidebarOpen ? 'open' : 'closed'}`}>
           <Categories />
           <button
@@ -128,7 +131,6 @@ function Inventory() {
           >
             Add Product
           </button>
-
         </div>
 
         <InfiniteScroll
@@ -154,22 +156,21 @@ function Inventory() {
         </InfiniteScroll>
       </div>
 
+      {/* Product Details Modal */}
       {isProductDetailsModalOpen && selectedProductId && (
-        <div className="modal-overlay" onClick={handleCloseProductDetailsModal}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <ProductDetailsModal productId={selectedProductId} onClose={handleCloseProductDetailsModal} />
-          </div>
+        <div className="modal" onClick={(e) => e.stopPropagation()}>
+          <ProductDetailsModal productId={selectedProductId} onClose={handleCloseProductDetailsModal} />
         </div>
       )}
 
+      {/* Add Product Modal */}
       {isAddProductModalOpen && (
-        <div className="modal-overlay" onClick={handleCloseAddProductModal}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <AddProductForm onClose={handleCloseAddProductModal} />
-          </div>
+        <div className="modal" onClick={(e) => e.stopPropagation()}>
+          <AddProductForm onClose={handleCloseAddProductModal} />
         </div>
       )}
     </div>
+    </>
   );
 }
 

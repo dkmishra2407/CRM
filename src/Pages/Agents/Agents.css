@@ -8,6 +8,66 @@
     margin-top: 30px;
 }
 
+/* Universal Header (Fixed at the top of the page) */
+.UniversalHeader {
+    position: sticky;  /* Fix the header at the top */
+    top: 0;           /* Stick it to the top of the page */
+    left: 0;          /* Align to the left */
+    right: 0;         /* Align to the right */
+    width: 100%;      /* Full width of the viewport */
+    height: 60px;     /* Define the height of the header */
+    z-index: 1000;    /* Ensure it stays on top of other elements */
+    background-color: white;  /* Background color for the header */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);  /* Subtle shadow to separate header from content */
+    display: flex;    /* Use flexbox for layout */
+    align-items: center;  /* Vertically center the items */
+    justify-content: space-between;  /* Space the items to opposite ends */
+    padding: 0 20px;  
+  }
+  
+  /* Adding space below the fixed header so content doesn't overlap
+  body {
+    padding-top: 60px; /* Add padding equal to the height of the header */
+  
+  
+  /* Header elements styling */
+  .header-logo {
+    font-size: 24px;   /* Logo font size */
+    font-weight: bold;
+    color: #333;       /* Color of the logo text */
+  }
+  
+  .header-icons {
+    display: flex;
+    gap: 10px;         /* Space between icons */
+  }
+  
+  .header-icons .icon {
+    font-size: 24px;
+    color: #333;
+    cursor: pointer;
+  }
+  
+  .header-icons .icon:hover {
+    color: #007bff;    /* Optional: change color on hover */
+  }
+  
+  /* Sidebar and other content should adapt to the header */
+  .generate-container {
+    transition: margin-left 0.3s ease;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    margin-left: 250px; /* Adjust based on sidebar width */
+  }
+  
+  .generate-container.sidebar-closed {
+    margin-left: 60px; /* Adjust based on collapsed sidebar width */
+  }
+  
+  
+  
+  
 /* Search bar styling */
 .search-bar {
     flex-grow: 1;
@@ -15,6 +75,7 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     margin-right: 10px; /* Space between search bar and search icon */
+    font-size: 16px;
 }
 
 .search-icon {
@@ -23,19 +84,27 @@
     background-color: #007acc;
     color: white;
     border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }
 
 /* Add Agent button */
 .add-agent-btn {
-    padding: 10px 20px;
     background-color: #28a745;
     color: white;
+    padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-bottom: 20px;
-    display: inline-block;
-    text-align: right;
+    transition: background-color 0.3s ease;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    width: 80px;
+    margin-bottom: 5px;
 }
 
 .add-agent-btn:hover {
@@ -47,26 +116,40 @@
     width: calc(100% - 40px); /* Full width minus padding */
     margin: 0 20px; /* Align table with search bar and add button */
     border-collapse: collapse;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: white;
 }
 
 .agent-table th,
 .agent-table td {
     border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
+    padding: 12px;
+    text-align: center;
+    font-size: 14px;
 }
 
 .agent-table th {
-    background-color: #f2f2f2;
+    background-color: #007bff;
+    color: black;
     font-weight: bold;
 }
 
+.agent-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.agent-table tr:hover {
+    background-color: #ddd;
+}
+
+/* Action buttons styling */
 .action-btn {
-    padding: 5px 10px;
+    padding: 6px 12px;
     margin-right: 5px;
     border: none;
     border-radius: 3px;
     cursor: pointer;
+    font-size: 14px;
 }
 
 .view-btn {
@@ -98,4 +181,68 @@
 
 .generate-container.sidebar-closed {
     margin-left: 60px; /* Adjust based on collapsed sidebar width */
+}
+
+/* Pagination buttons */
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination-btn {
+    padding: 8px 16px;
+    margin: 0 5px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.pagination-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination-info {
+    font-size: 14px;
+    color: #333;
+    margin: 0 10px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .search-bar-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .search-bar {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .add-agent-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .agent-table {
+        width: 100%;
+        margin: 0;
+    }
+
+    .generate-container {
+        margin-left: 0;
+    }
+
+    .pagination-controls {
+        flex-direction: column;
+    }
+
+    .pagination-info {
+        margin: 10px 0;
+    }
 }

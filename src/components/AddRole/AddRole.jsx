@@ -1,82 +1,101 @@
-import React, { useState } from 'react';
-import './AddRole.css'; // Update CSS filename to match the new component
+import React, { useState, useEffect } from 'react';
+import './AddRole.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-import Sidebar from '../SideBar/SideBar';
+import { FaTimes } from 'react-icons/fa';
 
-const AddRoles = () => {
-    const [roleName, setRoleName] = useState('');
-    const [roleDescription, setRoleDescription] = useState('');
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true); // State to control sidebar visibility
-    const apiUrl = process.env.REACT_APP_API_URL; // Use the API URL from the environment variables
+const AddRoleForm = ({ isOpen, onClose, roleId, onUpdate }) => {
+  const [roleName, setRoleName] = useState('');
+  const [roleDescription, setRoleDescription] = useState('');
+  const apiUrl = process.env.REACT_APP_API_URL;
 
-    // Data structure for roles
-    const roleData = {
-        roleName: roleName,
-        roleDescription: roleDescription,
-    };
+  useEffect(() => {
+    if (roleId) {
+      fetchRoleData(roleId);
+    }
+  }, [roleId]);
 
-    const handleClear = () => {
-        setRoleName('');
-        setRoleDescription('');
-    };
+  const fetchRoleData = async (id) => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/roles/${id}`);
+      const role = response.data;
+      setRoleName(role.roleName);
+      setRoleDescription(role.roleDescription);
+    } catch (err) {
+      console.error('Failed to fetch role data', err);
+      toast.error('Failed to load role data.');
+    }
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await axios.post(`${apiUrl}/api/roles`, roleData, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            toast.success('Role Added Successfully!');
-            handleClear();  // Clear the form after saving
-        } catch (err) {
-            console.error('Error saving the form', err);
-            toast.error('Failed to Add the Role. Please try again.');
-        }
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const roleData = { roleName, roleDescription };
 
-    return (
-        <div className={`add-roles-form-container`}>
-            <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
-            <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`}>
-                <h2>Add New Role</h2>
-                <form onSubmit={handleSubmit} className="add-roles-form">
-                    <div className="form-group">
-                        <label htmlFor="roleName">Role Name</label>
-                        <input
-                            type="text"
-                            id="roleName"
-                            value={roleName}
-                            onChange={(e) => setRoleName(e.target.value)}
-                            placeholder="Enter role name"
-                            required
-                        />
-                    </div>
+    try {
+      if (roleId) {
+        await axios.put(`${apiUrl}/api/roles/${roleId}`, roleData);
+        toast.success('Role updated successfully!');
+        onUpdate(roleId, roleData);
+      } else {
+        await axios.post(`${apiUrl}/api/roles`, roleData);
+        toast.success('Role added successfully!');
+      }
+      onClose();
+      window.location.reload();
+    } catch (err) {
+      console.error('Error saving the role', err);
+      toast.error('Failed to save the role. Please try again.');
+    }
+  };
 
-                    <div className="form-group">
-                        <label htmlFor="roleDescription">Role Description</label>
-                        <textarea
-                            id="roleDescription"
-                            value={roleDescription}
-                            onChange={(e) => setRoleDescription(e.target.value)}
-                            placeholder="Enter role description"
-                            rows="4"
-                            required
-                        ></textarea>
-                    </div>
+  if (!isOpen) return null;
 
-                    <div className="form-actions">
-                        <button type="submit" className="submit-btn">Add Role</button>
-                        <button type="button" className="clear-btn" onClick={handleClear}>Clear</button>
-                    </div>
-                </form>
-                <ToastContainer />  {/* Correctly render the ToastContainer */}
-            </div>
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h2>{roleId ? 'Edit Role' : 'Add New Role'}</h2>
+          <FaTimes className="close-icon" onClick={onClose} />
         </div>
-    );
+        <form onSubmit={handleSubmit} className="add-role-form">
+          <div className="form-group">
+            <label htmlFor="roleName">Role Name</label>
+            <input
+              type="text"
+              id="roleName"
+              value={roleName}
+              onChange={(e) => setRoleName(e.target.value)}
+              placeholder="Enter role name"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="roleDescription">Role Description</label>
+            <textarea
+              id="roleDescription"
+              value={roleDescription}
+              onChange={(e) => setRoleDescription(e.target.value)}
+              placeholder="Enter role description"
+              rows="4"
+              required
+            ></textarea>
+          </div>
+
+          <div className="form-actions">
+            <button type="submit" className="submit-btn">
+              {roleId ? 'Update Role' : 'Add Role'}
+            </button>
+            <button type="button" className="clear-btn" onClick={onClose}>
+              Cancel
+            </button>
+          </div>
+        </form>
+        <ToastContainer />
+      </div>
+    </div>
+  );
 };
 
-export default AddRoles;
+export default AddRoleForm;

@@ -1,5 +1,5 @@
 /* Container styling */
-.login-container {
+.auth-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -11,7 +11,7 @@
 }
 
 /* Welcome Section */
-.welcome-section {
+.auth-welcome-section {
   width: 50%;
   height: 100vh;
   background: linear-gradient(135deg, #a0e6ff, #d7baff);
@@ -24,157 +24,153 @@
   z-index: 1;
 }
 
-.desktop-icon {
+.auth-desktop-icon {
   width: 150px;
   margin: 20px 0;
   animation: bounce 2s infinite;
 }
 
-.rocket-icon {
+.auth-rocket-icon {
   margin-top: 30px;
 }
 
-.gradient-text {
+.auth-gradient-text {
   background: linear-gradient(45deg, #062695, #0BA1D0);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-size: 2rem; /* Increased font size */
+  font-size: 2rem;
   text-align: center;
 }
 
-.login-heading-1,
-.login-heading-2 {
+.auth-heading-main,
+.auth-heading-secondary {
   margin: 0;
-  font-size: 2rem; /* Increased font size */
+  font-size: 2rem;
   text-align: center;
   color: #333;
 }
 
 /* Login Section */
-.login-section {
+.auth-login-section {
   height: 300px;
   width: 400px;
   background: white;
-  padding: 40px; /* Increased padding for more space */
+  padding: 40px;
   border-radius: 15px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Increased shadow for better separation */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
   text-align: center;
   position: relative;
   margin-right: 50px;
   z-index: 1;
 }
 
-.login-title {
+.auth-login-title {
   color: #007bff;
-  font-size: 1.75rem; /* Adjusted font size */
+  font-size: 1.75rem;
   margin-bottom: 20px;
 }
 
-.input-group {
+.auth-input-group {
   position: relative;
-  margin-bottom: 25px; /* Adjusted margin */
-  
+  margin-bottom: 25px;
   margin-right: 25px;
 }
 
-.input-group input {
+.auth-input-group input {
   width: 100%;
-  padding: 12px 40px 12px 10px; /* Adjusted padding */
+  padding: 12px 40px 12px 10px;
   border: 2px solid #007bff;
   border-radius: 20px;
   font-size: 16px;
   transition: border-color 0.3s ease;
-
 }
 
-.input-group input:focus {
+.auth-input-group input:focus {
   border-color: #0056b3;
 }
 
-.input-icon {
+.auth-input-icon {
   position: absolute;
-  right: -25px; /* Adjusted for better alignment */
+  right: 20px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 18px;
   color: #007bff;
 }
 
-.toggle-password {
+.auth-toggle-password {
   background: none;
   border: none;
   color: #007BFF;
   cursor: pointer;
-  font-size: 18px; /* Increased font size */
+  font-size: 18px;
   position: absolute;
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
 }
 
-.options {
+.auth-options {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px; /* Adjusted margin */
+  margin-bottom: 25px;
   font-size: 14px;
   padding-right: 20px;
 }
 
-.forgot-password {
+.auth-forgot-password {
   color: #007bff;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
-.forgot-password:hover {
+.auth-forgot-password:hover {
   color: #0056b3;
   text-decoration: underline;
 }
 
-.button-container {
+.auth-button-container {
   display: flex;
-  justify-content: space-between; /* Adjusted spacing */
+  justify-content: space-between;
   gap: 20px;
 }
 
-.SignUp-button,
-.submit-button {
+.auth-submit-button {
   background-color: #007bff;
   color: white;
-  padding: 12px 20px; /* Adjusted padding */
+  padding: 12px 20px;
   border: none;
   border-radius: 20px;
   cursor: pointer;
   font-size: 16px;
-  width: 100%; /* Adjusted width */
+  width: 100%;
   transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.SignUp-button:hover,
-.submit-button:hover {
+.auth-submit-button:hover {
   background-color: #0056b3;
   transform: translateY(-2px);
 }
 
-.login-ellipse {
+.auth-ellipse {
   position: absolute;
   opacity: 0.6;
   z-index: 0;
 }
 
-.login-ellipse-2 {
-  top: 65%;
-  left: 82%;
-  width: 280px;
-  height: 280px;
-  animation: slideInRight 1s ease-in-out;
-}
-
-.login-ellipse-3 {
+.auth-ellipse-left {
   bottom: 65%;
   right: 30%;
   width: 200px;
   height: 200px;
   animation: slideInLeft 1s ease-in-out;
+}
+
+.auth-ellipse-right {
+  top: 65%;
+  left: 82%;
+  width: 280px;
+  height: 280px;
+  animation: slideInRight 1s ease-in-out;
 }

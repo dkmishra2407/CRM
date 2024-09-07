@@ -19,6 +19,7 @@ const ProductcardForInventory = ({ sku, name, image, rate, category, availableQt
         ))}
       </div>
       <p className="product-price">${(rate * quantity).toFixed(2)}</p>
+      <p>{availableQty} Is in the stock</p>
     </div>
   );
 };

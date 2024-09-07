@@ -36,3 +36,23 @@
     transform: rotate(360deg);
   }
 }
+
+/* Universal Header Container */
+.UniversalHeader {
+  position: sticky; /* Make the header sticky */
+  top: 0; /* Stick it to the top when scrolling */
+  width: 100%; /* Make it span the entire width of the page */
+  z-index: 1000; /* High z-index to ensure it stays above other elements */
+  background-color: white; /* Ensure it has a background to cover content below */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for a modern look */
+  padding: 10px 20px; /* Padding for better visual appearance */
+}
+
+/* Adjust the body padding so content doesn't go under the sticky header */
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevent horizontal scrolling if content overflows */
+}
+
+

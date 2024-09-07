@@ -11,6 +11,30 @@
   z-index: 1000;
 }
 
+.save-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: none;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.disabled-btn {
+  background-color: #ccc; /* Gray for disabled */
+  cursor: not-allowed;
+}
+
+.enabled-btn {
+  background-color: #28a745; /* Green for enabled */
+  cursor: pointer;
+  filter: none;
+}
+
+.save-btn:hover.enabled-btn {
+  background-color: #218838; /* Darker green on hover */
+}
+
+
 .modal-content {
   background: white;
   padding: 20px;

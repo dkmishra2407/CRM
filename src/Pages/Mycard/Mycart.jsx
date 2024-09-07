@@ -7,7 +7,7 @@ import jsPDFInvoiceTemplate, { OutputType, jsPDF } from 'jspdf-invoice-template'
 import { Link } from 'react-router-dom';
 import SadhguruTilesLogo from './logos/sadhgurtiles.jpeg'; // Replace with actual path
 import DTSLogo from './logos/company_logo.png'; // Replace with actual path
-
+import Header from '../../components/Header/Header';
 const MyCart = () => {
   const { state: { ShoppingCart } } = useCart();
   const [customerId, setCustomerId] = useState('');
@@ -150,6 +150,9 @@ const MyCart = () => {
   };
 
   return (
+
+    <>
+    <Header className="UniversalHeader"/>
     <div className={`my-cart-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <div className="my-cart">
@@ -217,6 +220,7 @@ const MyCart = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

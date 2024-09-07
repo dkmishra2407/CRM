@@ -10,7 +10,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { ThreeDots } from 'react-loader-spinner';
 import Categories from '../../components/Catagories/Catagories';
 import ProductDetailsModal from '../../components/ProductDetail/ProductDetal';
-
+import Header from '../../components/Header/Header';
 function Generate() {
   const { state: { totalQuantity }, dispatch } = useCart();
   const [isProductDetailsModalOpen, setIsProductDetailsModalOpen] = useState(false);
@@ -97,11 +97,13 @@ function Generate() {
   };
 
   return (
+    <>
+    <Header className="UniversalHeader"/>
     <div className="App">
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`}>
         <div className="top-bar">
-        <h1>STORE</h1>
+        <h1>Web Store</h1>
           <div className="search-bar-container">
             <input
               type="text"
@@ -168,6 +170,7 @@ function Generate() {
         </div>
       )}
     </div>
+    </>
   );
 }
 

@@ -159,3 +159,7 @@
 .add-customer-select-image-btn:hover {
   background-color: #005fa3;
 }
+
+.checkbox{
+  margin-bottom: 10px;
+}

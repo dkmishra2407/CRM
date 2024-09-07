@@ -5,20 +5,25 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { FaTimes } from 'react-icons/fa';
 
-const AddSalesAgentForm = ({ isOpen, onClose, agentId }) => {
+const AddSalesAgentForm = ({ isOpen, onClose, agentId, onUpdate }) => {
   const [agentName, setAgentName] = useState('');
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
   const [roleDescription, setRoleDescription] = useState('');
   const [active, setActive] = useState(true);
-  const [errors, setErrors] = useState({});
   const [roles, setRoles] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [isFormValid, setIsFormValid] = useState(false); // Track form validity
+
   const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     fetchRoles();
-  }, []);
+    if (agentId) {
+      fetchAgentData(agentId);
+    }
+  }, [agentId]);
 
   const fetchRoles = async () => {
     try {
@@ -30,23 +35,16 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId }) => {
     }
   };
 
-  useEffect(() => {
-    if (agentId) {
-      fetchAgentData(agentId);
-    }
-  }, [agentId]);
-
   const fetchAgentData = async (id) => {
     try {
       const response = await axios.get(`${apiUrl}/api/associates/${id}`);
       const agent = response.data;
-
       setAgentName(agent.associateName);
       setUserName(agent.userName);
       setRole(agent.role.roleId);
       setRoleDescription(agent.role.roleDescription);
       setActive(agent.active);
-      setPassword('');
+      setPassword(''); // Reset password field for editing
     } catch (err) {
       console.error('Failed to fetch agent data', err);
       toast.error('Failed to load agent data. Please try again.');
@@ -61,45 +59,72 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId }) => {
     setRoleDescription('');
     setActive(true);
     setErrors({});
+    setIsFormValid(false);
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!agentName) newErrors.agentName = 'Agent Name is required.';
-    if (!userName) newErrors.userName = 'Username is required.';
-    if (!password && !agentId) newErrors.password = 'Password is required.';
-    if (!role) newErrors.role = 'Role is required.';
+  const handleFieldChange = (field, value) => {
+    const newErrors = { ...errors };
+    if (field === 'agentName') setAgentName(value);
+    if (field === 'userName') setUserName(value);
+    if (field === 'password') setPassword(value);
+    if (field === 'role') setRole(value);
+    if (field === 'active') setActive(value === 'true');
+
+    // Field-level validation
+    switch (field) {
+      case 'agentName':
+        if (!value) newErrors.agentName = 'Agent Name is required.';
+        else delete newErrors.agentName;
+        break;
+      case 'userName':
+        if (!value) newErrors.userName = 'Username is required.';
+        else delete newErrors.userName;
+        break;
+      case 'password':
+        if (!value && !agentId) newErrors.password = 'Password is required.';
+        else delete newErrors.password;
+        break;
+      case 'role':
+        if (!value) newErrors.role = 'Role is required.';
+        else delete newErrors.role;
+        break;
+      default:
+        break;
+    }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setIsFormValid(Object.keys(newErrors).length === 0);
   };
 
   const handleSave = async () => {
-    if (!validateForm()) return;
+    if (!isFormValid) return; 
+
+    const agentData = {
+      role: { roleId: role },
+      associateName: agentName,
+      userName,
+      password: password || undefined, 
+      active,
+    };
 
     try {
-      const associateData = {
-        role: { roleId: role },
-        associateName: agentName,
-        userName: userName,
-        password: password || undefined,
-        active: active,
-      };
-
       if (agentId) {
-        await axios.put(`${apiUrl}/api/associates/${agentId}`, associateData);
+        await onUpdate(agentId, agentData);
         toast.success('Agent Updated Successfully!');
       } else {
-        await axios.post(`${apiUrl}/api/associates`, associateData);
+        await axios.post(`${apiUrl}/api/associates`, agentData, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
         toast.success('Agent Added Successfully!');
       }
-
       handleClear();
       onClose();
       window.location.reload();
     } catch (err) {
       console.error('Error saving the form', err);
-      toast.error('Failed to Save the Agent. Please try again.');
+      toast.error('Failed to save the agent. Please try again.');
     }
   };
 
@@ -119,39 +144,39 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId }) => {
               type="text"
               placeholder="Agent Name"
               value={agentName}
-              onChange={(e) => setAgentName(e.target.value)}
+              onChange={(e) => handleFieldChange('agentName', e.target.value)}
             />
             {errors.agentName && <span className="error">{errors.agentName}</span>}
           </div>
+
           <div className="form-group">
             <label>Username</label>
             <input
               type="text"
               placeholder="Username"
               value={userName}
-              onChange={(e) => setUserName(e.target.value)}
+              onChange={(e) => handleFieldChange('userName', e.target.value)}
             />
             {errors.userName && <span className="error">{errors.userName}</span>}
           </div>
+
           <div className="form-group">
             <label>Password</label>
             <input
               type="password"
               placeholder="Password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => handleFieldChange('password', e.target.value)}
+              required={!agentId}
             />
             {errors.password && <span className="error">{errors.password}</span>}
           </div>
+
           <div className="form-group">
             <label>Role</label>
             <select
               value={role}
-              onChange={(e) => {
-                const selectedRole = roles.find(r => r.roleId === Number(e.target.value));
-                setRole(e.target.value);
-                setRoleDescription(selectedRole ? selectedRole.roleDescription : '');
-              }}
+              onChange={(e) => handleFieldChange('role', e.target.value)}
               className="dropdown"
             >
               <option value="">Select Role</option>
@@ -163,20 +188,12 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId }) => {
             </select>
             {errors.role && <span className="error">{errors.role}</span>}
           </div>
-          <div className="form-group">
-            <label>Role Description</label>
-            <input
-              type="text"
-              value={roleDescription}
-              placeholder="Role Description"
-              readOnly
-            />
-          </div>
+
           <div className="form-group">
             <label>Active</label>
             <select
-              value={active}
-              onChange={(e) => setActive(e.target.value === 'true')}
+              value={active.toString()}
+              onChange={(e) => handleFieldChange('active', e.target.value)}
               className="dropdown"
             >
               <option value="true">Active</option>
@@ -184,9 +201,15 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId }) => {
             </select>
           </div>
         </div>
+
         <div className="form-actions">
-          <button onClick={handleClear} className="clear-btn">CLEAR</button>
-          <button onClick={handleSave} className="save-btn" disabled={Object.keys(errors).length > 0}>SAVE</button>
+          <button
+            onClick={handleSave}
+            className={`save-btn ${!isFormValid ? 'disabled-btn' : 'enabled-btn'}`}
+            disabled={!isFormValid}
+          >
+            Save Agent
+          </button>
         </div>
       </div>
     </div>
