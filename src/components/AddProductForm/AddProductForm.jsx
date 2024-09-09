@@ -10,12 +10,12 @@ const AddProductForm = () => {
   const [name, setName] = useState('');
   const [siteId, setSiteId] = useState('');
   const [categoryId, setCategoryId] = useState('');
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState();
   const [images, setImages] = useState([]);
   const [sites, setSites] = useState([]);
   const [categories, setCategories] = useState([]);
   const [showForm, setShowForm] = useState(true);
-  const [rate, setRate] = useState(0);
+  const [rate, setRate] = useState();
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -42,7 +42,7 @@ const AddProductForm = () => {
 
     fetchSites();
     fetchCategories();
-  }, []);
+  }, [apiUrl]);
 
   const handleImageChange = (e) => {
     setImages([...e.target.files]);
@@ -70,10 +70,8 @@ const AddProductForm = () => {
         imageUrl: image.imageUrl,
       }));
 
-      console.log("Images uploaded:", imageDetails);
       return imageDetails;
     } catch (error) {
-      console.error('Error uploading images:', error);
       toast.error('Failed to upload images.');
       throw error;
     }
@@ -101,19 +99,16 @@ const AddProductForm = () => {
         images: imageDetails,
       };
 
-      const response = await axios.post(`${apiUrl}/api/products`, productData, {
+      await axios.post(`${apiUrl}/api/products`, productData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
 
       toast.success('Product added successfully!');
-      console.log('Product added:', response.data);
       setShowForm(false);
-
       window.location.reload();
     } catch (error) {
-      console.error('Error adding product:', error);
       toast.error('Failed to add product.');
     }
   };
@@ -141,9 +136,10 @@ const AddProductForm = () => {
               placeholder="SKU ID"
               value={sku}
               onChange={(e) => setSku(e.target.value)}
-              className="product-form-input"
+              className={`product-form-input ${!sku && "input-error"}`}
               required
             />
+            {!sku && <small className="error-message">SKU is required</small>}
           </div>
 
           <div className="form-group">
@@ -153,9 +149,10 @@ const AddProductForm = () => {
               placeholder="Product Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="product-form-input"
+              className={`product-form-input ${!name && "input-error"}`}
               required
             />
+            {!name && <small className="error-message">Product Name is required</small>}
           </div>
 
           <div className="form-group">
@@ -209,7 +206,8 @@ const AddProductForm = () => {
               <button
                 type="button"
                 onClick={() => handleQuantityChange(-1)}
-                className="quantity-btn"
+                className="quantity-btn-product-form"
+                placeholder="Quantity"
               >
                 -
               </button>
@@ -223,13 +221,12 @@ const AddProductForm = () => {
               <button
                 type="button"
                 onClick={() => handleQuantityChange(1)}
-                className="quantity-btn"
+                className="quantity-btn-product-form"
               >
                 +
               </button>
             </div>
           </div>
-
 
           <div className="form-group">
             <label className="product-form-label">Rate</label>
@@ -243,7 +240,11 @@ const AddProductForm = () => {
             />
           </div>
 
-          <button type="submit" className="product-form-submit-button">
+          <button
+            type="submit"
+            className="product-form-submit-button"
+            disabled={!sku || !name || !siteId || !categoryId}
+          >
             Save Product
           </button>
         </form>

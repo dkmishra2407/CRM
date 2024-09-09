@@ -87,9 +87,6 @@ const AddRoleForm = ({ isOpen, onClose, roleId, onUpdate }) => {
             <button type="submit" className="submit-btn">
               {roleId ? 'Update Role' : 'Add Role'}
             </button>
-            <button type="button" className="clear-btn" onClick={onClose}>
-              Cancel
-            </button>
           </div>
         </form>
         <ToastContainer />

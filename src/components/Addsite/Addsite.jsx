@@ -141,7 +141,7 @@ const Addsites = ({ isOpen, onClose, siteId, onUpdate }) => {
 
                     <div className="form-actions">
                         <button type="submit" className="submit-btn">{siteId ? 'Update Site' : 'Add Site'}</button>
-                        <button type="button" className="clear-btn" onClick={onClose}>Cancel</button>
+                        {/* <button type="button" className="clear-btn" onClick={onClose}>Cancel</button> */}
                     </div>
                 </form>
                 <ToastContainer />  {/* Correctly render the ToastContainer */}

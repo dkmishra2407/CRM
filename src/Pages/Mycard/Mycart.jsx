@@ -3,14 +3,18 @@ import './Mycart.css';
 import { useCart } from '../../Context/card.context';
 import Sidebar from '../../components/SideBar/SideBar';
 import axios from 'axios';
-import jsPDFInvoiceTemplate, { OutputType, jsPDF } from 'jspdf-invoice-template';
+import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template';
 import { Link } from 'react-router-dom';
 import SadhguruTilesLogo from './logos/sadhgurtiles.jpeg'; // Replace with actual path
 import DTSLogo from './logos/company_logo.png'; // Replace with actual path
 import Header from '../../components/Header/Header';
+
 const MyCart = () => {
   const { state: { ShoppingCart } } = useCart();
+  // State for customer ID, agent ID, discounts, and customer data
   const [customerId, setCustomerId] = useState('');
+  const [agentId, setAgentId] = useState('');
+  const [discounts, setDiscounts] = useState(); // Initialize with 0
   const [customerData, setCustomerData] = useState({
     customerName: '',
     billingAddress: '',
@@ -18,12 +22,14 @@ const MyCart = () => {
     phoneNumber: '',
     emailAddress: '',
   });
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Sidebar state
   const subtotal = ShoppingCart.reduce((acc, item) => acc + (item.rate || 0) * (item.quantity || 0), 0);
   const amountReceived = 0; // Example value, adjust as needed
-  const balanceDue = subtotal - amountReceived;
+  const balanceDue = subtotal - amountReceived - parseFloat(discounts); // Subtract discount from total, ensure discounts is treated as a number
   const apiUrl = process.env.REACT_APP_API_URL;
 
+  // Fetch customer details
   const handleCustomer = async () => {
     try {
       const response = await axios.get(`${apiUrl}/api/customers/${customerId}`);
@@ -40,12 +46,15 @@ const MyCart = () => {
     } catch (err) {
       console.log(err);
     }
+    console.log(ShoppingCart)
   };
 
+  // Toggle sidebar
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen); // Toggle sidebar state
   };
 
+  // Handle PDF Download
   const handleDownload = () => {
     const props = {
       outputType: OutputType.Save,
@@ -79,7 +88,7 @@ const MyCart = () => {
         address: "Sr. No. 1/3, Yojana Nagar, near HP Petrol Pump...",
         phone: "0980101989 / 7620870603 / 9011719000",
         email: "sadhgurutiles@gmail.com",
-        website: "www.sadhgurutiles.com", // Add your website if any
+        website: "www.sadhgurutiles.com",
       },
       contact: {
         label: "Invoice issued for:",
@@ -101,6 +110,7 @@ const MyCart = () => {
           { title: "SKU", style: { width: 30 } },
           { title: "Product Name", style: { width: 80 } },
           { title: "Category", style: { width: 30 } },
+          { title: "Image", style: { width: 50 } },
           { title: "Rate (INR)", style: { width: 30 } },
           { title: "Quantity", style: { width: 20 } },
           { title: "Tax", style: { width: 20 } },
@@ -111,27 +121,34 @@ const MyCart = () => {
           item.sku?.toString() || 'N/A',
           item.name?.toString() || 'N/A',
           item.category?.toString() || 'N/A',
-          `Rs ${(item.rate || 0).toString()}`,
+          { type: "PNG", src: item.image || '', width: 30, height: 30 }, // Adjusted image size
+          `Rs ${(item.rate || 0).toFixed(2)}`,
           (item.quantity || 0).toString(),
-          `Rs ${(item.tax || 0).toString()}`,
-          `Rs ${(item.rate * item.quantity || 0).toString()}`,
+          `Rs ${(item.tax || 0).toFixed(2)}`,
+          `Rs ${(item.rate * item.quantity || 0).toFixed(2)}`,
         ])),
         additionalRows: [
           {
             col1: 'Subtotal:',
-            col2: `Rs ${subtotal}.00`,
+            col2: `Rs ${subtotal.toFixed(2)}`,
+            col3: '',
+            style: { fontSize: 12, fontStyle: 'bold' },
+          },
+          {
+            col1: 'Discount:',
+            col2: `Rs ${parseFloat(discounts).toFixed(2)}`, // Ensure discounts is parsed as a number
             col3: '',
             style: { fontSize: 12, fontStyle: 'bold' },
           },
           {
             col1: 'Amount Received:',
-            col2: `Rs ${amountReceived}.00`,
+            col2: `Rs ${amountReceived.toFixed(2)}`,
             col3: '',
             style: { fontSize: 12, fontStyle: 'bold' },
           },
           {
             col1: 'Balance Due:',
-            col2: `Rs ${balanceDue}.00`,
+            col2: `Rs ${balanceDue.toFixed(2)}`,
             col3: '',
             style: { fontSize: 12, fontStyle: 'bold' },
           },
@@ -150,76 +167,90 @@ const MyCart = () => {
   };
 
   return (
-
     <>
-    <Header className="UniversalHeader"/>
-    <div className={`my-cart-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      <div className="my-cart">
-        <div className="customer-details">
-          <input
-            type="text"
-            placeholder="Enter Customer Id"
-            value={customerId}
-            onChange={(e) => setCustomerId(e.target.value)}
-          />
-          <button onClick={handleCustomer}>Check</button>
-        </div>
+      <Header className="UniversalHeader" />
+      <div className={`my-cart-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+        <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        <div className="my-cart">
+          <div className="customer-details">
+            <input
+              type="text"
+              placeholder="Enter Customer Id"
+              value={customerId}
+              onChange={(e) => setCustomerId(e.target.value)}
+            />
+            <button onClick={handleCustomer}>Check</button>
+          </div>
 
-        <div className="customer-info">
-          <input type="text" placeholder="Customer Name" value={customerData.customerName} readOnly />
-          <input type="email" placeholder="Email Address" value={customerData.emailAddress} readOnly />
-          <input type="text" placeholder="Billing Address" value={customerData.billingAddress} readOnly />
-          <input type="text" placeholder="Shipping Address" value={customerData.shippingAddress} readOnly />
-          <input type="text" placeholder="Phone Number" value={customerData.phoneNumber} readOnly />
-        </div>
+          <div className="customer-info">
+            <input type="text" placeholder="Customer Name" value={customerData.customerName} readOnly />
+            <input type="email" placeholder="Email Address" value={customerData.emailAddress} readOnly />
+            <input type="text" placeholder="Billing Address" value={customerData.billingAddress} readOnly />
+            <input type="text" placeholder="Shipping Address" value={customerData.shippingAddress} readOnly />
+            <input type="text" placeholder="Phone Number" value={customerData.phoneNumber} readOnly />
+          </div>
 
-        <table className="cart-table">
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>SKU</th>
-              <th>Product Name</th>
-              <th>Category</th>
-              <th>Rate (INR)</th>
-              <th>Quantity</th>
-              <th>Tax</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ShoppingCart.map((item, index) => (
-              <tr key={item.sku}>
-                <td>{index + 1}</td>
-                <td>
-                  <img src={item.image} alt={item.sku} className="cart-item-image" />
-                  <p>{item.sku}</p>
-                </td>
-                <td>{item.name}</td>
-                <td>{item.category}</td>
-                <td>Rs {item.rate}</td>
-                <td>{item.quantity}</td>
-                <td>Rs {item.tax || 0}</td>
-                <td>Rs {item.rate * item.quantity}</td>
+          <div className="additional-info">
+            <input
+              type="text"
+              placeholder="Enter Agent Id"
+              value={agentId}
+              onChange={(e) => setAgentId(e.target.value)}
+            />
+            <input
+              type="number"
+              placeholder="Enter Discounts"
+              value={discounts}
+              onChange={(e) => setDiscounts(e.target.value)} // Discount is set as string initially
+            />
+          </div>
+
+          <table className="cart-table">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>SKU</th>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Rate (INR)</th>
+                <th>Quantity</th>
+                <th>Tax</th>
+                <th>Total</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {ShoppingCart.map((item, index) => (
+                <tr key={item.sku}>
+                  <td>{index + 1}</td>
+                  <td>
+                    <img src={item.image} alt={item.sku} className="cart-item-image" />
+                    <p>{item.sku}</p>
+                  </td>
+                  <td>{item.name}</td>
+                  <td>{item.category}</td>
+                  <td>Rs {item.rate}</td>
+                  <td>{item.quantity}</td>
+                  <td>Rs {item.tax || 0}</td>
+                  <td>Rs {item.rate * item.quantity}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-        <div className="cart-summary">
-          <p>Total <span>Rs {subtotal}.00</span></p>
-          <p>Amount Received <span>Rs {amountReceived}.00</span></p>
-          <p>Balance Due <span>Rs {balanceDue}.00</span></p>
-        </div>
+          <div className="cart-summary">
+            <p>Total <span>Rs {subtotal}.00</span></p>
+            <p>Amount Received <span>Rs {amountReceived}.00</span></p>
+            <p>Balance Due <span>Rs {balanceDue}.00</span></p>
+          </div>
 
-        <div className="cart-buttons">
-          <button className="download-button" onClick={handleDownload}>Download</button>
-          <Link to="createinvoice">
-            <button className="pay-button">Pay</button>
-          </Link>
+          <div className="cart-buttons">
+            <button className="download-button" onClick={handleDownload}>Download</button>
+            <Link to="createinvoice">
+              <button className="pay-button">Pay</button>
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
     </>
   );
 };

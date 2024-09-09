@@ -11,7 +11,6 @@ import AddSalesAgentForm from './components/AddAgents/AddAgents'
 import Agent from './Pages/Agents/Agents';
 import CreateInvoiceComponent from './Pages/Invoice/Invoice'
 import AddCatagories from "./components/AddCatagories/AddCatagories";
-import QuotationPage from './components/Quotation/Quotation';
 import Inventory from './Pages/Inventory/Inventory';
 import Addsites from './components/Addsite/Addsite';
 import Customer from './Pages/Customer/Customer';
@@ -22,6 +21,7 @@ import Roles from './Pages/Role/Role';
 import ShowAllCategory from './Pages/ShowAllCategory/ShowAllCategory';
 import AccessControl from './Pages/AccessControl/AccessControl';
 import { ToastContainer } from 'react-toastify';
+import Quotation from './Pages/Quotation/Quotation';
 function App() {
   return (
     <Router>
@@ -39,13 +39,12 @@ function App() {
           <Route path='/agents' element={<Agent />}/>
           <Route path='/mycart/createinvoice' element={<CreateInvoiceComponent />}/>
           <Route path='/addcategories' element={<ShowAllCategory />}/>
-          <Route path='/quotation' element={<QuotationPage />}/>
           <Route path='/inventory' element={<Inventory />}/>
           <Route path='/addsites' element={<Sites />}/>
           <Route path='/customer' element={<Customer />}/>
           <Route path='/addroles' element={<Roles />}/>
           <Route path='/accesscontol' element={<AccessControl />}/>
-
+          <Route path='/quotation' element={<Quotation />}/>
         </Routes>
       </div>
     </Router>

@@ -30,7 +30,7 @@
   width: 48%;
 }
 
-.customer-info input {
+.customer-info input, .customer-info textarea {
   width: 100%;
   padding: 12px;
   margin-bottom: 12px;

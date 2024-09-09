@@ -7,10 +7,9 @@ import { Link } from 'react-router-dom';
 import Sidebar from '../../components/SideBar/SideBar';
 import axios from 'axios';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { ThreeDots } from 'react-loader-spinner';
-import Categories from '../../components/Catagories/Catagories';
 import ProductDetailsModal from '../../components/ProductDetail/ProductDetal';
 import Header from '../../components/Header/Header';
+
 function Generate() {
   const { state: { totalQuantity }, dispatch } = useCart();
   const [isProductDetailsModalOpen, setIsProductDetailsModalOpen] = useState(false);
@@ -21,18 +20,31 @@ function Generate() {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [categories, setCategories] = useState([]); // Categories state
+  const [selectedCategory, setSelectedCategory] = useState(''); // Selected category state
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const apiUrl = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
+    fetchCategories(); // Fetch categories when the component loads
     fetchProducts();
   }, [page]);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/categories`);
+      setCategories(response.data); // Store categories
+    } catch (err) {
+      console.error('Failed to fetch categories', err);
+    }
+  };
 
   const fetchProducts = async () => {
     setLoading(true);
     try {
       const response = await axios.get(`${apiUrl}/api/products?page=${page}&limit=15`);
       const data = response.data;
-
+      console.log(data)
       if (data.length === 0) {
         setHasMore(false);
       } else {
@@ -44,8 +56,9 @@ function Generate() {
           availableQty: product.productQuantity?.availableQty || 0,
           rate: product.rate,
           category: product.category.categoryName,
+          categoryId: product.category.categoryId, // Store category ID for filtering
         }));
-
+      
         setInitialProducts(prevProducts => {
           const productSet = new Set(prevProducts.map(p => p.key));
           const newProducts = products.filter(p => !productSet.has(p.key));
@@ -58,7 +71,6 @@ function Generate() {
     }
     setLoading(false);
   };
-
   const fetchMoreData = () => {
     if (!loading) {
       setPage(prevPage => prevPage + 1);
@@ -87,10 +99,15 @@ function Generate() {
     setSearchQuery(event.target.value);
   };
 
-  const filteredProducts = initialProducts.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.sku.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleCategoryChange = (event) => {
+    setSelectedCategory(event.target.value); // Update selected category
+  };
+
+  const filteredProducts = initialProducts.filter((product) => {
+    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || product.sku.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === '' || product.categoryId === parseInt(selectedCategory);
+    return matchesSearch && matchesCategory;
+  });
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -98,13 +115,40 @@ function Generate() {
 
   return (
     <>
-    <Header className="UniversalHeader"/>
-    <div className="App">
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`}>
-        <div className="top-bar">
-        <h1>Web Store</h1>
-          <div className="search-bar-container">
+      <Header className="UniversalHeader" />
+      <div className="App">
+        <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`}>
+          <div className="top-bar">
+            <h1>Web Store</h1>
+            <div className="actions">
+              <div className="cart-icon">
+                <Link to="/mycart">
+                  <span className="material-icons gradient-text">shopping_cart</span>
+                  <span className="cart-count">{totalQuantity}</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className='search-and-filter'>
+            <div className="category-dropdown-container-inventory">
+              <label htmlFor="category-select">Filter by Category: </label>
+              <select
+                id="category-select"
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+              >
+                <option value="">All Categories</option>
+                {categories.map((category) => (
+                  <option key={category.categoryId} value={category.categoryId}>
+                    {category.categoryName}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+        <div className="search-bar-container">
             <input
               type="text"
               value={searchQuery}
@@ -117,59 +161,49 @@ function Generate() {
             </div>
           </div>
 
-          <div className="actions">
-            <div className="cart-icon">
-              <Link to="/mycart">
-                <span className="material-icons gradient-text">shopping_cart</span>
-              </Link>
-              <span className="cart-count">{totalQuantity}</span>
+        </div>
+          
+          {/* Category Dropdown */}
+      
+
+          <InfiniteScroll
+            dataLength={filteredProducts.length}
+            next={fetchMoreData}
+            hasMore={hasMore}
+            endMessage={<p style={{ textAlign: 'center' }}>No more products to display.</p>}
+            className="product-container"
+          >
+            {filteredProducts.map((product) => (
+              <ProductCard
+                key={product.key}
+                sku={product.sku}
+                name={product.name}
+                image={product.image}
+                rate={product.rate}
+                category={product.category.categoryName}
+                availableQty={product.availableQty}
+                onClick={() => handleOpenProductDetailsModal(product.key)}
+              />
+            ))}
+          </InfiniteScroll>
+        </div>
+
+        {isProductDetailsModalOpen && selectedProductId && (
+          <div className="modal-overlay" onClick={handleCloseProductDetailsModal}>
+            <div className="modal" onClick={(e) => e.stopPropagation()}>
+              <ProductDetailsModal productId={selectedProductId} onClose={handleCloseProductDetailsModal} />
             </div>
           </div>
-        </div>
+        )}
 
-        <div className={`categorybar ${isSidebarOpen ? 'open' : 'closed'}`}>
-          <Categories />
-        </div>
-
-        <InfiniteScroll
-          dataLength={filteredProducts.length}
-          next={fetchMoreData}
-          hasMore={hasMore}
-          loader={<div className="loader"><ThreeDots color="#00BFFF" height={80} width={80} /></div>}
-          endMessage={<p style={{ textAlign: 'center' }}>No more products to display.</p>}
-          className="product-container"
-        >
-          {filteredProducts.map((product) => (
-            <ProductCard
-              key={product.key}
-              sku={product.sku}
-              name={product.name}
-              image={product.image}
-              rate={product.rate}
-              category={product.category}
-              availableQty={product.availableQty}
-              onClick={() => handleOpenProductDetailsModal(product.key)}
-            />
-          ))}
-        </InfiniteScroll>
+        {isAddProductModalOpen && (
+          <div className="modal-overlay" onClick={handleCloseAddProductModal}>
+            <div className="modal" onClick={(e) => e.stopPropagation()}>
+              <AddProductForm onClose={handleCloseAddProductModal} />
+            </div>
+          </div>
+        )}
       </div>
-
-      {isProductDetailsModalOpen && selectedProductId && (
-        <div className="modal-overlay" onClick={handleCloseProductDetailsModal}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <ProductDetailsModal productId={selectedProductId} onClose={handleCloseProductDetailsModal} />
-          </div>
-        </div>
-      )}
-
-      {isAddProductModalOpen && (
-        <div className="modal-overlay" onClick={handleCloseAddProductModal}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <AddProductForm onClose={handleCloseAddProductModal} />
-          </div>
-        </div>
-      )}
-    </div>
     </>
   );
 }

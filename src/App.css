@@ -56,3 +56,11 @@ body {
 }
 
 
+.d-flex{
+  display: flex;
+}
+
+.justify{
+  justify-content: space-between;
+}
+

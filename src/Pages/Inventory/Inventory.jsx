@@ -11,6 +11,7 @@ import { ThreeDots } from 'react-loader-spinner';
 import Categories from '../../components/Catagories/Catagories';
 import ProductDetailsModal from '../../components/ProductDetail/ProductDetal';
 import Header from '../../components/Header/Header';
+
 function Inventory() {
   const { state: { totalQuantity }, dispatch } = useCart();
   const [isProductDetailsModalOpen, setIsProductDetailsModalOpen] = useState(false);
@@ -21,13 +22,17 @@ function Inventory() {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [categories, setCategories] = useState([]); // Categories state
+  const [selectedCategory, setSelectedCategory] = useState(''); // Selected category
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
+    fetchCategories(); // Fetch categories when the component loads
     fetchProducts();
   }, [page]);
 
+  // Fetch products from the API
   const fetchProducts = async () => {
     setLoading(true);
     try {
@@ -45,6 +50,7 @@ function Inventory() {
           availableQty: product.productQuantity?.availableQty || 0,
           rate: product.rate,
           category: product.category.categoryName,
+          categoryId: product.category.categoryId, // Store category ID for filtering
         }));
 
         setInitialProducts(prevProducts => {
@@ -60,6 +66,17 @@ function Inventory() {
     setLoading(false);
   };
 
+  // Fetch categories from the API
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/categories`);
+      setCategories(response.data); // Store categories
+    } catch (err) {
+      console.error('Failed to fetch categories', err);
+    }
+  };
+
+  // Fetch more data when scrolling
   const fetchMoreData = () => {
     if (!loading) {
       setPage(prevPage => prevPage + 1);
@@ -88,10 +105,16 @@ function Inventory() {
     setSearchQuery(event.target.value);
   };
 
-  const filteredProducts = initialProducts.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.sku.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleCategoryChange = (event) => {
+    setSelectedCategory(event.target.value); // Update selected category
+  };
+
+  // Filter products based on search query and selected category
+  const filteredProducts = initialProducts.filter((product) => {
+    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || product.sku.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === '' || product.categoryId === parseInt(selectedCategory);
+    return matchesSearch && matchesCategory;
+  });
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -105,22 +128,6 @@ function Inventory() {
       <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`}>
         <div className="top-bar">
           <h1 style={{ color: 'black' }}>Inventory</h1>
-          <div className="search-bar-container">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearchChange}
-              placeholder="Search Products"
-              className="search-bar"
-            />
-            <div className="search-icon">
-              <span className="material-icons gradient-text">search</span>
-            </div>
-          </div>
-        </div>
-
-        <div className={`categorybar ${isSidebarOpen ? 'open' : 'closed'}`}>
-          <Categories />
           <button
             className="add-product-btn"
             onClick={handleOpenAddProductModal}
@@ -133,11 +140,41 @@ function Inventory() {
           </button>
         </div>
 
+        <div className='search-and-filter'>
+        <div className="category-dropdown-container-inventory">
+          <label htmlFor="category-select">Filter by Category: </label>
+          <select
+            id="category-select"
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+          >
+            <option value="">All Categories</option>
+            {categories.map((category) => (
+              <option key={category.categoryId} value={category.categoryId}>
+                {category.categoryName}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="search-bar-container">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              placeholder="Search Products"
+              className="search-bar"
+            />
+            <div className="search-icon">
+              <span className="material-icons gradient-text">search</span>
+            </div>
+        </div>
+        </div>
+
         <InfiniteScroll
           dataLength={filteredProducts.length}
           next={fetchMoreData}
           hasMore={hasMore}
-          loader={<div className="loader"><ThreeDots color="#00BFFF" height={80} width={80} /></div>}
           endMessage={<p style={{ textAlign: 'center' }}>No more products to display.</p>}
           className="product-container"
         >

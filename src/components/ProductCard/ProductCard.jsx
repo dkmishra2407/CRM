@@ -6,15 +6,11 @@ import abc from './ABC.avif'; // Import the default image
 const ProductCard = ({ sku, name, image, rate, category, availableQty, onClick }) => {
   const [quantity, setQuantity] = useState(1);
   const { dispatch } = useCart();
-
-  // Fallback to the default image if no image is provided
-  const productImage = abc;
-
   // Product details to be dispatched with cart actions
   const product = {
     sku,
     name,
-    image: abc,
+    image,
     rate,
     category: category?.categoryName,
     quantity,
@@ -50,14 +46,14 @@ const ProductCard = ({ sku, name, image, rate, category, availableQty, onClick }
   return (
     <div className="product-card" onClick={onClick}>
       <p className="product-sku">SKU - {sku}</p>
-      <img src={abc} alt={name} className="product-image" />
+      <img src={image} alt={name} className="product-image" />
       <h3 className="product-name">{name}</h3>
       <div className="product-rate">
         {Array.from({ length: 5 }, (_, index) => (
           <span key={index} className={index < rate ? 'star filled' : 'star'}></span>
         ))}
       </div>
-      <p className="product-price">${(rate * quantity).toFixed(2)}</p>
+      <p className="product-price">RS{(rate * quantity).toFixed(2)}</p>
       <div className="quantity-control">
         <button className="decrement" onClick={decrementQuantity}>-</button>
         <span className="quantity">{quantity}</span>

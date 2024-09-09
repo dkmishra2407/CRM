@@ -2,19 +2,19 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaTimes } from 'react-icons/fa';
 import './ProductDetail.css';
-import abc from './ABC.avif'
+
 const ProductDetailsModal = ({ productId, onClose }) => {
   const [product, setProduct] = useState(null);
   const apiUrl = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
-    // Fetch the product data based on the productId
     axios.get(`${apiUrl}/api/products/${productId}`)
       .then(response => setProduct(response.data))
       .catch(error => console.error('Error fetching product data:', error));
   }, [productId]);
 
   if (!product) {
-    return <div>Loading...</div>; // Show a loading message while fetching data
+    return <div>Loading...</div>;
   }
 
   return (
@@ -22,20 +22,26 @@ const ProductDetailsModal = ({ productId, onClose }) => {
       <div className="modal-content">
         <div className="modal-header">
           <h3 className="modal-title">Product Details</h3>
-          <FaTimes className="close-icon" onClick={onClose} /> {/* Close icon */}
+          <FaTimes className="close-icon" onClick={onClose} />
         </div>
+
         <div className="modal-body">
-        <div className="product-section">
-              <h4>Images</h4>
-              <div className="product-images">
-                {product.images.map(image => (
-                  <img key={image.id} src={abc} alt="Product" className="product-image" />
-                ))}
-              </div>
+          <div className="product-images">
+            <h4>Product Images</h4>
+            {product.images && product.images.length > 0 ? (
+              product.images.map((img, index) => (
+                <img key={index} src={img.imageUrl} alt="Product" className="product-image" />
+              ))
+            ) : (
+              <p>No images available</p>
+            )}
+          </div>
+
           <div className="product-info">
-            <h4>SKU: {product.sku}</h4>
             <h2>{product.name}</h2>
-            <h3><strong>Rate:</strong>{product.rate}</h3>
+            <h4>SKU: {product.sku}</h4>
+            <h4>Rate: ₹{product.rate}</h4>
+
             <div className="product-section">
               <h4>Site Information</h4>
               <p><strong>Site Name:</strong> {product.site.siteName}</p>
@@ -53,7 +59,6 @@ const ProductDetailsModal = ({ productId, onClose }) => {
             <div className="product-section">
               <h4>Quantity</h4>
               <p><strong>Available Quantity:</strong> {product.productQuantity.availableQty}</p>
-            </div>
             </div>
           </div>
         </div>

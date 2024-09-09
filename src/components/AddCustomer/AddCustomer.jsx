@@ -4,7 +4,6 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { FaTimes } from 'react-icons/fa';
-import { Box } from '@mui/material';
 
 const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
   const [customerName, setCustomerName] = useState('');
@@ -16,11 +15,11 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
   const [customerType, setCustomerType] = useState('Retail');
   const [taxIdentificationNumber, setTaxIdentificationNumber] = useState('');
   const [image, setImage] = useState(null);
-  const [sameAsBilling, setSameAsBilling] = useState(false); // Track checkbox state
-
+  const [sameAsBilling, setSameAsBilling] = useState(false);
+  
   const apiUrl = process.env.REACT_APP_API_URL;
   const [errors, setErrors] = useState({});
-  const [isFormValid, setIsFormValid] = useState(false); // Track form validity
+  const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(() => {
     if (customerId) {
@@ -30,9 +29,9 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
 
   useEffect(() => {
     if (sameAsBilling) {
-      setShippingAddress(billingAddress); // Copy billing to shipping when checkbox is checked
+      setShippingAddress(billingAddress);
     }
-  }, [sameAsBilling, billingAddress]); // Trigger whenever checkbox state or billing address changes
+  }, [sameAsBilling, billingAddress]);
 
   const fetchCustomerData = async (id) => {
     try {
@@ -70,7 +69,7 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
     setCustomerType('Retail');
     setTaxIdentificationNumber('');
     setImage(null);
-    setSameAsBilling(false); // Reset checkbox state
+    setSameAsBilling(false);
     setErrors({});
     setIsFormValid(false);
   };
@@ -85,7 +84,6 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
     if (field === 'emailAddress') setEmailAddress(value);
     if (field === 'taxIdentificationNumber') setTaxIdentificationNumber(value);
 
-    // Field-level validation
     switch (field) {
       case 'customerName':
         if (!value) newErrors.customerName = 'Customer Name is required.';
@@ -117,7 +115,7 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
     }
 
     setErrors(newErrors);
-    setIsFormValid(Object.keys(newErrors).length === 0); // Form is valid if no errors
+    setIsFormValid(Object.keys(newErrors).length === 0);
   };
 
   const handleSave = async () => {
@@ -235,7 +233,7 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
               >
                 <option value="Retail">Retail</option>
                 <option value="Wholesale">Wholesale</option>
-                <option value="Wholesale">Walk-in</option>
+                <option value="Walk-in">Walk-in</option>
               </select>
             </div>
             <div className="add-customer-form-group">
@@ -251,11 +249,10 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
           </div>
         </div>
         <div className="add-customer-form-actions">
-          {/* <button onClick={handleClear} className="add-customer-clear-btn">CLEAR</button> */}
           <button
             onClick={handleSave}
             className="add-customer-save-btn"
-            disabled={!isFormValid} // Disable the save button if form is invalid
+            disabled={!isFormValid}
           >
             Save Customer
           </button>

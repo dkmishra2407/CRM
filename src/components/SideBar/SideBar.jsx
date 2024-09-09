@@ -2,6 +2,7 @@ import React from 'react';
 import './SideBar.css';
 import logo from './company_logo.png'; // Ensure the logo path is correct
 import { Link } from 'react-router-dom';
+import { MdChevronLeft,MdChevronRight,MdStore, MdDashboard, MdGroup, MdInventory, MdPersonAdd, MdLocationOn, MdLabel, MdSecurity } from 'react-icons/md'; // Using Material Design Icons
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   return (
@@ -16,86 +17,68 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         </div>
         <button className="toggle-btn" onClick={toggleSidebar}>
           <span className="material-icons">
-            {isOpen ? 'chevron_left' : 'chevron_right'}
+            {isOpen ? <MdChevronLeft /> : <MdChevronRight />}
           </span>
         </button>
       </div>
       <ul className="sidebar-menu">
         <li>
           <Link to="/webstore" className="menu-link">
-            <span className="material-icons menu-icon">store</span>
+            <MdStore className="menu-icon" />
             {isOpen && <span className="menu-text">Web Store</span>}
           </Link>
         </li>
         <li>
           <Link to="/dashboard" className="menu-link">
-            <span className="material-icons menu-icon">dashboard</span>
+            <MdDashboard className="menu-icon" />
             {isOpen && <span className="menu-text">Dashboard</span>}
           </Link>
         </li>
         <li>
           <Link to="/customer" className="menu-link">
-            <span className="material-icons menu-icon">people</span>
+            <MdGroup className="menu-icon" />
             {isOpen && <span className="menu-text">Customers</span>}
           </Link>
         </li>
         <li>
           <Link to="/inventory" className="menu-link">
-            <span className="material-icons menu-icon">inventory_2</span>
+            <MdInventory className="menu-icon" />
             {isOpen && <span className="menu-text">Inventory</span>}
           </Link>
         </li>
-        {/* <li>
-          <Link to="/sales" className="menu-link">
-            <span className="material-icons menu-icon">shopping_cart</span>
-            {isOpen && <span className="menu-text">Sales</span>}
+        <li>
+          <Link to="/quotation" className="menu-link">
+            <MdInventory className="menu-icon" />
+            {isOpen && <span className="menu-text">Quotation</span>}
           </Link>
-        </li> */}
-        {/* <li>
-          <Link to="/purchase" className="menu-link">
-            <span className="material-icons menu-icon">attach_money</span>
-            {isOpen && <span className="menu-text">Purchase</span>}
-          </Link>
-        </li> */}
-        {/* <li>
-          <Link to="/expenses" className="menu-link">
-            <span className="material-icons menu-icon">pie_chart</span>
-            {isOpen && <span className="menu-text">Expenses</span>}
-          </Link>
-        </li> */}
+        </li>
         <li>
           <Link to="/agents" className="menu-link">
-            <span className="material-icons menu-icon">person</span>
+            <MdPersonAdd className="menu-icon" />
             {isOpen && <span className="menu-text">Agents</span>}
           </Link>
         </li>
-        {/* <li>
-          <Link to="/reports" className="menu-link">
-            <span className="material-icons menu-icon">assessment</span>
-            {isOpen && <span className="menu-text">Reports</span>}
-          </Link>
-        </li> */}
         <li>
           <Link to="/addsites" className="menu-link">
-            <span className="material-icons menu-icon">place</span>
+            <MdLocationOn className="menu-icon" />
             {isOpen && <span className="menu-text">Add Sites</span>}
           </Link>
         </li>
         <li>
           <Link to="/addcategories" className="menu-link">
-            <span className="material-icons menu-icon">label</span>
+            <MdLabel className="menu-icon" />
             {isOpen && <span className="menu-text">Add Category</span>}
           </Link>
         </li>
         <li>
           <Link to="/addroles" className="menu-link">
-            <span className="material-icons menu-icon">label</span>
+            <MdPersonAdd className="menu-icon" />
             {isOpen && <span className="menu-text">Add Role</span>}
           </Link>
         </li>
         <li>
           <Link to="/accesscontol" className="menu-link">
-            <span className="material-icons menu-icon">label</span>
+            <MdSecurity className="menu-icon" />
             {isOpen && <span className="menu-text">Access Control</span>}
           </Link>
         </li>

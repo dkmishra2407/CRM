@@ -87,9 +87,6 @@ const AddCategoryForm = ({ isOpen, onClose, categoryId, onUpdate }) => {
             <button type="submit" className="submit-btn">
               {categoryId ? 'Update Category' : 'Add Category'}
             </button>
-            <button type="button" className="clear-btn" onClick={onClose}>
-              Cancel
-            </button>
           </div>
         </form>
         <ToastContainer />
