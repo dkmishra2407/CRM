@@ -14,7 +14,7 @@ const ProductCard = ({ sku, name, image, rate, category, availableQty, onClick }
     name,
     image,
     rate,
-    category: category?.categoryName,
+    category,
     quantity,
     availableQty,
   };

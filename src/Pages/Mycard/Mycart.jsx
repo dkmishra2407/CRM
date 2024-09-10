@@ -8,9 +8,9 @@ import { Link } from 'react-router-dom';
 import SadhguruTilesLogo from './logos/sadhgurtiles.jpeg'; 
 import DTSLogo from './logos/company_logo.png'; 
 import Header from '../../components/Header/Header';
-
+import { FaTimes } from 'react-icons/fa';
 const MyCart = () => {
-  const { state: { ShoppingCart } } = useCart();
+  const { state: { ShoppingCart }, dispatch } = useCart(); // Add dispatch to update cart
   const [customerId, setCustomerId] = useState('');
   const [agentId, setAgentId] = useState('');
   const [discounts, setDiscounts] = useState(0); // Default discount to 0
@@ -21,6 +21,7 @@ const MyCart = () => {
     phoneNumber: '',
     emailAddress: '',
   });
+  console.log(ShoppingCart)
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Sidebar state
   const subtotal = ShoppingCart.reduce((acc, item) => acc + (item.rate || 0) * (item.quantity || 0), 0);
@@ -51,6 +52,15 @@ const MyCart = () => {
   // Toggle sidebar
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen); // Toggle sidebar state
+  };
+
+  // Handle item deletion from cart
+  const handleDeleteItem = (sku) => {
+    // Dispatch an action to remove the item from the cart
+    dispatch({
+      type: 'REMOVE_FROM_CART',
+      payload: { sku },
+    });
   };
 
   // Handle PDF Download and POST request
@@ -147,7 +157,6 @@ const MyCart = () => {
             { title: "SKU", style: { width: 30 } },
             { title: "Product Name", style: { width: 80 } },
             { title: "Category", style: { width: 30 } },
-            { title: "Image", style: { width: 50 } },
             { title: "Rate (INR)", style: { width: 30 } },
             { title: "Quantity", style: { width: 20 } },
             { title: "Tax", style: { width: 20 } },
@@ -158,7 +167,6 @@ const MyCart = () => {
             item.sku?.toString() || 'N/A',
             item.name?.toString() || 'N/A',
             item.category?.toString() || 'N/A',
-            { type: "PNG", src: item.image || '', width: 30, height: 30 }, // Adjusted image size
             `Rs ${(item.rate || 0).toFixed(2)}`,
             (item.quantity || 0).toString(),
             `Rs ${(item.tax || 0).toFixed(2)}`,
@@ -258,6 +266,7 @@ const MyCart = () => {
                 <th>Quantity</th>
                 <th>Tax</th>
                 <th>Total</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -274,6 +283,11 @@ const MyCart = () => {
                   <td>{item.quantity}</td>
                   <td>Rs {item.tax || 0}</td>
                   <td>Rs {item.rate * item.quantity}</td>
+                  <td>
+                    <button className="delete-btn" onClick={() => handleDeleteItem(item.sku)}>
+                      <FaTimes className="delete-icon" />
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

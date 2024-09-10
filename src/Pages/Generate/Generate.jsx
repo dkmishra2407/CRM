@@ -180,7 +180,7 @@ function Generate() {
                 name={product.name}
                 image={product.image}
                 rate={product.rate}
-                category={product.category.categoryName}
+                category={product.category}
                 availableQty={product.availableQty}
                 onClick={() => handleOpenProductDetailsModal(product.key)}
               />
