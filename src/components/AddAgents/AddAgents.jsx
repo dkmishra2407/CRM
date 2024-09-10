@@ -14,7 +14,7 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId, onUpdate }) => {
   const [active, setActive] = useState(true);
   const [roles, setRoles] = useState([]);
   const [errors, setErrors] = useState({});
-  const [isFormValid, setIsFormValid] = useState(false); // Track form validity
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -22,6 +22,8 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId, onUpdate }) => {
     fetchRoles();
     if (agentId) {
       fetchAgentData(agentId);
+    } else {
+      resetForm();
     }
   }, [agentId]);
 
@@ -44,14 +46,14 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId, onUpdate }) => {
       setRole(agent.role.roleId);
       setRoleDescription(agent.role.roleDescription);
       setActive(agent.active);
-      setPassword(''); // Reset password field for editing
+      setPassword(''); // Clear password field for security
     } catch (err) {
       console.error('Failed to fetch agent data', err);
       toast.error('Failed to load agent data. Please try again.');
     }
   };
 
-  const handleClear = () => {
+  const resetForm = () => {
     setAgentName('');
     setUserName('');
     setPassword('');
@@ -64,29 +66,28 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId, onUpdate }) => {
 
   const handleFieldChange = (field, value) => {
     const newErrors = { ...errors };
-    if (field === 'agentName') setAgentName(value);
-    if (field === 'userName') setUserName(value);
-    if (field === 'password') setPassword(value);
-    if (field === 'role') setRole(value);
-    if (field === 'active') setActive(value === 'true');
 
-    // Field-level validation
     switch (field) {
       case 'agentName':
+        setAgentName(value);
         if (!value) newErrors.agentName = 'Agent Name is required.';
         else delete newErrors.agentName;
         break;
       case 'userName':
+        setUserName(value);
         if (!value) newErrors.userName = 'Username is required.';
         else delete newErrors.userName;
         break;
       case 'password':
-        if (!value && !agentId) newErrors.password = 'Password is required.';
-        else delete newErrors.password;
+        setPassword(value);
         break;
       case 'role':
+        setRole(value);
         if (!value) newErrors.role = 'Role is required.';
         else delete newErrors.role;
+        break;
+      case 'active':
+        setActive(value === 'true');
         break;
       default:
         break;
@@ -97,21 +98,26 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId, onUpdate }) => {
   };
 
   const handleSave = async () => {
-    if (!isFormValid) return; 
+    if (!isFormValid) return;
 
     const agentData = {
       role: { roleId: role },
       associateName: agentName,
       userName,
-      password: password || undefined, 
       active,
     };
 
     try {
       if (agentId) {
-        await onUpdate(agentId, agentData);
+        // PUT request to update an existing agent
+        await axios.put(`${apiUrl}/api/associates/${agentId}`, agentData, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
         toast.success('Agent Updated Successfully!');
       } else {
+        // POST request to create a new agent
         await axios.post(`${apiUrl}/api/associates`, agentData, {
           headers: {
             'Content-Type': 'application/json',
@@ -119,9 +125,9 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId, onUpdate }) => {
         });
         toast.success('Agent Added Successfully!');
       }
-      handleClear();
+      resetForm();
       onClose();
-      window.location.reload();
+      window.location.reload(); // Reload the page to reflect changes
     } catch (err) {
       console.error('Error saving the form', err);
       toast.error('Failed to save the agent. Please try again.');
@@ -160,17 +166,17 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId, onUpdate }) => {
             {errors.userName && <span className="error">{errors.userName}</span>}
           </div>
 
-          <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => handleFieldChange('password', e.target.value)}
-              required={!agentId}
-            />
-            {errors.password && <span className="error">{errors.password}</span>}
-          </div>
+          {!agentId && (
+            <div className="form-group">
+              <label>Password</label>
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => handleFieldChange('password', e.target.value)}
+              />
+            </div>
+          )}
 
           <div className="form-group">
             <label>Role</label>

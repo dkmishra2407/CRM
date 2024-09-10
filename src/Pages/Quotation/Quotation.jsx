@@ -3,12 +3,15 @@ import './Quotation.css'; // CSS specific for Quotations
 import axios from 'axios';
 import Sidebar from '../../components/SideBar/SideBar';
 import Header from '../../components/Header/Header';
+import QoutationModal from '../../components/QoutationModal/QoutationModal'; // Import a Modal component for quotation details
 
 function Quotation() {
   const [quotations, setQuotations] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedQuotation, setSelectedQuotation] = useState(null); // To store the selected quotation
+  const [isModalOpen, setIsModalOpen] = useState(false); // Manage modal visibility
   const quotationsPerPage = 10; // Number of quotations per page
   const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -34,6 +37,26 @@ function Quotation() {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  // Open the modal with quotation details
+  const openQuotationModal = (quotation) => {
+    setSelectedQuotation(quotation);
+    setIsModalOpen(true);
+  };
+
+  // Close the modal
+  const closeModal = () => {
+    setSelectedQuotation(null);
+    setIsModalOpen(false);
+  };
+
+  // Handle the "Sale" button click inside the modal
+  const handleSale = () => {
+    // Logic to process the sale can go here
+    console.log('Processing sale for quotation:', selectedQuotation);
+    // Close the modal after processing
+    closeModal();
   };
 
   // Pagination logic
@@ -103,18 +126,16 @@ function Quotation() {
           </thead>
           <tbody>
             {filteredQuotations.length > 0 ? (
-              filteredQuotations.map((quotation) =>
-                quotation.quotationItemDetails.map((item, index) => (
-                  <tr key={`${quotation.quotationId}-${index}`}>
-                    <td>{quotation.quotationNumber}</td>
-                    <td>{quotation.customer.customerName}</td>
-                    <td>{quotation.quotationDate}</td>
-                    <td>Rs {quotation.subtotal}</td>
-                    <td>Rs {quotation.totalAmount}</td>
-                    <td>{quotation.quotationStatus}</td>
-                  </tr>
-                ))
-              )
+              filteredQuotations.map((quotation) => (
+                <tr key={quotation.quotationId} onClick={() => openQuotationModal(quotation)}>
+                  <td>{quotation.quotationNumber}</td>
+                  <td>{quotation.customer.customerName}</td>
+                  <td>{quotation.quotationDate}</td>
+                  <td>Rs {quotation.subtotal}</td>
+                  <td>Rs {quotation.totalAmount}</td>
+                  <td>{quotation.quotationStatus}</td>
+                </tr>
+              ))
             ) : (
               <tr>
                 <td colSpan="7">No quotations found</td>
@@ -134,6 +155,34 @@ function Quotation() {
           </button>
         </div>
       </div>
+
+      {/* Modal for showing quotation details */}
+      {isModalOpen && selectedQuotation && (
+        <QoutationModal onClose={closeModal}>
+          <h2>Quotation Details</h2>
+          <p><strong>Quotation Number:</strong> {selectedQuotation.quotationNumber}</p>
+          <p><strong>Customer Name:</strong> {selectedQuotation.customer.customerName}</p>
+          <p><strong>Date:</strong> {selectedQuotation.quotationDate}</p>
+          <p><strong>Subtotal:</strong> Rs {selectedQuotation.subtotal}</p>
+          <p><strong>Total Amount:</strong> Rs {selectedQuotation.totalAmount}</p>
+          <p><strong>Status:</strong> {selectedQuotation.quotationStatus}</p>
+
+          {/* Display all items in the quotation */}
+          <h3>Items:</h3>
+          <ul>
+            {selectedQuotation.quotationItemDetails.map((item, index) => (
+              <li key={index}>
+                <p><strong>Product ID:</strong> {item.product.productId}</p>
+                <p><strong>Quantity:</strong> {item.qty}</p>
+                <p><strong>Rate:</strong> Rs {item.rate}</p>
+              </li>
+            ))}
+          </ul>
+
+          {/* Sale button */}
+          <button className="sale-btn" onClick={handleSale}>Sale</button>
+        </QoutationModal>
+      )}
     </>
   );
 }

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import './ProductCard.css';
 import { useCart } from '../../Context/card.context';
+import { toast } from 'react-toastify';
 import abc from './ABC.avif'; // Import the default image
+import { Alert } from '@mui/material';
 
 const ProductCard = ({ sku, name, image, rate, category, availableQty, onClick }) => {
   const [quantity, setQuantity] = useState(1);
@@ -19,13 +21,13 @@ const ProductCard = ({ sku, name, image, rate, category, availableQty, onClick }
 
   // Handle adding the product to the cart
   const addToCart = (e) => {
-    e.stopPropagation(); // Prevent triggering the onClick event of the card
+    e.stopPropagation(); 
+    toast.success("Added Product")
     dispatch({ type: "ADD_TO_CART", payload: product });
   };
 
-  // Handle incrementing the product quantity
   const incrementQuantity = (e) => {
-    e.stopPropagation(); // Prevent triggering the onClick event of the card
+    e.stopPropagation(); 
     const updatedQuantity = quantity + 1;
     setQuantity(updatedQuantity);
     dispatch({ type: "UPDATE_QUANTITY", payload: { ...product, quantity: updatedQuantity } });

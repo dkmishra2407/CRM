@@ -28,8 +28,7 @@ function App() {
       <ToastContainer/>
       <div className='body'>
         <Routes>
-          <Route path="/" element={<MainContent />} />
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={<LoginPage />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/Dashboard" element={<Dashboard />} />
           <Route path="/webstore" element={<Generate />} />

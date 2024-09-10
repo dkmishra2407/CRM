@@ -8,6 +8,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   return (
     <aside className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
       <div className="sidebar-header">
+        <Link to='/webstore'>
         <div className="logo-container">
           {isOpen ? (
             <img src={logo} alt="Company Logo" className="logo" />
@@ -15,6 +16,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <img src={logo} alt="Company Logo" className="logo-collapsed" />
           )}
         </div>
+        </Link>
         <button className="toggle-btn" onClick={toggleSidebar}>
           <span className="material-icons">
             {isOpen ? <MdChevronLeft /> : <MdChevronRight />}

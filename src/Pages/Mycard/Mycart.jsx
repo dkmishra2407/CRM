@@ -5,16 +5,15 @@ import Sidebar from '../../components/SideBar/SideBar';
 import axios from 'axios';
 import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template';
 import { Link } from 'react-router-dom';
-import SadhguruTilesLogo from './logos/sadhgurtiles.jpeg'; // Replace with actual path
-import DTSLogo from './logos/company_logo.png'; // Replace with actual path
+import SadhguruTilesLogo from './logos/sadhgurtiles.jpeg'; 
+import DTSLogo from './logos/company_logo.png'; 
 import Header from '../../components/Header/Header';
 
 const MyCart = () => {
   const { state: { ShoppingCart } } = useCart();
-  // State for customer ID, agent ID, discounts, and customer data
   const [customerId, setCustomerId] = useState('');
   const [agentId, setAgentId] = useState('');
-  const [discounts, setDiscounts] = useState(); // Initialize with 0
+  const [discounts, setDiscounts] = useState(0); // Default discount to 0
   const [customerData, setCustomerData] = useState({
     customerName: '',
     billingAddress: '',
@@ -26,7 +25,7 @@ const MyCart = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Sidebar state
   const subtotal = ShoppingCart.reduce((acc, item) => acc + (item.rate || 0) * (item.quantity || 0), 0);
   const amountReceived = 0; // Example value, adjust as needed
-  const balanceDue = subtotal - amountReceived - parseFloat(discounts); // Subtract discount from total, ensure discounts is treated as a number
+  const balanceDue = subtotal - amountReceived - parseFloat(discounts); // Ensure discounts is treated as a number
   const apiUrl = process.env.REACT_APP_API_URL;
 
   // Fetch customer details
@@ -46,7 +45,7 @@ const MyCart = () => {
     } catch (err) {
       console.log(err);
     }
-    console.log(ShoppingCart)
+    console.log(ShoppingCart);
   };
 
   // Toggle sidebar
@@ -54,116 +53,158 @@ const MyCart = () => {
     setIsSidebarOpen(!isSidebarOpen); // Toggle sidebar state
   };
 
-  // Handle PDF Download
-  const handleDownload = () => {
-    const props = {
-      outputType: OutputType.Save,
-      returnJsPDFDocObject: false,
-      fileName: `Quotation_${customerId || 'Unknown'}`,
-      orientationLandscape: false,
-      compress: true,
-      logo: {
-        src: SadhguruTilesLogo || '', // Default to empty string if logo is missing
-        type: 'JPEG',
-        width: 53.33,
-        height: 26.66,
-        margin: {
-          top: 0,
-          left: 0,
-        },
+  // Handle PDF Download and POST request
+  const handleDownload = async () => {
+    const quotationNumber = `QTN-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-001`;
+    const quotationDate = new Date().toISOString().slice(0, 10);
+
+    // Prepare the quotation data
+    const quotationData = {
+      quotationNumber,
+      quotationDate,
+      customer: {
+        customerId: parseInt(customerId), // Assuming customerId is a number
       },
-      stamp: {
-        inAllPages: false,
-        src: DTSLogo || '',
-        type: 'PNG',
-        width: 20,
-        height: 20,
-        margin: {
-          top: 0,
-          left: 0,
-        },
+      associate: {
+        associateId: parseInt(agentId), // Assuming agentId is a number
       },
-      business: {
-        name: "SADHGURU TILES & MARBLES",
-        address: "Sr. No. 1/3, Yojana Nagar, near HP Petrol Pump...",
-        phone: "0980101989 / 7620870603 / 9011719000",
-        email: "sadhgurutiles@gmail.com",
-        website: "www.sadhgurutiles.com",
-      },
-      contact: {
-        label: "Invoice issued for:",
-        name: customerData.customerName || 'N/A',
-        address: customerData.shippingAddress || 'N/A',
-        phone: customerData.phoneNumber || 'N/A',
-        email: customerData.emailAddress || 'N/A',
-        otherInfo: "",
-      },
-      invoice: {
-        label: "Quotation #: ",
-        num: customerId || 'Unknown',
-        invDate: `Payment Date: ${new Date().toLocaleDateString()}`,
-        invGenDate: `Invoice Date: ${new Date().toLocaleDateString()}`,
-        headerBorder: true,
-        tableBodyBorder: true,
-        header: [
-          { title: "#", style: { width: 10 } },
-          { title: "SKU", style: { width: 30 } },
-          { title: "Product Name", style: { width: 80 } },
-          { title: "Category", style: { width: 30 } },
-          { title: "Image", style: { width: 50 } },
-          { title: "Rate (INR)", style: { width: 30 } },
-          { title: "Quantity", style: { width: 20 } },
-          { title: "Tax", style: { width: 20 } },
-          { title: "Total", style: { width: 30 } },
-        ],
-        table: ShoppingCart.map((item, index) => ([
-          index + 1,
-          item.sku?.toString() || 'N/A',
-          item.name?.toString() || 'N/A',
-          item.category?.toString() || 'N/A',
-          { type: "PNG", src: item.image || '', width: 30, height: 30 }, // Adjusted image size
-          `Rs ${(item.rate || 0).toFixed(2)}`,
-          (item.quantity || 0).toString(),
-          `Rs ${(item.tax || 0).toFixed(2)}`,
-          `Rs ${(item.rate * item.quantity || 0).toFixed(2)}`,
-        ])),
-        additionalRows: [
-          {
-            col1: 'Subtotal:',
-            col2: `Rs ${subtotal.toFixed(2)}`,
-            col3: '',
-            style: { fontSize: 12, fontStyle: 'bold' },
-          },
-          {
-            col1: 'Discount:',
-            col2: `Rs ${parseFloat(discounts).toFixed(2)}`, // Ensure discounts is parsed as a number
-            col3: '',
-            style: { fontSize: 12, fontStyle: 'bold' },
-          },
-          {
-            col1: 'Amount Received:',
-            col2: `Rs ${amountReceived.toFixed(2)}`,
-            col3: '',
-            style: { fontSize: 12, fontStyle: 'bold' },
-          },
-          {
-            col1: 'Balance Due:',
-            col2: `Rs ${balanceDue.toFixed(2)}`,
-            col3: '',
-            style: { fontSize: 12, fontStyle: 'bold' },
-          },
-        ],
-        invDescLabel: "Invoice Note",
-        invDesc: "Thank you for your business! Please make the payment by the due date.",
-      },
-      footer: {
-        text: "The invoice is created on a computer and is valid without the signature and stamp.",
-      },
-      pageEnable: true,
-      pageLabel: "Page ",
+      quotationItemDetails: ShoppingCart.map((item) => ({
+        product: { productId: item.productId }, // Assuming productId is available in the ShoppingCart item
+        qty: item.quantity,
+        rate: item.rate,
+      })),
+      subtotal: subtotal,
+      discounts: parseFloat(discounts),
+      taxAmount: ShoppingCart.reduce((acc, item) => acc + (item.tax || 0), 0), // Assuming tax field in each item
+      totalAmount: balanceDue,
+      validityPeriod: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString().slice(0, 10), // 30 days from now
+      notesComments: "This quotation is valid for 30 days.",
+      quotationStatus: "Pending",
+      followUpDate: new Date(new Date().setDate(new Date().getDate() + 5)).toISOString().slice(0, 10), // Follow-up 5 days from now
     };
 
-    jsPDFInvoiceTemplate(props);
+    try {
+      // Send POST request to save the quotation
+      const response = await axios.post(`${apiUrl}/api/quotations`, quotationData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log("Quotation saved successfully:", response.data);
+
+      // Proceed with PDF generation after successful POST request
+      const props = {
+        outputType: OutputType.Save,
+        returnJsPDFDocObject: false,
+        fileName: `Quotation_${customerId || 'Unknown'}`,
+        orientationLandscape: false,
+        compress: true,
+        logo: {
+          src: SadhguruTilesLogo || '', // Default to empty string if logo is missing
+          type: 'JPEG',
+          width: 53.33,
+          height: 26.66,
+          margin: {
+            top: 0,
+            left: 0,
+          },
+        },
+        stamp: {
+          inAllPages: false,
+          src: DTSLogo || '',
+          type: 'PNG',
+          width: 20,
+          height: 20,
+          margin: {
+            top: 0,
+            left: 0,
+          },
+        },
+        business: {
+          name: "SADHGURU TILES & MARBLES",
+          address: "Sr. No. 1/3, Yojana Nagar, near HP Petrol Pump...",
+          phone: "0980101989 / 7620870603 / 9011719000",
+          email: "sadhgurutiles@gmail.com",
+          website: "www.sadhgurutiles.com",
+        },
+        contact: {
+          label: "Invoice issued for:",
+          name: customerData.customerName || 'N/A',
+          address: customerData.shippingAddress || 'N/A',
+          phone: customerData.phoneNumber || 'N/A',
+          email: customerData.emailAddress || 'N/A',
+          otherInfo: "",
+        },
+        invoice: {
+          label: "Quotation #: ",
+          num: customerId || 'Unknown',
+          invDate: `Payment Date: ${new Date().toLocaleDateString()}`,
+          invGenDate: `Invoice Date: ${new Date().toLocaleDateString()}`,
+          headerBorder: true,
+          tableBodyBorder: true,
+          header: [
+            { title: "#", style: { width: 10 } },
+            { title: "SKU", style: { width: 30 } },
+            { title: "Product Name", style: { width: 80 } },
+            { title: "Category", style: { width: 30 } },
+            { title: "Image", style: { width: 50 } },
+            { title: "Rate (INR)", style: { width: 30 } },
+            { title: "Quantity", style: { width: 20 } },
+            { title: "Tax", style: { width: 20 } },
+            { title: "Total", style: { width: 30 } },
+          ],
+          table: ShoppingCart.map((item, index) => ([
+            index + 1,
+            item.sku?.toString() || 'N/A',
+            item.name?.toString() || 'N/A',
+            item.category?.toString() || 'N/A',
+            { type: "PNG", src: item.image || '', width: 30, height: 30 }, // Adjusted image size
+            `Rs ${(item.rate || 0).toFixed(2)}`,
+            (item.quantity || 0).toString(),
+            `Rs ${(item.tax || 0).toFixed(2)}`,
+            `Rs ${(item.rate * item.quantity || 0).toFixed(2)}`,
+          ])),
+          additionalRows: [
+            {
+              col1: 'Subtotal:',
+              col2: `Rs ${subtotal.toFixed(2)}`,
+              col3: '',
+              style: { fontSize: 12, fontStyle: 'bold' },
+            },
+            {
+              col1: 'Discount:',
+              col2: `Rs ${parseFloat(discounts).toFixed(2)}`, // Ensure discounts is parsed as a number
+              col3: '',
+              style: { fontSize: 12, fontStyle: 'bold' },
+            },
+            {
+              col1: 'Amount Received:',
+              col2: `Rs ${amountReceived.toFixed(2)}`,
+              col3: '',
+              style: { fontSize: 12, fontStyle: 'bold' },
+            },
+            {
+              col1: 'Balance Due:',
+              col2: `Rs ${balanceDue.toFixed(2)}`,
+              col3: '',
+              style: { fontSize: 12, fontStyle: 'bold' },
+            },
+          ],
+          invDescLabel: "Invoice Note",
+          invDesc: "Thank you for your business! Please make the payment by the due date.",
+        },
+        footer: {
+          text: "The invoice is created on a computer and is valid without the signature and stamp.",
+        },
+        pageEnable: true,
+        pageLabel: "Page ",
+      };
+
+      jsPDFInvoiceTemplate(props);
+
+    } catch (err) {
+      console.error("Error saving quotation:", err);
+    }
   };
 
   return (
@@ -172,6 +213,7 @@ const MyCart = () => {
       <div className={`my-cart-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         <div className="my-cart">
+        <h1>Generate Quotation</h1>
           <div className="customer-details">
             <input
               type="text"

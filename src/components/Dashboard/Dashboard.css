@@ -22,6 +22,20 @@ body {
     margin-left: -250px; /* Adjust according to sidebar width */
 }
 
+.sidebar-open-dashboard {
+    margin-left: 0; /* No margin when the sidebar is open */
+    width: 100vw; /* Fixed width for the open sidebar */
+    transition: margin-left 0.3s ease, width 0.3s ease; 
+    display: flex; /* Flexbox for layout */
+    flex-direction: column; /* Stack items vertically */
+    padding: 20px; /* Padding inside the sidebar */
+}
+
+.sidebar-closed-dashboard {
+    transition: margin-left 0.3s ease; /* Smooth transition for closing */
+    width: 90vw;
+}
+
 .sidebar {
     width: 250px;
     background-color: #343a40;

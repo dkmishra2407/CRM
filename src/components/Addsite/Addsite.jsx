@@ -123,6 +123,7 @@ const Addsites = ({ isOpen, onClose, siteId, onUpdate }) => {
                             value={siteContact}
                             onChange={(e) => setSiteContact(e.target.value)}
                             placeholder="Enter site contact"
+                            maxLength={10}
                             required
                         />
                     </div>
@@ -135,6 +136,7 @@ const Addsites = ({ isOpen, onClose, siteId, onUpdate }) => {
                             value={siteCode}
                             onChange={(e) => setSiteCode(e.target.value)}
                             placeholder="Enter site code"
+                            maxLength={10}
                             required
                         />
                     </div>

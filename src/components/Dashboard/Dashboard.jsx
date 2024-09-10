@@ -15,7 +15,7 @@ const Dashboard = () => {
   return (
     <>
     <Header className="UniversalHeader"/>
-    <div className={`dashboard ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+    <div className={`dashboard ${isSidebarOpen ? 'sidebar-open-dashboard' : 'sidebar-closed-dashboard'}`}>
       <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} /> {/* Sidebar toggles itself */}
       <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`}>
       <div className='heading-no-1'>

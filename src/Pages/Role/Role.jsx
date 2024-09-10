@@ -135,7 +135,6 @@ function Roles() {
             <th>Id</th>
             <th>Name</th>
             <th>Description</th>
-            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -145,10 +144,6 @@ function Roles() {
                 <td>{role.roleId}</td>
                 <td>{role.roleName || 'N/A'}</td>
                 <td>{role.roleDescription || 'N/A'}</td>
-                <td>
-                  <button className="action-btn view-btn" onClick={() => handleEdit(role.roleId)}>Edit</button>
-                  <button className="action-btn delete-btn" onClick={() => handleDelete(role.roleId)}>Delete</button>
-                </td>
               </tr>
             ))
           ) : (

@@ -7,7 +7,7 @@ const Header = () => {
   return (
     <header className="header">
       <div className="logo">
-        <span className="logo-text gradient-text">DigiTechno</span>
+        <Link to='/webstore'><span className="logo-text gradient-text">DigiTechno</span></Link>
         <span className="logo-sol gradient-text"> Sol</span>
         <FaBolt className="logo-icon" />
       </div>

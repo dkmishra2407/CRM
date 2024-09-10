@@ -13,7 +13,6 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
   const [billingAddress, setBillingAddress] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
   const [customerType, setCustomerType] = useState('Retail');
-  const [taxIdentificationNumber, setTaxIdentificationNumber] = useState('');
   const [image, setImage] = useState(null);
   const [sameAsBilling, setSameAsBilling] = useState(false);
   
@@ -45,7 +44,6 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
       setShippingAddress(customer.shippingAddress);
       setEmailAddress(customer.emailAddress);
       setCustomerType(customer.customerType);
-      setTaxIdentificationNumber(customer.taxIdentificationNumber);
       setImage(customer.imageUrl || null);
     } catch (err) {
       console.error('Failed to fetch customer data', err);
@@ -67,7 +65,6 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
     setShippingAddress('');
     setEmailAddress('');
     setCustomerType('Retail');
-    setTaxIdentificationNumber('');
     setImage(null);
     setSameAsBilling(false);
     setErrors({});
@@ -82,7 +79,6 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
     if (field === 'shippingAddress') setShippingAddress(value);
     if (field === 'billingAddress') setBillingAddress(value);
     if (field === 'emailAddress') setEmailAddress(value);
-    if (field === 'taxIdentificationNumber') setTaxIdentificationNumber(value);
 
     switch (field) {
       case 'customerName':
@@ -129,7 +125,6 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
       shippingAddress,
       emailAddress,
       customerType,
-      taxIdentificationNumber,
     };
 
     try {
@@ -236,23 +231,12 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
                 <option value="Walk-in">Walk-in</option>
               </select>
             </div>
-            <div className="add-customer-form-group">
-              <label>Tax Identification Number</label>
-              <input
-                type="text"
-                placeholder="Enter Tax Identification Number"
-                value={taxIdentificationNumber}
-                onChange={(e) => handleFieldChange('taxIdentificationNumber', e.target.value)}
-              />
-              {errors.taxIdentificationNumber && <span className="add-customer-error">{errors.taxIdentificationNumber}</span>}
-            </div>
           </div>
         </div>
         <div className="add-customer-form-actions">
           <button
             onClick={handleSave}
             className="add-customer-save-btn"
-            disabled={!isFormValid}
           >
             Save Customer
           </button>
