@@ -80,6 +80,8 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId, onUpdate }) => {
         break;
       case 'password':
         setPassword(value);
+        if (!value) newErrors.password = 'Password is required.';
+        else delete newErrors.password;
         break;
       case 'role':
         setRole(value);
@@ -104,6 +106,7 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId, onUpdate }) => {
       role: { roleId: role },
       associateName: agentName,
       userName,
+      password,
       active,
     };
 
