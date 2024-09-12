@@ -9,9 +9,15 @@ const Header = () => {
   const { dispatch } = usePage(); 
 
   const handleLogout = () => {
+    // Clear page access and authentication in context
     dispatch({ type: "SET_PAGES", payload: [] });
-    localStorage.removeItem('userSession');
 
+    // Clear local storage for session management
+    localStorage.removeItem('pageAccess');
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('lastVisitedPage');
+
+    // Redirect to login page
     navigate('/');
   };
 

@@ -21,14 +21,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  /* padding: 20px; */
 }
 
 .logo-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 10px;
+  margin-right: 4px;
 }
 
 .logo {
@@ -52,6 +52,7 @@
   padding: 0;
   margin: 0;
   flex-grow: 1;
+  overflow-y: auto;
 }
 
 .menu-link {
@@ -71,15 +72,17 @@
 
 .menu-icon {
   font-size: 24px;
-  margin-right: 20px;
   color: white;
 }
 
 .menu-text {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 500;
   flex-grow: 1; /* Ensure the text grows */
+  margin-left: 10px;
 }
+
+
 
 .sidebar.closed .menu-text {
   display: none; /* Hide text in collapsed sidebar */

@@ -106,9 +106,9 @@ const App = () => {
     const storedPages = localStorage.getItem('pageAccess');
     const storedAuth = localStorage.getItem('isAuthenticated');
     const lastVisitedPage = localStorage.getItem('lastVisitedPage');
-
+    console.log(storedPages)
     if (storedPages && storedAuth === 'true') {
-      const pageNames = JSON.parse(storedPages).map(page => page.pageName.toLowerCase());
+      const pageNames = JSON.parse(storedPages).map(page => page.pageName);
       setAccessiblePages(pageNames);
       setIsAuthenticated(true);
 
@@ -139,14 +139,6 @@ const App = () => {
     localStorage.setItem('lastVisitedPage', '/dashboard'); // Default page after login
   };
 
-  // Function to handle logout
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    setAccessiblePages([]);
-    localStorage.removeItem('pageAccess');
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('lastVisitedPage');
-  };
 
   if (loading) {
     return <div>Loading...</div>; // Display loading state while session is being verified
@@ -166,7 +158,7 @@ const App = () => {
           {isAuthenticated && accessiblePages.includes('webstore') && (
             <Route path="/webstore" element={<Generate />} />
           )}
-          {isAuthenticated && accessiblePages.includes('mycart')  && (
+          {isAuthenticated   && (
             <Route path="/mycart" element={<MyCart />} />
           )}
           {isAuthenticated && accessiblePages.includes('addproduct') && (
@@ -175,7 +167,7 @@ const App = () => {
           {isAuthenticated && accessiblePages.includes('addagent') && (
             <Route path="/addagent" element={<AddSalesAgentForm />} />
           )}
-          {isAuthenticated && accessiblePages.includes('agents') && (
+          {isAuthenticated &&   (
             <Route path="/agents" element={<Agent />} />
           )}
           {isAuthenticated && accessiblePages.includes('createinvoice') && (
@@ -193,17 +185,16 @@ const App = () => {
           {isAuthenticated && accessiblePages.includes('customer') && (
             <Route path='/customer' element={<Customer />} />
           )}
-          {isAuthenticated && accessiblePages.includes('addroles') && (
+          {isAuthenticated  && (
             <Route path='/addroles' element={<Roles />} />
           )}
-          {isAuthenticated && accessiblePages.includes('accesscontrol') && (
-            <Route path='/accesscontrol' element={<AccessControl />} />
+          {isAuthenticated && accessiblePages.includes('accessControl') && (
+            <Route path='/accessControl' element={<AccessControl />} />
           )}
-          {isAuthenticated && accessiblePages.includes('quotation') && (
+          {isAuthenticated  && (
             <Route path='/quotation' element={<Quotation />} />
           )}
-        {/* Default redirect to login if user is not authenticated */}
-        <Route path="*" element={<Navigate to={isAuthenticated ? location.pathname : "/"} />} />
+        <Route path="*" element={<Navigate to={isAuthenticated ? '/webstore' : "/"} />} />
       </Routes>
     </div>
   );
