@@ -1,89 +1,65 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './SideBar.css';
-import logo from './company_logo.png'; // Ensure the logo path is correct
+import logo from './company_logo.png';
 import { Link } from 'react-router-dom';
-import { MdChevronLeft,MdChevronRight,MdStore, MdDashboard, MdGroup, MdInventory, MdPersonAdd, MdLocationOn, MdLabel, MdSecurity } from 'react-icons/md'; // Using Material Design Icons
+import { MdChevronLeft, MdChevronRight, MdStore, MdDashboard, MdGroup, MdInventory, MdPersonAdd, MdLocationOn, MdLabel, MdSecurity } from 'react-icons/md';
+import { usePage } from '../../Context/page-context'; // Import the PageContext
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
+  const { state } = usePage(); // Get the page access from the context
+  const [accessiblePages, setAccessiblePages] = useState([]);
+
+  // Load page access from localStorage if state is empty (e.g., after a page refresh)
+  useEffect(() => {
+    if (state.pageAccess && state.pageAccess.length > 0) {
+      setAccessiblePages(state.pageAccess.map(page => page.pageName));
+    } else {
+      const storedPages = localStorage.getItem('pageAccess');
+      if (storedPages) {
+        setAccessiblePages(JSON.parse(storedPages).map(page => page.pageName));
+      }
+    }
+  }, [state.pageAccess]);
+
+  // Mapping of pageName to respective icon and link
+  const pageMapping = {
+    webstore: { icon: <MdStore />, label: 'Web Store', link: '/webstore' },
+    dashboard: { icon: <MdDashboard />, label: 'Dashboard', link: '/dashboard' },
+    customer: { icon: <MdGroup />, label: 'Customers', link: '/customer' },
+    inventory: { icon: <MdInventory />, label: 'Inventory', link: '/inventory' },
+    quotation: { icon: <MdInventory />, label: 'Quotation', link: '/quotation' },
+    agents: { icon: <MdPersonAdd />, label: 'Agents', link: '/agents' },
+    addsites: { icon: <MdLocationOn />, label: 'Add Sites', link: '/addsites' },
+    addcategories: { icon: <MdLabel />, label: 'Add Category', link: '/addcategories' },
+    addroles: { icon: <MdPersonAdd />, label: 'Add Role', link: '/addroles' },
+    accesscontrol: { icon: <MdSecurity />, label: 'Access Control', link: '/accesscontrol' },
+  };
+
   return (
     <aside className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
       <div className="sidebar-header">
         <Link to='/webstore'>
-        <div className="logo-container">
-          {isOpen ? (
-            <img src={logo} alt="Company Logo" className="logo" />
-          ) : (
-            <img src={logo} alt="Company Logo" className="logo-collapsed" />
-          )}
-        </div>
+          <div className="logo-container">
+            <img src={logo} alt="Company Logo" className={`logo ${isOpen ? '' : 'logo-collapsed'}`} />
+          </div>
         </Link>
         <button className="toggle-btn" onClick={toggleSidebar}>
-          <span className="material-icons">
-            {isOpen ? <MdChevronLeft /> : <MdChevronRight />}
-          </span>
+          {isOpen ? <MdChevronLeft /> : <MdChevronRight />}
         </button>
       </div>
       <ul className="sidebar-menu">
-        <li>
-          <Link to="/webstore" className="menu-link">
-            <MdStore className="menu-icon" />
-            {isOpen && <span className="menu-text">Web Store</span>}
-          </Link>
-        </li>
-        <li>
-          <Link to="/dashboard" className="menu-link">
-            <MdDashboard className="menu-icon" />
-            {isOpen && <span className="menu-text">Dashboard</span>}
-          </Link>
-        </li>
-        <li>
-          <Link to="/customer" className="menu-link">
-            <MdGroup className="menu-icon" />
-            {isOpen && <span className="menu-text">Customers</span>}
-          </Link>
-        </li>
-        <li>
-          <Link to="/inventory" className="menu-link">
-            <MdInventory className="menu-icon" />
-            {isOpen && <span className="menu-text">Inventory</span>}
-          </Link>
-        </li>
-        <li>
-          <Link to="/quotation" className="menu-link">
-            <MdInventory className="menu-icon" />
-            {isOpen && <span className="menu-text">Quotation</span>}
-          </Link>
-        </li>
-        <li>
-          <Link to="/agents" className="menu-link">
-            <MdPersonAdd className="menu-icon" />
-            {isOpen && <span className="menu-text">Agents</span>}
-          </Link>
-        </li>
-        <li>
-          <Link to="/addsites" className="menu-link">
-            <MdLocationOn className="menu-icon" />
-            {isOpen && <span className="menu-text">Add Sites</span>}
-          </Link>
-        </li>
-        <li>
-          <Link to="/addcategories" className="menu-link">
-            <MdLabel className="menu-icon" />
-            {isOpen && <span className="menu-text">Add Category</span>}
-          </Link>
-        </li>
-        <li>
-          <Link to="/addroles" className="menu-link">
-            <MdPersonAdd className="menu-icon" />
-            {isOpen && <span className="menu-text">Add Role</span>}
-          </Link>
-        </li>
-        <li>
-          <Link to="/accesscontol" className="menu-link">
-            <MdSecurity className="menu-icon" />
-            {isOpen && <span className="menu-text">Access Control</span>}
-          </Link>
-        </li>
+        {accessiblePages.map((pageName) => {
+          const page = pageMapping[pageName.toLowerCase()];
+          if (!page) return null; // Ignore pages that don't match
+          return (
+            <li key={pageName}>
+              <Link to={page.link} className="menu-link">
+                {page.icon}
+                {isOpen && <span className="menu-text">{page.label}</span>}
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </aside>
   );

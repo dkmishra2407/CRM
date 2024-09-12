@@ -7,24 +7,59 @@ import ellipse3 from './Ellipse4.png';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
+import { usePage } from '../../Context/page-context'; // Import PageContext
 
-const LoginPage = () => {
+const LoginPage = ({ onLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [user, setUser] = useState('');
   const [pass, setPass] = useState('');
-
-  const correctUsername = "Devansh";
-  const correctPassword = "123";
-
   const navigate = useNavigate();
+  const { dispatch } = usePage(); // Use the dispatch from PageContext
+  const apiUrl = process.env.REACT_APP_API_URL;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (user === correctUsername && pass === correctPassword) {
-      toast.success("Logged In Successfully!");
-      navigate("/Dashboard");
-    } else {
-      toast.error("Username or Password does not match!");
+
+    const loginData = { userName: user, password: pass };
+
+    try {
+      const response = await fetch(`${apiUrl}/api/associates/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(loginData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+
+      const data = await response.json();
+
+      if (data.active) {
+        const pages = data.role.rolePageXrefs.map((xref) => xref.page);
+
+        // Dispatch accessible pages to context
+        dispatch({ type: 'SET_PAGES', payload: pages });
+
+        // Store user session in localStorage
+        localStorage.setItem('user', JSON.stringify(data));
+        localStorage.setItem('pageAccess', JSON.stringify(pages));
+
+        // Call the onLogin callback to update the App.js state
+        onLogin(pages);
+
+        // Navigate to the first accessible page
+        if (pages.length > 0) {
+          const firstPage = pages[0].pageName;
+          navigate('/webstore');
+        } else {
+          toast.error('No accessible pages found for your role.');
+        }
+      } else {
+        toast.error('User is not active.');
+      }
+    } catch (error) {
+      toast.error(error.message);
     }
   };
 

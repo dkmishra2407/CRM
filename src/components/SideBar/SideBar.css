@@ -1,13 +1,16 @@
 /* Sidebar container styling */
 
 @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0");
+
 .sidebar {
   width: 250px;
   height: 100vh;
   background-color: #2c3e50;
   transition: width 0.3s ease;
   color: white;
-  margin-top: 75px;
+  margin-top: 95px;
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar.closed {
@@ -48,6 +51,7 @@
   list-style: none;
   padding: 0;
   margin: 0;
+  flex-grow: 1;
 }
 
 .menu-link {
@@ -57,21 +61,24 @@
   color: white;
   text-decoration: none;
   transition: background-color 0.3s ease;
+  border-left: 4px solid transparent; /* Add visual feedback */
 }
 
 .menu-link:hover {
   background-color: #34495e;
+  border-left: 4px solid #f39c12; /* Highlight active on hover */
 }
 
 .menu-icon {
-  font-size: 30px;
+  font-size: 24px;
   margin-right: 20px;
-  color: white; /* Set the color to white for visibility */
+  color: white;
 }
 
 .menu-text {
   font-size: 16px;
   font-weight: 500;
+  flex-grow: 1; /* Ensure the text grows */
 }
 
 .sidebar.closed .menu-text {
@@ -83,11 +90,6 @@
   display: flex;
   justify-content: center;
   width: 100%;
-}
-
-.sidebar .menu-icon {
-  color: white; /* Ensure the icons are white */
-  font-size: 24px; /* Adjust icon size */
 }
 
 /* Adjusting for smaller screens */

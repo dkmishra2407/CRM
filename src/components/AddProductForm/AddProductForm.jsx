@@ -16,6 +16,7 @@ const AddProductForm = () => {
   const [categories, setCategories] = useState([]);
   const [showForm, setShowForm] = useState(true);
   const [rate, setRate] = useState();
+  const [isSubmitting, setIsSubmitting] = useState(false); // Add a loading state
 
   const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -80,6 +81,9 @@ const AddProductForm = () => {
   const addProduct = async (e) => {
     e.preventDefault();
 
+    // Disable button and show loading state
+    setIsSubmitting(true);
+
     try {
       const imageDetails = await uploadImages();
 
@@ -110,6 +114,8 @@ const AddProductForm = () => {
       window.location.reload();
     } catch (error) {
       toast.error('Failed to add product.');
+      // Re-enable button in case of error
+      setIsSubmitting(false);
     }
   };
 
@@ -207,7 +213,6 @@ const AddProductForm = () => {
                 type="button"
                 onClick={() => handleQuantityChange(-1)}
                 className="quantity-btn-product-form"
-                placeholder="Quantity"
               >
                 -
               </button>
@@ -243,9 +248,9 @@ const AddProductForm = () => {
           <button
             type="submit"
             className="product-form-submit-button"
-            disabled={!sku || !name || !siteId || !categoryId}
+            disabled={isSubmitting || !sku || !name || !siteId || !categoryId} // Disable button if form is incomplete or submitting
           >
-            Save Product
+            {isSubmitting ? 'Saving...' : 'Save Product'}
           </button>
         </form>
       </div>

@@ -4,6 +4,7 @@ import axios from 'axios';
 import Sidebar from '../../components/SideBar/SideBar';
 import Header from '../../components/Header/Header';
 import QoutationModal from '../../components/QoutationModal/QoutationModal'; // Import a Modal component for quotation details
+import { Link } from 'react-router-dom';
 
 function Quotation() {
   const [quotations, setQuotations] = useState([]);
@@ -180,7 +181,7 @@ function Quotation() {
           </ul>
 
           {/* Sale button */}
-          <button className="sale-btn" onClick={handleSale}>Sale</button>
+         <Link to='/invoice'><button className="sale-btn" onClick={handleSale}>Sale</button></Link>
         </QoutationModal>
       )}
     </>
