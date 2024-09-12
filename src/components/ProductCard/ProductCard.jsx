@@ -3,13 +3,13 @@ import './ProductCard.css';
 import { useCart } from '../../Context/card.context';
 import { toast } from 'react-toastify';
 import abc from './ABC.avif'; // Import the default image
-import { Alert } from '@mui/material';
 
-const ProductCard = ({ sku, name, image, rate, category, availableQty, onClick }) => {
+const ProductCard = ({ id, sku, name, image, rate, category, availableQty, onClick }) => {
   const [quantity, setQuantity] = useState(1);
   const { dispatch } = useCart();
-  // Product details to be dispatched with cart actions
+  // Product details to be dispatched with cart actions, including the id
   const product = {
+    id,        // Include the product id
     sku,
     name,
     image,
@@ -22,7 +22,7 @@ const ProductCard = ({ sku, name, image, rate, category, availableQty, onClick }
   // Handle adding the product to the cart
   const addToCart = (e) => {
     e.stopPropagation(); 
-    toast.success("Added Product")
+    toast.success("Added Product");
     dispatch({ type: "ADD_TO_CART", payload: product });
   };
 

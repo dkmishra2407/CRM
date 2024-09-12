@@ -9,6 +9,7 @@ import SadhguruTilesLogo from './logos/sadhgurtiles.jpeg';
 import DTSLogo from './logos/company_logo.png'; 
 import Header from '../../components/Header/Header';
 import { FaTimes } from 'react-icons/fa';
+
 const MyCart = () => {
   const { state: { ShoppingCart }, dispatch } = useCart(); // Add dispatch to update cart
   const [customerId, setCustomerId] = useState('');
@@ -22,12 +23,13 @@ const MyCart = () => {
     emailAddress: '',
   });
   console.log(ShoppingCart)
-
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Sidebar state
   const subtotal = ShoppingCart.reduce((acc, item) => acc + (item.rate || 0) * (item.quantity || 0), 0);
   const amountReceived = 0; // Example value, adjust as needed
   const balanceDue = subtotal - amountReceived - parseFloat(discounts); // Ensure discounts is treated as a number
   const apiUrl = process.env.REACT_APP_API_URL;
+
+
 
   // Fetch customer details
   const handleCustomer = async () => {
@@ -46,10 +48,8 @@ const MyCart = () => {
     } catch (err) {
       console.log(err);
     }
-    console.log(ShoppingCart);
   };
 
-  // Toggle sidebar
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen); // Toggle sidebar state
   };
@@ -73,16 +73,17 @@ const MyCart = () => {
       quotationNumber,
       quotationDate,
       customer: {
-        customerId: parseInt(customerId), // Assuming customerId is a number
+        customerId: parseInt(customerId), 
       },
       associate: {
-        associateId: parseInt(agentId), // Assuming agentId is a number
+        associateId: parseInt(agentId), 
       },
       quotationItemDetails: ShoppingCart.map((item) => ({
-        product: { productId: item.productId }, // Assuming productId is available in the ShoppingCart item
+        product: { productId: item.id }, 
         qty: item.quantity,
         rate: item.rate,
       })),
+    
       subtotal: subtotal,
       discounts: parseFloat(discounts),
       taxAmount: ShoppingCart.reduce((acc, item) => acc + (item.tax || 0), 0), // Assuming tax field in each item
@@ -93,16 +94,17 @@ const MyCart = () => {
       followUpDate: new Date(new Date().setDate(new Date().getDate() + 5)).toISOString().slice(0, 10), // Follow-up 5 days from now
     };
 
+    console.log(quotationData);
+
     try {
-      // Send POST request to save the quotation
       const response = await axios.post(`${apiUrl}/api/quotations`, quotationData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
+
       console.log("Quotation saved successfully:", response.data);
 
-      // Proceed with PDF generation after successful POST request
       const props = {
         outputType: OutputType.Save,
         returnJsPDFDocObject: false,
@@ -221,7 +223,7 @@ const MyCart = () => {
       <div className={`my-cart-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         <div className="my-cart">
-        <h1>Generate Quotation</h1>
+          <h1>Generate Quotation</h1>
           <div className="customer-details">
             <input
               type="text"
