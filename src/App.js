@@ -85,6 +85,7 @@ import Roles from './Pages/Role/Role';
 import AccessControl from './Pages/AccessControl/AccessControl';
 import Quotation from './Pages/Quotation/Quotation';
 import { ToastContainer } from 'react-toastify';
+import InvoicePage from './Pages/Invoice/Invoice';
 import 'react-toastify/dist/ReactToastify.css';
 
 const AppWrapper = () => {
@@ -170,19 +171,19 @@ const App = () => {
           {isAuthenticated &&   (
             <Route path="/agents" element={<Agent />} />
           )}
-          {isAuthenticated && accessiblePages.includes('createinvoice') && (
+          {isAuthenticated  && (
             <Route path="/mycart/createinvoice" element={<CreateInvoiceComponent />} />
           )}
-          {isAuthenticated && accessiblePages.includes('addcategories') && (
+          {isAuthenticated  && (
             <Route path='/addcategories' element={<ShowAllCategory />} />
           )}
           {isAuthenticated && accessiblePages.includes('inventory') && (
             <Route path='/inventory' element={<Inventory />} />
           )}
-          {isAuthenticated && accessiblePages.includes('addsites') && (
+          {isAuthenticated  && (
             <Route path='/addsites' element={<Sites />} />
           )}
-          {isAuthenticated && accessiblePages.includes('customer') && (
+          {isAuthenticated  && (
             <Route path='/customer' element={<Customer />} />
           )}
           {isAuthenticated  && (
@@ -193,6 +194,9 @@ const App = () => {
           )}
           {isAuthenticated  && (
             <Route path='/quotation' element={<Quotation />} />
+          )}
+          {isAuthenticated  && (
+            <Route path='/invoice' element={<InvoicePage />} />
           )}
         <Route path="*" element={<Navigate to={isAuthenticated ? '/webstore' : "/"} />} />
       </Routes>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './SideBar.css';
-import logo from './company_logo.png';
+import logo from './logo1.jpg';
 import { Link } from 'react-router-dom';
 import { MdChevronLeft, MdChevronRight, MdStore, MdDashboard, MdGroup, MdInventory, MdPersonAdd, MdLocationOn, MdLabel, MdSecurity } from 'react-icons/md';
 import { usePage } from '../../Context/page-context'; // Import the PageContext
