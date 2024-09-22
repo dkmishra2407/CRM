@@ -8,7 +8,7 @@
   text-align: center;
   margin: 20px;
   padding: 20px; /* Increased padding for more space */
-  max-width: 300px; /* Limit card width for better responsiveness */
+  max-width: 400px; /* Limit card width for better responsiveness */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -66,9 +66,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 15px; /* Increased spacing */
+  margin-bottom: 2px; /* Increased spacing */
+  padding-left: 10px;
 }
 
+.quantity-control input{
+   border: none;
+   width: 30px;
+   height: 30px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
 .quantity-control button {
   background-color: #007bff;
   color: white;

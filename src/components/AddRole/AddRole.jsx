@@ -84,7 +84,7 @@ const AddRoleForm = ({ isOpen, onClose, roleId, onUpdate }) => {
           </div>
 
           <div className="form-actions">
-            <button type="submit" className="submit-btn">
+            <button type="submit" className="submit-btn-role">
               {roleId ? 'Update Role' : 'Add Role'}
             </button>
           </div>

@@ -6,10 +6,48 @@
     transition: transform 0.2s, box-shadow 0.2s;
     background-color: #fff;
     text-align: center;
-    margin: 20px;
     padding: 15px;
   }
+  .Inventory-wala-card{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+  }
   
+  
+  .quantity-control {
+    display: flex;
+    align-items: center; /* Center items vertically */
+    justify-content: center;
+    padding-left: 80px;
+  }
+  
+  .quantity-control input {
+    width: 50px; /* Set a fixed width for the input */
+    text-align: center; /* Center text in the input */
+  }
+  
+  .add-to-cart {
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white;
+    border: none;
+    padding: 10px 20px; /* Add padding for a better look */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer;
+  }
+  
+  .add-to-cart:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+  }
+  
+  .card-content {
+    display: flex;
+    justify-content: space-between; /* Space out content evenly */
+  }
+  .product-inventory-image{
+    object-fit: contain;
+  }
   .product-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);

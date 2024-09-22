@@ -115,15 +115,15 @@ function ShowAllCategory() {
           Add Category
         </div>
       </div>
-      <div className="category-search-container">
+      <div className="search-bar-container">
         <input
           type="text"
           placeholder="Search by name or description"
-          className="category-search-bar"
+          className="search-bar"
           value={searchTerm}
           onChange={handleSearchTermChange}
         />
-        <div className="category-search-icon">
+        <div className="search-icon">
           <span className="material-icons">search</span>
         </div>
       </div>

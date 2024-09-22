@@ -21,13 +21,13 @@ const Dashboard = () => {
       <div className='heading-no-1'>
         <h1 className="customers-page-title">Dashboard</h1>
         </div>
-        <div className="customer-search-container">
+        <div className="search-bar-container">
           <input
             type="text"
             placeholder="Search Customers / Invoice No / Quotation No"
-            className="customer-search-bar"
+            className="search-bar"
           />
-          <div className="customer-search-icon">
+          <div className="search-icon">
             <span className="material-symbols-outlined">search</span>
           </div>
         </div>

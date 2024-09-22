@@ -24,7 +24,8 @@
 }
 
 .my-cart-container.sidebar-open .my-cart {
-  width: calc(100% - 200px); /* Adjusted for the open sidebar */
+  margin-left: 250px;
+  width: calc(100% - 200px); 
 }
 
 .my-cart-container.sidebar-closed .my-cart {
@@ -97,14 +98,11 @@
   display: flex;
   transition: margin-left 0.3s ease;
 }
-
-.my-cart-container.sidebar-open {
-  margin-left: 250px; /* Adjust based on sidebar width */
-}
+/* 
 
 .my-cart-container.sidebar-closed {
-  margin-left: 60px; /* Adjust based on collapsed sidebar width */
-}
+  margin-left: 60px; /* Adjust based on collapsed sidebar width 
+} */
 
 /* Cart container styling */
 .my-cart {
@@ -287,6 +285,30 @@
   cursor: pointer;
   font-size: 16px;
 }
+
+/* Mycart.css */
+.suggestions-list {
+  list-style: none;
+  margin-top: 35px;
+  padding: 0;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: #fff;
+  width: 40%;
+  position: absolute;
+  z-index: 100;
+}
+
+.suggestion-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.suggestion-item:hover {
+  background-color: #f0f0f0;
+}
+
 
 .download-button:hover {
   background-color: #218838;

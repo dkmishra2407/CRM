@@ -141,7 +141,7 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
       }
       handleClear();
       onClose();
-      window.location.reload();
+      // window.location.reload();
     } catch (err) {
       console.error('Error saving the form', err);
       toast.error('Failed to save the customer. Please try again.');

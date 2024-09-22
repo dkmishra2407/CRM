@@ -86,6 +86,7 @@ import AccessControl from './Pages/AccessControl/AccessControl';
 import Quotation from './Pages/Quotation/Quotation';
 import { ToastContainer } from 'react-toastify';
 import InvoicePage from './Pages/Invoice/Invoice';
+import Sales from './Pages/Sales/Sales';
 import 'react-toastify/dist/ReactToastify.css';
 
 const AppWrapper = () => {
@@ -107,7 +108,6 @@ const App = () => {
     const storedPages = localStorage.getItem('pageAccess');
     const storedAuth = localStorage.getItem('isAuthenticated');
     const lastVisitedPage = localStorage.getItem('lastVisitedPage');
-    console.log(storedPages)
     if (storedPages && storedAuth === 'true') {
       const pageNames = JSON.parse(storedPages).map(page => page.pageName);
       setAccessiblePages(pageNames);
@@ -140,9 +140,8 @@ const App = () => {
     localStorage.setItem('lastVisitedPage', '/dashboard'); // Default page after login
   };
 
-
   if (loading) {
-    return <div>Loading...</div>; // Display loading state while session is being verified
+    return <div>Loading...</div>;
   }
 
   return (
@@ -156,43 +155,44 @@ const App = () => {
           {isAuthenticated && accessiblePages.includes('dashboard') && (
             <Route path="/dashboard" element={<Dashboard />} />
           )}
+          {isAuthenticated && accessiblePages.includes('dashboard') && (
+            <Route path="/sales" element={<Sales />} />
+          )}
           {isAuthenticated && accessiblePages.includes('webstore') && (
             <Route path="/webstore" element={<Generate />} />
           )}
-          {isAuthenticated   && (
+          {isAuthenticated  && (
             <Route path="/mycart" element={<MyCart />} />
           )}
           {isAuthenticated && accessiblePages.includes('addproduct') && (
             <Route path="/addproduct" element={<AddProductForm />} />
           )}
-          {isAuthenticated && accessiblePages.includes('addagent') && (
-            <Route path="/addagent" element={<AddSalesAgentForm />} />
-          )}
-          {isAuthenticated &&   (
+  
+          {isAuthenticated &&  accessiblePages.includes('agents') && (
             <Route path="/agents" element={<Agent />} />
           )}
           {isAuthenticated  && (
             <Route path="/mycart/createinvoice" element={<CreateInvoiceComponent />} />
           )}
-          {isAuthenticated  && (
+          {isAuthenticated  && accessiblePages.includes('category') && (
             <Route path='/addcategories' element={<ShowAllCategory />} />
           )}
           {isAuthenticated && accessiblePages.includes('inventory') && (
             <Route path='/inventory' element={<Inventory />} />
           )}
-          {isAuthenticated  && (
+          {isAuthenticated  && accessiblePages.includes('sites') &&   (
             <Route path='/addsites' element={<Sites />} />
           )}
-          {isAuthenticated  && (
+          {isAuthenticated  && accessiblePages.includes('customers') && (
             <Route path='/customer' element={<Customer />} />
           )}
-          {isAuthenticated  && (
+          {isAuthenticated  && accessiblePages.includes('roles') && (
             <Route path='/addroles' element={<Roles />} />
           )}
           {isAuthenticated && accessiblePages.includes('accessControl') && (
             <Route path='/accessControl' element={<AccessControl />} />
           )}
-          {isAuthenticated  && (
+          {isAuthenticated  && accessiblePages.includes('quotations') && (
             <Route path='/quotation' element={<Quotation />} />
           )}
           {isAuthenticated  && (

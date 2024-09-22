@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import './Role.css'; // CSS specific for Roles
+import './Role.css'; 
 import axios from 'axios';
 import Sidebar from '../../components/SideBar/SideBar';
-import AddRoleForm from '../../components/AddRole/AddRole'; // Form for adding/editing roles
+import AddRoleForm from '../../components/AddRole/AddRole'; 
 import Header from '../../components/Header/Header';
 function Roles() {
   const [roles, setRoles] = useState([]);
@@ -11,7 +11,7 @@ function Roles() {
   const [selectedRoleId, setSelectedRoleId] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const rolesPerPage = 10; // Number of roles per page
+  const rolesPerPage = 10; 
   const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
@@ -36,7 +36,7 @@ function Roles() {
           role.roleId === id ? { ...role, ...updatedData } : role
         )
       );
-      handleCloseModal(); // Close the modal after updating
+      handleCloseModal(); 
     } catch (err) {
       console.error('Failed to update role', err);
     }
@@ -62,7 +62,7 @@ function Roles() {
 
   const handleSearchTermChange = (e) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1); // Reset to the first page when searching
+    setCurrentPage(1); 
   };
 
   const handleCloseModal = () => {
@@ -74,7 +74,6 @@ function Roles() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Pagination logic
   const indexOfLastRole = currentPage * rolesPerPage;
   const indexOfFirstRole = indexOfLastRole - rolesPerPage;
 
@@ -117,15 +116,15 @@ function Roles() {
           Add Role
         </div>
       </div>
-      <div className="role-search-container">
+      <div className="search-bar-container">
         <input
           type="text"
           placeholder="Search by role name or description"
-          className="role-search-bar"
+          className="search-bar"
           value={searchTerm}
           onChange={handleSearchTermChange}
         />
-        <div className="role-search-icon">
+        <div className="search-icon">
           <span className="material-icons">search</span>
         </div>
       </div>
@@ -153,8 +152,6 @@ function Roles() {
           )}
         </tbody>
       </table>
-
-      {/* Pagination Controls */}
       <div className="pagination-controls">
         <button className="pagination-btn" onClick={previousPage} disabled={currentPage === 1}>
           Previous
@@ -170,7 +167,7 @@ function Roles() {
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           roleId={selectedRoleId}
-          onUpdate={updateRole} // Pass the update function as a prop
+          onUpdate={updateRole} 
         />
       )}
     </div>

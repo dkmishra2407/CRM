@@ -207,15 +207,13 @@
 
 
 import React, { useState, useEffect } from 'react';
-import './ProductDetail.css';
 import axios from 'axios';
-import { FaTimes } from 'react-icons/fa'; // Importing the close icon
+import { FaTimes } from 'react-icons/fa';
 
-const ProductDetailsModal = ({ id, onClose, image }) => {
+const ProductWebstore = ({ id, onClose, image }) => {
   const [productDetails, setProductDetail] = useState(null);
   const apiUrl = process.env.REACT_APP_API_URL;
 
-  // Fetch product details from the API
   const fetchProductDetails = async () => {
     try {
       const response = await axios.get(`${apiUrl}/api/products/${id}`);
@@ -225,46 +223,36 @@ const ProductDetailsModal = ({ id, onClose, image }) => {
     }
   };
 
-  
   const handleAddMore = async () => {
-    // Prompt the user for the updated quantity
     const updatedQuantity = prompt("Enter the updated quantity");
-  
-    // Check if the user entered a valid value
-    if (updatedQuantity === null || isNaN(updatedQuantity)) {
+
+    if (!updatedQuantity || isNaN(updatedQuantity)) {
       alert("Please enter a valid number.");
       return;
     }
-  
+
     try {
-      // Make the PATCH request with the updated quantity
       const response = await axios.patch(`${apiUrl}/api/products/${id}/quantity?quantity=${updatedQuantity}`);
-      
-      // Log the response data
       console.log(response.data);
     } catch (err) {
-      // Log any errors
       console.error(err);
-   }
+    }
   };
 
   useEffect(() => {
     fetchProductDetails();
   }, [id]);
 
-  // Ensure productDetails is loaded before destructuring
   if (!productDetails) {
     return <div>Loading...</div>;
   }
 
-  // Destructure properties once productDetails is available
   const { sku, name, rate, productQuantity, images, category, site } = productDetails;
   const availableQty = productQuantity ? productQuantity.availableQty : 0;
 
   return (
     <div className="product-details-modal show">
       <div className="modal-content small-modal">
-        {/* Product Section */}
         <section className="product">
           <div className="product__photo">
             <div className="photo-container">
@@ -283,7 +271,6 @@ const ProductDetailsModal = ({ id, onClose, image }) => {
             </div>
           </div>
 
-          {/* Product Information */}
           <div className="product__info">
             <div className="title">
               <h1>{name}</h1>
@@ -305,12 +292,12 @@ const ProductDetailsModal = ({ id, onClose, image }) => {
           </div>
         </section>
 
-        <button onClick={handleAddMore}>Add More</button>
-        {/* Close Icon */}
+        <button onClick={handleAddMore}>Add to Cart</button>
         <FaTimes onClick={onClose} className="close-icon" />
       </div>
     </div>
   );
 };
 
-export default ProductDetailsModal;
+export default ProductWebstore;
+

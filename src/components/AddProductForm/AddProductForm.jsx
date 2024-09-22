@@ -132,9 +132,10 @@ const AddProductForm = () => {
       <div className="product-form-container">
         <div className="product-form-header">
           <h3 className="product-form-title">Add Product</h3>
-          <FaTimes className="close-icon" onClick={handleCloseForm} />
+          <FaTimes className="close-icon-productfrom" onClick={handleCloseForm} />
         </div>
         <form className="product-form" onSubmit={addProduct}>
+
           <div className="form-group">
             <label className="product-form-label">SKU ID</label>
             <input

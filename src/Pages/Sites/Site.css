@@ -129,18 +129,7 @@
     background-color: #c82333;
 }
 
-/* Responsive container for the entire page */
-.generate-container {
-    transition: margin-left 0.3s ease;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    margin-left: 250px;
-}
 
-.generate-container.sidebar-closed {
-    margin-left: 60px;
-}
 
 /* Pagination controls */
 .pagination-controls {

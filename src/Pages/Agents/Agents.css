@@ -1,14 +1,3 @@
-/* Container for the search bar and add button */
-.search-bar-container {
-    display: flex;
-    justify-content: space-between; /* Aligns search bar to the left and add button to the right */
-    align-items: center;
-    margin-bottom: 20px;
-    padding: 0 20px; /* Add some padding to align content better */
-    margin-top: 30px;
-}
-
-/* Universal Header (Fixed at the top of the page) */
 .UniversalHeader {
     position: sticky;  /* Fix the header at the top */
     top: 0;           /* Stick it to the top of the page */
@@ -52,18 +41,7 @@
     color: #007bff;    /* Optional: change color on hover */
   }
   
-  /* Sidebar and other content should adapt to the header */
-  .generate-container {
-    transition: margin-left 0.3s ease;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    margin-left: 250px; /* Adjust based on sidebar width */
-  }
   
-  .generate-container.sidebar-closed {
-    margin-left: 60px; /* Adjust based on collapsed sidebar width */
-  }
   
   
   
@@ -94,16 +72,15 @@
 .add-agent-btn {
     background-color: #28a745;
     color: white;
-    padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    height: 20px;
+    height: 30px;
     display: flex;
     justify-content: center;
     align-self: center;
-    width: 80px;
+    width: 90px;
     margin-bottom: 5px;
 }
 
@@ -170,14 +147,7 @@
     background-color: #c82333;
 }
 
-/* Responsive container for the entire page */
-.generate-container {
-    transition: margin-left 0.3s ease;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    margin-left: 250px; /* Adjust based on sidebar width */
-}
+
 
 .generate-container.sidebar-closed {
     margin-left: 60px; /* Adjust based on collapsed sidebar width */

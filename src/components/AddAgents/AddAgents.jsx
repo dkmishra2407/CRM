@@ -105,6 +105,7 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId, onUpdate }) => {
     const agentData = {
       role: { roleId: role },
       associateName: agentName,
+      password,
       userName,
       password,
       active,
@@ -141,7 +142,7 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId, onUpdate }) => {
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content">
+      <div className="modal-content-1">
         <div className="modal-header">
           <h2 className="form-title">{agentId ? 'Edit Sales Agent' : 'Add Sales Agent'}</h2>
           <FaTimes className="close-icon" onClick={onClose} />

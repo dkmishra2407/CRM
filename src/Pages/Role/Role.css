@@ -53,16 +53,16 @@
 .role-add-btn {
     background-color: #28a745;
     color: white;
-    padding: 10px 20px;
+    padding-top: 5px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    height: 20px;
+    height: 30px;
     display: flex;
     justify-content: center;
     align-self: center;
-    width: 80px;
+    width: 110px;
     margin-bottom: 5px;
 }
 
@@ -129,14 +129,6 @@
     background-color: #c82333;
 }
 
-/* Responsive container for the entire page */
-.generate-container {
-    transition: margin-left 0.3s ease;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    margin-left: 250px;
-}
 
 .generate-container.sidebar-closed {
     margin-left: 60px;

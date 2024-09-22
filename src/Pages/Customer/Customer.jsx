@@ -119,15 +119,15 @@ function Customer() {
           Add Customer
         </div>
       </div>
-      <div className="customer-search-container">
+      <div className="search-bar-container">
         <input
           type="text"
           placeholder="Search by name, phone, or email"
-          className="customer-search-bar"
+          className="search-bar"
           value={searchTerm}
           onChange={handleSearchTermChange}
         />
-        <div className="customer-search-icon">
+        <div className="search-icon">
           <span className="material-icons">search</span>
         </div>
       </div>

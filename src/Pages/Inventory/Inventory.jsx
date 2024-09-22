@@ -180,6 +180,7 @@ function Inventory() {
         >
           {filteredProducts.map((product) => (
             <ProductcardForInventory
+              id={product.key}
               key={product.key}
               sku={product.sku}
               name={product.name}

@@ -4,11 +4,14 @@ import './index.css';
 import App from './App';
 import { CartProvider } from './Context/card.context';
 import { PageProvider } from './Context/page-context';
+import { SidebarProvider } from './Context/sidebar-context';
 ReactDOM.render(
   <React.StrictMode>
     <PageProvider>
       <CartProvider>
-        <App />
+        <SidebarProvider>
+         <App />
+        </SidebarProvider>
       </CartProvider>
     </PageProvider>
   </React.StrictMode>,

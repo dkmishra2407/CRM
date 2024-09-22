@@ -1,38 +1,33 @@
-/* Sidebar container styling */
-
 @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0");
 
 .sidebar {
-  width: 250px;
+  width: 200px; /* Default width when open */
   height: 100vh;
   background-color: #2c3e50;
   transition: width 0.3s ease;
   color: white;
-  margin-top: 95px;
+  margin-top: 66px;
   display: flex;
   flex-direction: column;
+  overflow-y: scroll;
 }
 
 .sidebar.closed {
-  width: 60px;
+  width: 80px; /* Width when closed */
 }
 
 .sidebar-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center; /* Align elements in center when collapsed */
   align-items: center;
-  /* padding: 20px; */
-}
-
-.logo-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 4px;
+  height: 100px;
+  width: 100%; /* Make the header width dynamic */
+  transition: all 0.3s ease; /* Smooth transition */
 }
 
 .logo {
   width: 150px;
+  transition: all 0.3s ease; /* Transition for the logo size */
 }
 
 .logo-collapsed {
@@ -45,6 +40,11 @@
   cursor: pointer;
   color: white;
   font-size: 24px;
+  transition: margin-left 0.3s ease; /* Smooth transition when sidebar collapses */
+}
+
+.sidebar.closed .toggle-btn {
+  margin-left: 20px;
 }
 
 .sidebar-menu {
@@ -52,13 +52,12 @@
   padding: 0;
   margin: 0;
   flex-grow: 1;
-  overflow-y: auto;
 }
 
 .menu-link {
   display: flex;
   align-items: center;
-  padding: 15px 20px;
+  padding: 5px 10px;
   color: white;
   text-decoration: none;
   transition: background-color 0.3s ease;
@@ -78,18 +77,16 @@
 .menu-text {
   font-size: 20px;
   font-weight: 500;
-  flex-grow: 1; /* Ensure the text grows */
-  margin-left: 10px;
+  flex-grow: 1;
+  margin-left: 3px;
 }
 
-
-
 .sidebar.closed .menu-text {
-  display: none; /* Hide text in collapsed sidebar */
+  display: none; /* Hide text when sidebar is closed */
 }
 
 .sidebar.closed .menu-icon {
-  margin-right: 0; /* Remove space between icon and text in collapsed sidebar */
+  margin-right: 0;
   display: flex;
   justify-content: center;
   width: 100%;

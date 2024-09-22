@@ -140,15 +140,15 @@ function Sites() {
           Add Site
         </div>
       </div>
-      <div className="site-search-container">
+      <div className="search-bar-container">
         <input
           type="text"
           placeholder="Search by name, contact, or code"
-          className="site-search-bar"
+          className="search-bar"
           value={searchTerm}
           onChange={handleSearchTermChange}
         />
-        <div className="site-search-icon">
+        <div className="search-icon">
           <span className="material-icons">search</span>
         </div>
       </div>

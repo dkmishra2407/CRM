@@ -1,5 +1,6 @@
 .product-form-modal {
   position: fixed;
+  padding-top: 500px;
   top: 0;
   left: 0;
   width: 100%;
@@ -9,6 +10,7 @@
   align-items: center;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 5000;
+  overflow-y: scroll;
 }
 
 .product-form-container {
@@ -19,6 +21,7 @@
   width: 100%;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   font-family: 'Roboto', sans-serif;
+  overflow-y: scroll;
 }
 
 .product-form-header {
@@ -28,10 +31,12 @@
   margin-bottom: 20px;
 }
 
-.close-icon {
+.close-icon-productfrom {
   cursor: pointer;
   font-size: 1.8rem;
   color: #ff5e57;
+  position: relative;
+  margin-right: 3%;
 }
 
 .product-form-title {

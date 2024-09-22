@@ -53,7 +53,7 @@ const AddCategoryForm = ({ isOpen, onClose, categoryId, onUpdate }) => {
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content">
+      <div className="modal-content-category">
         <div className="modal-header">
           <h2>{categoryId ? 'Edit Category' : 'Add New Category'}</h2>
           <FaTimes className="close-icon" onClick={onClose} />

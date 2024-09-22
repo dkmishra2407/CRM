@@ -5,11 +5,12 @@
     margin-left: 100px;
 }
 
-.main-content {
+/* .main-content {
     flex-grow: 1; 
-    padding: 20px;
+    padding: 2px;
     transition: margin-left 0.3s ease; 
-}
+    gap: 0px;
+} */
 
 .main-content.open {
     margin-left: 250px; 
@@ -127,14 +128,14 @@
 }
 
 /* Modal Content */
-.modal-content {
+/* .modal-content {
     background: white;
     padding: 20px;
     border-radius: 8px;
     width: 600px;
     max-width: 100%;
     position: relative;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); 
 }
 
 /* Modal Header */

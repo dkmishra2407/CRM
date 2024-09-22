@@ -53,27 +53,24 @@
 .category-add-btn {
     background-color: #28a745;
     color: white;
-    padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    height: 20px;
+    height: 35px;
     display: flex;
     justify-content: center;
     align-self: center;
     width: 120px;
     margin-bottom: 5px;
+    padding-top: 7px;
 }
 
 .heading-no-1{
     display: flex;
     justify-content: space-between;
     background-color: #fff;
-    padding: 15px 20px;
-    border-radius: 8px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
-    margin-bottom: 10px;
 }
 .category-add-btn:hover {
     background-color: #218838;
@@ -139,13 +136,7 @@
 }
 
 /* Responsive container for the entire page */
-.generate-container {
-    transition: margin-left 0.3s ease;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    margin-left: 250px;
-}
+
 
 .generate-container.sidebar-closed {
     margin-left: 60px;

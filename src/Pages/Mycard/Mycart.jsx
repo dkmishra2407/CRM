@@ -1,220 +1,690 @@
-import React, { useState } from 'react';
+// import React, { useState, useEffect } from 'react';
+// import './Mycart.css';
+// import { useCart } from '../../Context/card.context';
+// import Sidebar from '../../components/SideBar/SideBar';
+// import axios from 'axios';
+// import pdfMake from 'pdfmake/build/pdfmake';
+// import pdfFonts from 'pdfmake/build/vfs_fonts';
+// import { Link } from 'react-router-dom';
+// import SadhguruTilesLogo from './logos/sadhgurtiles.jpeg';
+// import DTSLogo from './logos/company_logo.png';
+// import Header from '../../components/Header/Header';
+// import { FaTimes } from 'react-icons/fa';
+// import { toast } from 'react-toastify';
+// import AddCustomerForm from '../../components/AddCustomer/AddCustomer';
+// import { useNavigate } from 'react-router-dom';
+
+// pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
+// const MyCart = () => {
+//   const { state: { ShoppingCart }, dispatch } = useCart();
+//   const [searchTerm, setSearchTerm] = useState('');
+//   const [agentId, setAgentId] = useState('');
+//   const [discountPercent, setDiscountPercent] = useState(0); // Updated to store the discount percentage
+//   const [customerData, setCustomerData] = useState({
+//     customerId: '',
+//     customerName: '',
+//     billingAddress: '',
+//     shippingAddress: '',
+//     phoneNumber: '',
+//     emailAddress: '',
+//   });
+//   const [customers, setCustomers] = useState([]);
+//   const [suggestedCustomers, setSuggestedCustomers] = useState([]);
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+//   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  
+//   const apiUrl = process.env.REACT_APP_API_URL;
+
+//   // Calculate subtotal and tax with discount applied
+//   const subtotal = ShoppingCart.reduce((acc, item) => acc + (item.rate * item.quantity), 0);
+//   const discountAmount = (subtotal * discountPercent) / 100;
+//   const totalAfterDiscount = subtotal - discountAmount;
+//   const taxAmount = totalAfterDiscount * 0.18; // 18% tax
+//   const grandTotal = totalAfterDiscount + taxAmount;
+
+//   const amountReceived = 0;
+//   const balanceDue = grandTotal - amountReceived;
+
+//   const navigate = useNavigate();
+
+
+
+//   const fetchCustomers = async () => {
+//     try {
+//       const response = await axios.get(`${apiUrl}/api/customers`);
+//       setCustomers(Array.isArray(response.data) ? response.data : []);
+//     } catch (err) {
+//       console.error('Failed to fetch customers', err);
+//       setCustomers([]);
+//     }
+//   };
+
+//   const handleSearchChange = (e) => {
+//     const searchValue = e.target.value;
+//     setSearchTerm(searchValue);
+
+//     if (searchValue.length > 0) {
+//       const filteredCustomers = customers.filter(cust =>
+//         cust.customerName.toLowerCase().includes(searchValue.toLowerCase())
+//       );
+//       setSuggestedCustomers(filteredCustomers);
+//     } else {
+//       setSuggestedCustomers([]);
+//     }
+//   };
+
+//   const getBase64ImageFromUrl = async (imageUrl) => {
+//     const res = await fetch(imageUrl);
+//     const blob = await res.blob();
+
+//     return new Promise((resolve, reject) => {
+//       const reader = new FileReader();
+//       reader.onloadend = () => resolve(reader.result);
+//       reader.onerror = reject;
+//       reader.readAsDataURL(blob);
+//     });
+//   };
+
+//   const handleCustomerSearch = () => {
+//     const customer = customers.find(cust => cust.customerName.toLowerCase() === searchTerm.toLowerCase());
+    
+//     if (customer) {
+//       const { customerId, customerName, billingAddress, shippingAddress, phoneNumber, emailAddress } = customer;
+//       setCustomerData({
+//         customerId,
+//         customerName,
+//         billingAddress,
+//         shippingAddress,
+//         phoneNumber,
+//         emailAddress,
+//       });
+//       toast.success("Customer Found");
+//     } else {
+//       setCustomerData({
+//         customerId: '',
+//         customerName: '',
+//         billingAddress: '',
+//         shippingAddress: '',
+//         phoneNumber: '',
+//         emailAddress: '',
+//       });
+//       toast.error("Customer Not Found");
+//     }
+//   };
+
+//   const generatePDF = async (customerData, ShoppingCart, subtotal, discountAmount, taxAmount, grandTotal) => {
+//     try {
+//       const SadhguruTilesLogoBase64 = await getBase64ImageFromUrl(SadhguruTilesLogo || '');
+//       const DTSLogoBase64 = await getBase64ImageFromUrl(DTSLogo || '');
+
+//       const tableBody = [
+//         [
+//           { text: "#", style: 'tableHeader' },
+//           { text: "SKU", style: 'tableHeader' },
+//           { text: "Product Name", style: 'tableHeader' },
+//           { text: "Image", style: 'tableHeader' },
+//           { text: "Category", style: 'tableHeader' },
+//           { text: "Rate (INR)", style: 'tableHeader' },
+//           { text: "Qty", style: 'tableHeader' },
+//           { text: "Tax", style: 'tableHeader' },
+//           { text: "Total", style: 'tableHeader' },
+//         ],
+//         ...await Promise.all(ShoppingCart.map(async (item, index) => [
+//           index + 1,
+//           item.sku?.toString() || 'N/A',
+//           item.name?.toString() || 'N/A',
+//           { image: await getBase64ImageFromUrl(item.image), fit: [50, 50] },
+//           item.category?.toString() || 'N/A',
+//           `Rs ${(item.rate || 0)}`,
+//           item.quantity?.toString() || '0',
+//           `Rs ${(item.rate * item.quantity * 0.18)}`,
+//           `Rs ${(item.rate * item.quantity + (item.rate * item.quantity * 0.18))}`,
+//         ])),
+//       ];
+
+//       const docDefinition = {
+//         background: {
+//           image: DTSLogoBase64,
+//           width: 300,
+//           opacity: 0.2,
+//           absolutePosition: { x: 150, y: 250 }
+//         },
+//         content: [
+//           {
+//             columns: [
+//               { image: SadhguruTilesLogoBase64, width: 100 },
+//               [
+//                 { text: "SADHGURU TILES & MARBLES", fontSize: 18, bold: true },
+//                 { text: "Sr. No. 1/3, Yojana Nagar, near HP Petrol Pump...", fontSize: 10 },
+//                 { text: "Phone: 0980101989 / 7620870603 / 9011719000", fontSize: 10 },
+//                 { text: "Email: sadhgurutiles@gmail.com", fontSize: 10 },
+//                 { text: "Website: www.sadhgurutiles.com", fontSize: 10 }
+//               ],
+//               { image: DTSLogoBase64, width: 50 }
+//             ]
+//           },
+//           { text: '\n' },
+//           {
+//             columns: [
+//               {
+//                 width: '50%',
+//                 stack: [
+//                   { text: "Invoice issued for:", bold: true },
+//                   { text: `Name: ${customerData.customerName || 'N/A'}` },
+//                   { text: `Address: ${customerData.shippingAddress || 'N/A'}` },
+//                   { text: `Phone: ${customerData.phoneNumber || 'N/A'}` },
+//                   { text: `Email: ${customerData.emailAddress || 'N/A'}` },
+//                 ]
+//               },
+//               {
+//                 width: '50%',
+//                 stack: [
+//                   { text: "Quotation #:", bold: true },
+//                   { text: customerData.customerId || 'Unknown' },
+//                   { text: `Payment Date: ${new Date().toLocaleDateString()}` },
+//                   { text: `Invoice Date: ${new Date().toLocaleDateString()}` }
+//                 ]
+//               }
+//             ]
+//           },
+//           { text: '\n' },
+//           {
+//             table: {
+//               headerRows: 1,
+//               body: tableBody
+//             },
+//             layout: 'lightHorizontalLines'
+//           },
+//           { text: '\n' },
+//           {
+//             columns: [
+//               { width: '60%', text: '' },
+//               {
+//                 width: '50%',
+//                 table: {
+//                   widths: ['50%', '30%'],
+//                   body: [
+//                     [
+//                       { text: 'Subtotal:', bold: true, alignment: 'right' },
+//                       { text: `Rs ${subtotal}`, alignment: 'right' }
+//                     ],
+//                     [
+//                       { text: 'Discount:', bold: true, alignment: 'right' },
+//                       { text: `Rs ${discountAmount}`, alignment: 'right' }
+//                     ],
+//                     [
+//                       { text: 'Tax:', bold: true, alignment: 'right' },
+//                       { text: `Rs ${taxAmount}`, alignment: 'right' }
+//                     ],
+//                     [
+//                       { text: 'Total Amount:', bold: true, alignment: 'right' },
+//                       { text: `Rs ${grandTotal}`, alignment: 'right' }
+//                     ]
+//                   ]
+//                 },
+//                 layout: 'noBorders'
+//               }
+//             ]
+//           },
+//           { text: '\n' },
+//           {
+//             text: "The invoice is created on a computer and is valid without the signature and stamp.",
+//             fontSize: 10,
+//             alignment: 'center'
+//           }
+//         ],
+//         styles: {
+//           tableHeader: { bold: true, fontSize: 12, color: 'black' }
+//         }
+//       };
+
+//       pdfMake.createPdf(docDefinition).download(`Quotation_${customerData.customerId || 'Unknown'}.pdf`);
+//     } catch (error) {
+//       console.error("Error generating PDF:", error);
+//     }
+//   };
+
+//   const handleDownload = async () => {
+//     generatePDF(customerData, ShoppingCart, subtotal, discountAmount, taxAmount, grandTotal);
+//   };
+
+
+
+//   return (
+//     <>
+//       <Header className="UniversalHeader" />
+//       <div className={`my-cart-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+//         <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+//         <div className="my-cart">
+//           <h1>Generate Quotation</h1>
+
+//           <div className="customer-details">
+//             <input
+//               type="text"
+//               placeholder="Search Customer by Name"
+//               value={searchTerm}
+//               onChange={handleSearchChange}
+//               className="customer-search-input"
+//             />
+//             <button onClick={handleCustomerSearch}>Search</button>
+//             {suggestedCustomers.length > 0 && (
+//               <ul className="suggestions-list">
+//                 {suggestedCustomers.map((customer) => (
+//                   <li
+//                     key={customer.customerId}
+//                     onClick={() => handleCustomerSelect(customer)}
+//                     className="suggestion-item"
+//                   >
+//                     {customer.customerName}
+//                   </li>
+//                 ))}
+//               </ul>
+//             )}
+
+//             {!customerData.customerName && (
+//               <button onClick={handleAddCustomer} className="add-customer-btn">
+//                 Add Customer
+//               </button>
+//             )}
+//           </div>
+
+//           <div className="customer-info">
+//             <input type="text" placeholder="Customer Name" value={customerData.customerName} readOnly />
+//             <input type="email" placeholder="Email Address" value={customerData.emailAddress} readOnly />
+//             <input type="text" placeholder="Billing Address" value={customerData.billingAddress} readOnly />
+//             <input type="text" placeholder="Shipping Address" value={customerData.shippingAddress} readOnly />
+//             <input type="text" placeholder="Phone Number" value={customerData.phoneNumber} readOnly />
+//           </div>
+
+//           <table className="cart-table">
+//             <thead>
+//               <tr>
+//                 <th>No</th>
+//                 <th>SKU</th>
+//                 <th>Product Name</th>
+//                 <th>Category</th>
+//                 <th>Rate (INR)</th>
+//                 <th>Quantity</th>
+//                 <th>Discount (%)</th>
+//                 <th>Tax</th>
+//                 <th>Total</th>
+//                 <th>Actions</th>
+//               </tr>
+//             </thead>
+//             <tbody>
+//               {ShoppingCart.map((item, index) => (
+//                 <tr key={item.sku}>
+//                   <td>{index + 1}</td>
+//                   <td>
+//                     <img src={item.image} alt={item.sku} className="cart-item-image" />
+//                     <p>{item.sku}</p>
+//                   </td>
+//                   <td>{item.name}</td>
+//                   <td>{item.category}</td>
+//                   <td>Rs {item.rate}</td>
+//                   <td>{item.quantity}</td>
+//                   <td>
+//                     <input
+//                       type="text"
+//                       max={100}
+//                       min={0}
+//                       value={discountPercent}
+//                       defaultValue={0}
+//                       placeholder="Discount %"
+//                     />
+//                   </td>
+//                   <td>Rs {(item.rate * item.quantity * 0.18).toFixed(2)}</td>
+//                   <td>Rs {(item.rate * item.quantity + (item.rate * item.quantity * 0.18)).toFixed(2)}</td>
+//                   <td>
+//                     <button className="delete-btn" onClick={() => handleDeleteItem(item.sku)}>
+//                       <FaTimes className="delete-icon" />
+//                     </button>
+//                   </td>
+//                 </tr>
+//               ))}
+//             </tbody>
+//           </table>
+
+//           <div className="cart-summary">
+//             <p>Total <span>Rs {subtotal}.00</span></p>
+//             <p>Discount <span>Rs {discountAmount}.00</span></p>
+//             <p>Tax <span>Rs {taxAmount}.00</span></p>
+//             <p>Balance Due <span>Rs {grandTotal}.00</span></p>
+//           </div>
+
+//           <div className="cart-buttons">
+//             <button className="download-button" onClick={handleDownload}>Download</button>
+//             <Link to="createinvoice">
+//               <button className="pay-button">Pay</button>
+//             </Link>
+//           </div>
+
+//         </div>
+
+//         {isModalOpen && (
+//           <AddCustomerForm
+//             isOpen={isModalOpen}
+//             onClose={() => setIsModalOpen(false)}
+//           />
+//         )}
+//       </div>
+//     </>
+//   );
+// };
+
+// export default MyCart;
+
+
+import React, { useState, useEffect } from 'react';
 import './Mycart.css';
 import { useCart } from '../../Context/card.context';
 import Sidebar from '../../components/SideBar/SideBar';
 import axios from 'axios';
-import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Link } from 'react-router-dom';
-import SadhguruTilesLogo from './logos/sadhgurtiles.jpeg'; 
-import DTSLogo from './logos/company_logo.png'; 
+import SadhguruTilesLogo from './logos/sadhgurtiles.jpeg';
+import DTSLogo from './logos/company_logo.png';
 import Header from '../../components/Header/Header';
 import { FaTimes } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import AddCustomerForm from '../../components/AddCustomer/AddCustomer';
+import { useNavigate } from 'react-router-dom';
+
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const MyCart = () => {
-  const { state: { ShoppingCart }, dispatch } = useCart(); // Add dispatch to update cart
-  const [customerId, setCustomerId] = useState('');
+  const { state: { ShoppingCart }, dispatch } = useCart();
+  const [searchTerm, setSearchTerm] = useState('');
   const [agentId, setAgentId] = useState('');
-  const [discounts, setDiscounts] = useState(0); // Default discount to 0
   const [customerData, setCustomerData] = useState({
+    customerId: '',
     customerName: '',
     billingAddress: '',
     shippingAddress: '',
     phoneNumber: '',
     emailAddress: '',
   });
-  console.log(ShoppingCart)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Sidebar state
-  const subtotal = ShoppingCart.reduce((acc, item) => acc + (item.rate || 0) * (item.quantity || 0), 0);
-  const amountReceived = 0; // Example value, adjust as needed
-  const balanceDue = subtotal - amountReceived - parseFloat(discounts); // Ensure discounts is treated as a number
+  const [customers, setCustomers] = useState([]);
+  const [suggestedCustomers, setSuggestedCustomers] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  
   const apiUrl = process.env.REACT_APP_API_URL;
 
+  // Calculate subtotal, discount, tax, and total for each product
+  const calculateProductTotal = (item) => {
+    const discountAmount = (item.rate * item.quantity * (item.discount || 0)) / 100;
+    const totalAfterDiscount = (item.rate * item.quantity) - discountAmount;
+    const taxAmount = totalAfterDiscount * 0.18; // 18% tax
+    return totalAfterDiscount + taxAmount;
+  };
 
+  const subtotal = ShoppingCart.reduce((acc, item) => acc + (item.rate * item.quantity), 0);
+  const discountAmount = ShoppingCart.reduce((acc, item) => acc + ((item.rate * item.quantity * (item.discount || 0)) / 100), 0);
+  const totalAfterDiscount = subtotal - discountAmount;
+  const taxAmount = totalAfterDiscount * 0.18; // 18% tax
+  const grandTotal = totalAfterDiscount + taxAmount;
 
-  // Fetch customer details
-  const handleCustomer = async () => {
-    try {
-      const response = await axios.get(`${apiUrl}/api/customers/${customerId}`);
-      if (response.data) {
-        const { customerName, billingAddress, shippingAddress, phoneNumber, emailAddress } = response.data;
-        setCustomerData({
-          customerName,
-          billingAddress,
-          shippingAddress,
-          phoneNumber,
-          emailAddress,
-        });
+  const amountReceived = 0;
+  const balanceDue = grandTotal - amountReceived;
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const userString = localStorage.getItem('user');
+    if (userString) {
+      try {
+        const user = JSON.parse(userString);
+        if (user && user.associateId) {
+          setAgentId(user.associateId);
+        }
+      } catch (error) {
+        console.error('Error parsing user from localStorage:', error);
       }
+    }
+    fetchCustomers();
+  }, []);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const fetchCustomers = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/customers`);
+      setCustomers(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
-      console.log(err);
+      console.error('Failed to fetch customers', err);
+      setCustomers([]);
     }
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen); // Toggle sidebar state
+  const handleSearchChange = (e) => {
+    const searchValue = e.target.value;
+    setSearchTerm(searchValue);
+
+    if (searchValue.length > 0) {
+      const filteredCustomers = customers.filter(cust =>
+        cust.customerName.toLowerCase().includes(searchValue.toLowerCase())
+      );
+      setSuggestedCustomers(filteredCustomers);
+    } else {
+      setSuggestedCustomers([]);
+    }
   };
 
-  // Handle item deletion from cart
+  const getBase64ImageFromUrl = async (imageUrl) => {
+    const res = await fetch(imageUrl);
+    const blob = await res.blob();
+
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  const handleCustomerSelect = (customer) => {
+    setCustomerData({
+      customerId: customer.customerId,
+      customerName: customer.customerName,
+      billingAddress: customer.billingAddress,
+      shippingAddress: customer.shippingAddress,
+      phoneNumber: customer.phoneNumber,
+      emailAddress: customer.emailAddress,
+    });
+    setSearchTerm(customer.customerName);
+    setSuggestedCustomers([]);
+    toast.success("Customer Selected");
+  };
+
+  const handleAddCustomer = () => {
+    setIsModalOpen(true);
+  };
+
+
+
   const handleDeleteItem = (sku) => {
-    // Dispatch an action to remove the item from the cart
     dispatch({
       type: 'REMOVE_FROM_CART',
       payload: { sku },
     });
   };
 
-  // Handle PDF Download and POST request
-  const handleDownload = async () => {
-    const quotationNumber = `QTN-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-001`;
-    const quotationDate = new Date().toISOString().slice(0, 10);
-
-    // Prepare the quotation data
-    const quotationData = {
-      quotationNumber,
-      quotationDate,
-      customer: {
-        customerId: parseInt(customerId), 
-      },
-      associate: {
-        associateId: parseInt(agentId), 
-      },
-      quotationItemDetails: ShoppingCart.map((item) => ({
-        product: { productId: item.id }, 
-        qty: item.quantity,
-        rate: item.rate,
-      })),
+  const handleCustomerSearch = () => {
+    const customer = customers.find(cust => cust.customerName.toLowerCase() === searchTerm.toLowerCase());
     
-      subtotal: subtotal,
-      discounts: parseFloat(discounts),
-      taxAmount: ShoppingCart.reduce((acc, item) => acc + (item.tax || 0), 0), // Assuming tax field in each item
-      totalAmount: balanceDue,
-      validityPeriod: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString().slice(0, 10), // 30 days from now
-      notesComments: "This quotation is valid for 30 days.",
-      quotationStatus: "Pending",
-      followUpDate: new Date(new Date().setDate(new Date().getDate() + 5)).toISOString().slice(0, 10), // Follow-up 5 days from now
-    };
-
-    console.log(quotationData);
-
-    try {
-      const response = await axios.post(`${apiUrl}/api/quotations`, quotationData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+    if (customer) {
+      const { customerId, customerName, billingAddress, shippingAddress, phoneNumber, emailAddress } = customer;
+      setCustomerData({
+        customerId,
+        customerName,
+        billingAddress,
+        shippingAddress,
+        phoneNumber,
+        emailAddress,
       });
+      toast.success("Customer Found");
+    } else {
+      setCustomerData({
+        customerId: '',
+        customerName: '',
+        billingAddress: '',
+        shippingAddress: '',
+        phoneNumber: '',
+        emailAddress: '',
+      });
+      toast.error("Customer Not Found");
+    }
+  };
 
-      console.log("Quotation saved successfully:", response.data);
+  const handleDiscountChange = (e, sku) => {
+    const discount = e.target.value;
+    dispatch({
+      type: 'UPDATE_DISCOUNT',
+      payload: { sku, discount: parseFloat(discount) },
+    });
+  };
 
-      const props = {
-        outputType: OutputType.Save,
-        returnJsPDFDocObject: false,
-        fileName: `Quotation_${customerId || 'Unknown'}`,
-        orientationLandscape: false,
-        compress: true,
-        logo: {
-          src: SadhguruTilesLogo || '', // Default to empty string if logo is missing
-          type: 'JPEG',
-          width: 53.33,
-          height: 26.66,
-          margin: {
-            top: 0,
-            left: 0,
+  const generatePDF = async (customerData, ShoppingCart, subtotal, discountAmount, taxAmount, grandTotal) => {
+    try {
+      const SadhguruTilesLogoBase64 = await getBase64ImageFromUrl(SadhguruTilesLogo || '');
+      const DTSLogoBase64 = await getBase64ImageFromUrl(DTSLogo || '');
+
+      const tableBody = [
+        [
+          { text: "#", style: 'tableHeader' },
+          { text: "SKU", style: 'tableHeader' },
+          { text: "Product Name", style: 'tableHeader' },
+          { text: "Image", style: 'tableHeader' },
+          { text: "Category", style: 'tableHeader' },
+          { text: "Rate (INR)", style: 'tableHeader' },
+          { text: "Qty", style: 'tableHeader' },
+          { text: "Discount (%)", style: 'tableHeader' },
+          { text: "Tax", style: 'tableHeader' },
+          { text: "Total", style: 'tableHeader' },
+        ],
+        ...await Promise.all(ShoppingCart.map(async (item, index) => [
+          index + 1,
+          item.sku?.toString() || 'N/A',
+          item.name?.toString() || 'N/A',
+          { image: await getBase64ImageFromUrl(item.image), fit: [50, 50] },
+          item.category?.toString() || 'N/A',
+          `Rs ${(item.rate || 0)}`,
+          item.quantity?.toString() || '0',
+          `${item.discount || 0}%`,
+          `Rs ${(item.rate * item.quantity * 0.18)}`,
+          `Rs ${calculateProductTotal(item).toFixed(2)}`,
+        ])),
+      ];
+
+      const docDefinition = {
+        background: {
+          image: DTSLogoBase64,
+          width: 300,
+          opacity: 0.2,
+          absolutePosition: { x: 150, y: 250 }
+        },
+        content: [
+          {
+            columns: [
+              { image: SadhguruTilesLogoBase64, width: 100 },
+              [
+                { text: "SADHGURU TILES & MARBLES", fontSize: 18, bold: true },
+                { text: "Sr. No. 1/3, Yojana Nagar, near HP Petrol Pump...", fontSize: 10 },
+                { text: "Phone: 0980101989 / 7620870603 / 9011719000", fontSize: 10 },
+                { text: "Email: sadhgurutiles@gmail.com", fontSize: 10 },
+                { text: "Website: www.sadhgurutiles.com", fontSize: 10 }
+              ],
+              { image: DTSLogoBase64, width: 50 }
+            ]
           },
-        },
-        stamp: {
-          inAllPages: false,
-          src: DTSLogo || '',
-          type: 'PNG',
-          width: 20,
-          height: 20,
-          margin: {
-            top: 0,
-            left: 0,
+          { text: '\n' },
+          {
+            columns: [
+              {
+                width: '50%',
+                stack: [
+                  { text: "Invoice issued for:", bold: true },
+                  { text: `Name: ${customerData.customerName || 'N/A'}` },
+                  { text: `Address: ${customerData.shippingAddress || 'N/A'}` },
+                  { text: `Phone: ${customerData.phoneNumber || 'N/A'}` },
+                  { text: `Email: ${customerData.emailAddress || 'N/A'}` },
+                ]
+              },
+              {
+                width: '50%',
+                stack: [
+                  { text: "Quotation #:", bold: true },
+                  { text: customerData.customerId || 'Unknown' },
+                  { text: `Payment Date: ${new Date().toLocaleDateString()}` },
+                  { text: `Invoice Date: ${new Date().toLocaleDateString()}` }
+                ]
+              }
+            ]
           },
-        },
-        business: {
-          name: "SADHGURU TILES & MARBLES",
-          address: "Sr. No. 1/3, Yojana Nagar, near HP Petrol Pump...",
-          phone: "0980101989 / 7620870603 / 9011719000",
-          email: "sadhgurutiles@gmail.com",
-          website: "www.sadhgurutiles.com",
-        },
-        contact: {
-          label: "Invoice issued for:",
-          name: customerData.customerName || 'N/A',
-          address: customerData.shippingAddress || 'N/A',
-          phone: customerData.phoneNumber || 'N/A',
-          email: customerData.emailAddress || 'N/A',
-          otherInfo: "",
-        },
-        invoice: {
-          label: "Quotation #: ",
-          num: customerId || 'Unknown',
-          invDate: `Payment Date: ${new Date().toLocaleDateString()}`,
-          invGenDate: `Invoice Date: ${new Date().toLocaleDateString()}`,
-          headerBorder: true,
-          tableBodyBorder: true,
-          header: [
-            { title: "#", style: { width: 10 } },
-            { title: "SKU", style: { width: 30 } },
-            { title: "Product Name", style: { width: 80 } },
-            { title: "Category", style: { width: 30 } },
-            { title: "Rate (INR)", style: { width: 30 } },
-            { title: "Quantity", style: { width: 20 } },
-            { title: "Tax", style: { width: 20 } },
-            { title: "Total", style: { width: 30 } },
-          ],
-          table: ShoppingCart.map((item, index) => ([
-            index + 1,
-            item.sku?.toString() || 'N/A',
-            item.name?.toString() || 'N/A',
-            item.category?.toString() || 'N/A',
-            `Rs ${(item.rate || 0).toFixed(2)}`,
-            (item.quantity || 0).toString(),
-            `Rs ${(item.tax || 0).toFixed(2)}`,
-            `Rs ${(item.rate * item.quantity || 0).toFixed(2)}`,
-          ])),
-          additionalRows: [
-            {
-              col1: 'Subtotal:',
-              col2: `Rs ${subtotal.toFixed(2)}`,
-              col3: '',
-              style: { fontSize: 12, fontStyle: 'bold' },
+          { text: '\n' },
+          {
+            table: {
+              headerRows: 1,
+              body: tableBody
             },
-            {
-              col1: 'Discount:',
-              col2: `Rs ${parseFloat(discounts).toFixed(2)}`, // Ensure discounts is parsed as a number
-              col3: '',
-              style: { fontSize: 12, fontStyle: 'bold' },
-            },
-            {
-              col1: 'Amount Received:',
-              col2: `Rs ${amountReceived.toFixed(2)}`,
-              col3: '',
-              style: { fontSize: 12, fontStyle: 'bold' },
-            },
-            {
-              col1: 'Balance Due:',
-              col2: `Rs ${balanceDue.toFixed(2)}`,
-              col3: '',
-              style: { fontSize: 12, fontStyle: 'bold' },
-            },
-          ],
-          invDescLabel: "Invoice Note",
-          invDesc: "Thank you for your business! Please make the payment by the due date.",
-        },
-        footer: {
-          text: "The invoice is created on a computer and is valid without the signature and stamp.",
-        },
-        pageEnable: true,
-        pageLabel: "Page ",
+            layout: 'lightHorizontalLines'
+          },
+          { text: '\n' },
+          {
+            columns: [
+              { width: '60%', text: '' },
+              {
+                width: '50%',
+                table: {
+                  widths: ['50%', '30%'],
+                  body: [
+                    [
+                      { text: 'Subtotal:', bold: true, alignment: 'right' },
+                      { text: `Rs ${subtotal}`, alignment: 'right' }
+                    ],
+                    [
+                      { text: 'Discount:', bold: true, alignment: 'right' },
+                      { text: `Rs ${discountAmount}`, alignment: 'right' }
+                    ],
+                    [
+                      { text: 'Tax:', bold: true, alignment: 'right' },
+                      { text: `Rs ${taxAmount}`, alignment: 'right' }
+                    ],
+                    [
+                      { text: 'Total Amount:', bold: true, alignment: 'right' },
+                      { text: `Rs ${grandTotal}`, alignment: 'right' }
+                    ]
+                  ]
+                },
+                layout: 'noBorders'
+              }
+            ]
+          },
+          { text: '\n' },
+          {
+            text: "The invoice is created on a computer and is valid without the signature and stamp.",
+            fontSize: 10,
+            alignment: 'center'
+          }
+        ],
+        styles: {
+          tableHeader: { bold: true, fontSize: 12, color: 'black' }
+        }
       };
 
-      jsPDFInvoiceTemplate(props);
-
-    } catch (err) {
-      console.error("Error saving quotation:", err);
+      pdfMake.createPdf(docDefinition).download(`Quotation_${customerData.customerId || 'Unknown'}.pdf`);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
     }
+  };
+
+  const handleDownload = async () => {
+    generatePDF(customerData, ShoppingCart, subtotal, discountAmount, taxAmount, grandTotal);
   };
 
   return (
@@ -224,14 +694,35 @@ const MyCart = () => {
         <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         <div className="my-cart">
           <h1>Generate Quotation</h1>
+
           <div className="customer-details">
             <input
               type="text"
-              placeholder="Enter Customer Id"
-              value={customerId}
-              onChange={(e) => setCustomerId(e.target.value)}
+              placeholder="Search Customer by Name"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="customer-search-input"
             />
-            <button onClick={handleCustomer}>Check</button>
+            <button onClick={handleCustomerSearch}>Search</button>
+            {suggestedCustomers.length > 0 && (
+              <ul className="suggestions-list">
+                {suggestedCustomers.map((customer) => (
+                  <li
+                    key={customer.customerId}
+                    onClick={() => handleCustomerSelect(customer)}
+                    className="suggestion-item"
+                  >
+                    {customer.customerName}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {!customerData.customerName && (
+              <button onClick={handleAddCustomer} className="add-customer-btn">
+                Add Customer
+              </button>
+            )}
           </div>
 
           <div className="customer-info">
@@ -240,21 +731,6 @@ const MyCart = () => {
             <input type="text" placeholder="Billing Address" value={customerData.billingAddress} readOnly />
             <input type="text" placeholder="Shipping Address" value={customerData.shippingAddress} readOnly />
             <input type="text" placeholder="Phone Number" value={customerData.phoneNumber} readOnly />
-          </div>
-
-          <div className="additional-info">
-            <input
-              type="text"
-              placeholder="Enter Agent Id"
-              value={agentId}
-              onChange={(e) => setAgentId(e.target.value)}
-            />
-            <input
-              type="number"
-              placeholder="Enter Discounts"
-              value={discounts}
-              onChange={(e) => setDiscounts(e.target.value)} // Discount is set as string initially
-            />
           </div>
 
           <table className="cart-table">
@@ -266,6 +742,7 @@ const MyCart = () => {
                 <th>Category</th>
                 <th>Rate (INR)</th>
                 <th>Quantity</th>
+                <th>Discount (%)</th>
                 <th>Tax</th>
                 <th>Total</th>
                 <th>Actions</th>
@@ -283,8 +760,16 @@ const MyCart = () => {
                   <td>{item.category}</td>
                   <td>Rs {item.rate}</td>
                   <td>{item.quantity}</td>
-                  <td>Rs {item.tax || 0}</td>
-                  <td>Rs {item.rate * item.quantity}</td>
+                  <td>
+                    <input
+                      type="text"
+                      max={100}
+                      onChange={(e) => handleDiscountChange(e, item.sku)}
+                      placeholder="Discount %"
+                    />
+                  </td>
+                  <td>Rs {(item.rate * item.quantity * 0.18).toFixed(2)}</td>
+                  <td>Rs {calculateProductTotal(item).toFixed(2)}</td>
                   <td>
                     <button className="delete-btn" onClick={() => handleDeleteItem(item.sku)}>
                       <FaTimes className="delete-icon" />
@@ -297,8 +782,9 @@ const MyCart = () => {
 
           <div className="cart-summary">
             <p>Total <span>Rs {subtotal}.00</span></p>
-            <p>Amount Received <span>Rs {amountReceived}.00</span></p>
-            <p>Balance Due <span>Rs {balanceDue}.00</span></p>
+            <p>Discount <span>Rs {discountAmount}.00</span></p>
+            <p>Tax <span>Rs {taxAmount}.00</span></p>
+            <p>Balance Due <span>Rs {grandTotal}.00</span></p>
           </div>
 
           <div className="cart-buttons">
@@ -307,7 +793,15 @@ const MyCart = () => {
               <button className="pay-button">Pay</button>
             </Link>
           </div>
+
         </div>
+
+        {isModalOpen && (
+          <AddCustomerForm
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          />
+        )}
       </div>
     </>
   );

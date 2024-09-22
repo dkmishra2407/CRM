@@ -21,7 +21,18 @@
     margin-left: auto;
     margin-right: 20px;
   }
-  
+  .display-flex-1{
+    display: flex;
+    justify-content: space-evenly;
+    gap: 4px;
+  }
+
+  .display-flex-2{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    align-content: center;
+  }
   /* Search bar styling */
   .quotation-search-bar {
     flex-grow: 1;
@@ -112,7 +123,6 @@
   /* Responsive container for the entire page */
   .generate-container {
     transition: margin-left 0.3s ease;
-    padding: 20px;
     display: flex;
     flex-direction: column;
     margin-left: 250px;
