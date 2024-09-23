@@ -181,7 +181,7 @@ const App = () => {
             <Route path='/inventory' element={<Inventory />} />
           )}
           {isAuthenticated  && accessiblePages.includes('sites') &&   (
-            <Route path='/addsites' element={<Sites />} />
+            <Route path='/sites' element={<Sites />} />
           )}
           {isAuthenticated  && accessiblePages.includes('customers') && (
             <Route path='/customer' element={<Customer />} />

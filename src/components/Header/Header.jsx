@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Header.css'; // Import the CSS file for styling
-import { FaBell, FaUser, FaBolt, FaSignOutAlt } from 'react-icons/fa'; // Import icons
+import { FaBell, FaUser, FaSignOutAlt } from 'react-icons/fa'; // Import icons
 import { Link, useNavigate } from 'react-router-dom';
 import { usePage } from '../../Context/page-context'; 
 import Logo from './company_logo.png';
+import ProfileModal from '../MyprofileModal/MyprofileModal';
 
 const Header = () => {
   const navigate = useNavigate();
   const { dispatch } = usePage(); 
+
+  // State to manage modal visibility
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const handleProfileClick = () => {
+    console.log("first")
+    setModalOpen(true);
+  };
 
   const handleLogout = () => {
     dispatch({ type: "SET_PAGES", payload: [] });
@@ -17,7 +26,7 @@ const Header = () => {
     navigate('/');
   };
 
-  const [isOpen, setIsOpen] = React.useState(false); // State to manage sidebar visibility
+  const [isOpen, setIsOpen] = useState(false); // State to manage sidebar visibility
 
   return (
     <header className="pb-4 bg-white header">
@@ -39,12 +48,14 @@ const Header = () => {
           </button>
           {/* Sidebar links */}
           <div className={`lg:flex lg:items-center lg:ml-auto lg:space-x-10 ${isOpen ? 'flex' : 'hidden'}`}>
-            <Link to="/profile"><FaUser className="header-icon" /></Link>
+            <FaUser className="header-icon" onClick={handleProfileClick} />
             <FaBell className="header-icon" />
             <FaSignOutAlt className="header-icon" onClick={handleLogout} />
           </div>
         </nav>
       </div>
+      {/* Profile modal */}
+      {isModalOpen && <ProfileModal closeModal={() => setModalOpen(false)} />}
     </header>
   );
 };

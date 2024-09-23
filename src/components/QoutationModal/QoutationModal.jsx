@@ -1,15 +1,19 @@
 import React from 'react';
-import './QoutationModal.css';
 import { FaTimes } from 'react-icons/fa';
+
 const QoutationModal = ({ onClose, children }) => {
   return (
-    <div className="modal-overlay-1">
-     
-      <div className="modal-content-2">
-        
-        <div className="modal-body">
-        <FaTimes className='quotationModalClose' onClick={onClose} />
-        {children}</div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 z-[10000] overflow-y-auto">
+      <div className="relative w-full max-w-4xl p-6 bg-white rounded-lg shadow-lg">
+        {/* Close button */}
+        <button
+          className="absolute top-3 right-3 text-gray-600 hover:text-gray-900"
+          onClick={onClose}
+        >
+          <FaTimes className="text-lg" />
+        </button>
+        {/* Modal Body */}
+        <div className="mt-6">{children}</div>
       </div>
     </div>
   );

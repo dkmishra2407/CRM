@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./Dashboard.css";
 import CustomPieChart from "../Charts/charts";
 import CustomPieChart1 from "../Charts/chart2";
 import Sidebar from "../SideBar/SideBar";
@@ -9,112 +8,135 @@ const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen); // Toggle sidebar when needed (triggered elsewhere)
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
   return (
     <>
-    <Header className="UniversalHeader"/>
-    <div className={`dashboard ${isSidebarOpen ? 'sidebar-open-dashboard' : 'sidebar-closed-dashboard'}`}>
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} /> {/* Sidebar toggles itself */}
-      <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`}>
-      <div className='heading-no-1'>
-        <h1 className="customers-page-title">Dashboard</h1>
+      <Header className="UniversalHeader" />
+      <div className="flex h-screen">
+        {/* Sidebar */}
+        <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
+          <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         </div>
-        <div className="search-bar-container">
-          <input
-            type="text"
-            placeholder="Search Customers / Invoice No / Quotation No"
-            className="search-bar"
-          />
-          <div className="search-icon">
-            <span className="material-symbols-outlined">search</span>
+
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col p-6">
+          {/* Heading */}
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold">Dashboard</h1>
           </div>
-        </div>
-        <div className="overview">
-          <h2>Business Overview</h2>
-          <div className="overview-cards">
-            <div className="card">
-              <div className="card-heading">
-                <h3>Profit & Loss</h3>
-                <small>Last 6 Months</small>
-              </div>
-              <div className="card-detail">
-                <p>Rs 15500</p>
-              </div>
-              <div className="card-graph"><CustomPieChart /></div>
-              <div className="know-more">Know More</div>
-            </div>
-            <div className="card">
-              <div className="card-heading">
-                <h3>Expenses</h3>
-                <small>Last 6 Months</small>
-              </div>
-              <div className="card-detail">
-                <p>Rs 15500</p>
-              </div>
-              <div className="card-graph"><CustomPieChart1 /></div>
-              <div className="know-more">Know More</div>
-            </div>
-            <div className="card">
-              <div className="card-heading">
-                <h3>Sales Agents</h3>
-                <span className="material-symbols-outlined">notifications</span>
-              </div>
-              <div className="sales-agents">
-                <p>Laxman: Rs 8500</p>
-                <p>Sourabh: Rs 8500</p>
-                <p>Vikram: Rs 8500</p>
-              </div>
-            </div>
-            <div className="card inventory">
-              <div className="card-heading">
-                <h3>Inventory</h3>
-                <span className="material-symbols-outlined">notifications</span>
-              </div>
-              <div className="card-details">
-                <div className="available-stock">
-                  <span className="sub-details-1" style={{ color: "green", marginLeft: "40px" }}>1400</span>
-                  <p>Total Available Stocks</p>
+
+          {/* Search Bar */}
+          <div className="flex items-center mb-6">
+            <input
+              type="text"
+              placeholder="Search Customers / Invoice No / Quotation No"
+              className="border p-2 rounded-lg w-64"
+            />
+            <span className="ml-2 text-gray-600 material-symbols-outlined">search</span>
+          </div>
+
+          {/* Business Overview */}
+          <div className="mb-6">
+            <h2 className="text-2xl font-semibold mb-4">Business Overview</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {/* Profit & Loss Card */}
+              <div className="bg-white shadow-md rounded-lg p-4">
+                <div className="mb-2">
+                  <h3 className="text-lg font-semibold">Profit & Loss</h3>
+                  <small className="text-gray-500">Last 6 Months</small>
                 </div>
-                <div className="product-categories">
-                  <span className="sub-details-1" style={{ color: "green", marginLeft: "40px" }}>12</span>
-                  <p>Product Categories</p>
+                <div className="text-2xl font-bold">Rs 15500</div>
+                <div className="mt-4">
+                  <CustomPieChart />
                 </div>
-                <div className="out-of-stock">
-                  <span className="sub-details-1" style={{ color: "red", marginLeft: "40px" }}>5</span>
-                  <p>Out of Stocks</p>
+                <div className="mt-4 text-blue-500 cursor-pointer">Know More</div>
+              </div>
+
+              {/* Expenses Card */}
+              <div className="bg-white shadow-md rounded-lg p-4">
+                <div className="mb-2">
+                  <h3 className="text-lg font-semibold">Expenses</h3>
+                  <small className="text-gray-500">Last 6 Months</small>
+                </div>
+                <div className="text-2xl font-bold">Rs 15500</div>
+                <div className="mt-4">
+                  <CustomPieChart1 />
+                </div>
+                <div className="mt-4 text-blue-500 cursor-pointer">Know More</div>
+              </div>
+
+              {/* Sales Agents Card */}
+              <div className="bg-white shadow-md rounded-lg p-4">
+                <div className="mb-2 flex justify-between items-center">
+                  <h3 className="text-lg font-semibold">Sales Agents</h3>
+                  <span className="material-symbols-outlined">notifications</span>
+                </div>
+                <div className="text-lg">
+                  <p>Laxman: Rs 8500</p>
+                  <p>Sourabh: Rs 8500</p>
+                  <p>Vikram: Rs 8500</p>
                 </div>
               </div>
-            </div>
-            <div className="card delivery">
-              <div className="card-heading">
-                <h3>Delivery</h3>
-                <span className="material-symbols-outlined">notifications</span>
+
+              {/* Inventory Card */}
+              <div className="bg-white shadow-md rounded-lg p-4">
+                <div className="mb-2 flex justify-between items-center">
+                  <h3 className="text-lg font-semibold">Inventory</h3>
+                  <span className="material-symbols-outlined">notifications</span>
+                </div>
+                <div className="mt-4">
+                  <div className="flex justify-between">
+                    <div>
+                      <p className="text-green-600 font-bold text-lg">1400</p>
+                      <p>Total Available Stocks</p>
+                    </div>
+                    <div>
+                      <p className="text-green-600 font-bold text-lg">12</p>
+                      <p>Product Categories</p>
+                    </div>
+                    <div>
+                      <p className="text-red-600 font-bold text-lg">5</p>
+                      <p>Out of Stocks</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="card-details">
-                <div className="orders">
-                  <span className="sub-details-1" style={{ color: "green", marginLeft: "19px" }}>5</span>
-                  <p>Orders</p>
+
+              {/* Delivery Card */}
+              <div className="bg-white shadow-md rounded-lg p-4">
+                <div className="mb-2 flex justify-between items-center">
+                  <h3 className="text-lg font-semibold">Delivery</h3>
+                  <span className="material-symbols-outlined">notifications</span>
                 </div>
-                <div className="delivered">
-                  <span className="sub-details-1" style={{ color: "green", marginLeft: "19px" }}>3</span>
-                  <p>Delivered</p>
-                </div>
-                <div className="pending">
-                  <span className="sub-details-1" style={{ color: "red", marginLeft: "19px" }}>2</span>
-                  <p>Pending</p>
+                <div className="mt-4">
+                  <div className="flex justify-between">
+                    <div>
+                      <p className="text-green-600 font-bold text-lg">5</p>
+                      <p>Orders</p>
+                    </div>
+                    <div>
+                      <p className="text-green-600 font-bold text-lg">3</p>
+                      <p>Delivered</p>
+                    </div>
+                    <div>
+                      <p className="text-red-600 font-bold text-lg">2</p>
+                      <p>Pending</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="card empty">
-              <h3>Empty Card</h3>
-              <p>Details here</p>
+
+              {/* Empty Card */}
+              <div className="bg-white shadow-md rounded-lg p-4">
+                <h3 className="text-lg font-semibold">Empty Card</h3>
+                <p>Details here</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </>
   );
 };

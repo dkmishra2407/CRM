@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './AddAgents.css';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
@@ -10,7 +9,6 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId, onUpdate }) => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
-  const [roleDescription, setRoleDescription] = useState('');
   const [active, setActive] = useState(true);
   const [roles, setRoles] = useState([]);
   const [errors, setErrors] = useState({});
@@ -20,11 +18,7 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId, onUpdate }) => {
 
   useEffect(() => {
     fetchRoles();
-    if (agentId) {
-      fetchAgentData(agentId);
-    } else {
-      resetForm();
-    }
+    if (agentId) fetchAgentData(agentId);
   }, [agentId]);
 
   const fetchRoles = async () => {
@@ -32,8 +26,7 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId, onUpdate }) => {
       const response = await axios.get(`${apiUrl}/api/roles`);
       setRoles(response.data);
     } catch (err) {
-      console.error('Failed to fetch roles', err);
-      toast.error('Failed to load roles. Please try again.');
+      toast.error('Failed to load roles.');
     }
   };
 
@@ -44,56 +37,19 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId, onUpdate }) => {
       setAgentName(agent.associateName);
       setUserName(agent.userName);
       setRole(agent.role.roleId);
-      setRoleDescription(agent.role.roleDescription);
       setActive(agent.active);
-      setPassword(''); // Clear password field for security
     } catch (err) {
-      console.error('Failed to fetch agent data', err);
-      toast.error('Failed to load agent data. Please try again.');
+      toast.error('Failed to load agent data.');
     }
-  };
-
-  const resetForm = () => {
-    setAgentName('');
-    setUserName('');
-    setPassword('');
-    setRole('');
-    setRoleDescription('');
-    setActive(true);
-    setErrors({});
-    setIsFormValid(false);
   };
 
   const handleFieldChange = (field, value) => {
     const newErrors = { ...errors };
-
-    switch (field) {
-      case 'agentName':
-        setAgentName(value);
-        if (!value) newErrors.agentName = 'Agent Name is required.';
-        else delete newErrors.agentName;
-        break;
-      case 'userName':
-        setUserName(value);
-        if (!value) newErrors.userName = 'Username is required.';
-        else delete newErrors.userName;
-        break;
-      case 'password':
-        setPassword(value);
-        if (!value) newErrors.password = 'Password is required.';
-        else delete newErrors.password;
-        break;
-      case 'role':
-        setRole(value);
-        if (!value) newErrors.role = 'Role is required.';
-        else delete newErrors.role;
-        break;
-      case 'active':
-        setActive(value === 'true');
-        break;
-      default:
-        break;
-    }
+    if (field === 'agentName') setAgentName(value);
+    if (field === 'userName') setUserName(value);
+    if (field === 'password') setPassword(value);
+    if (field === 'role') setRole(value);
+    if (field === 'active') setActive(value === 'true');
 
     setErrors(newErrors);
     setIsFormValid(Object.keys(newErrors).length === 0);
@@ -107,87 +63,71 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId, onUpdate }) => {
       associateName: agentName,
       password,
       userName,
-      password,
       active,
     };
 
     try {
       if (agentId) {
-        // PUT request to update an existing agent
-        await axios.put(`${apiUrl}/api/associates/${agentId}`, agentData, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        toast.success('Agent Updated Successfully!');
+        await axios.put(`${apiUrl}/api/associates/${agentId}`, agentData);
+        toast.success('Agent Updated!');
       } else {
-        // POST request to create a new agent
-        await axios.post(`${apiUrl}/api/associates`, agentData, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        toast.success('Agent Added Successfully!');
+        await axios.post(`${apiUrl}/api/associates`, agentData);
+        toast.success('Agent Added!');
       }
-      resetForm();
       onClose();
-      window.location.reload(); // Reload the page to reflect changes
+      window.location.reload();
     } catch (err) {
-      console.error('Error saving the form', err);
-      toast.error('Failed to save the agent. Please try again.');
+      toast.error('Failed to save the agent.');
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content-1">
-        <div className="modal-header">
-          <h2 className="form-title">{agentId ? 'Edit Sales Agent' : 'Add Sales Agent'}</h2>
-          <FaTimes className="close-icon" onClick={onClose} />
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[10000] overflow-y-auto">
+      <div className="bg-white rounded-lg w-full max-w-lg p-6 relative">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-semibold">
+            {agentId ? 'Edit Sales Agent' : 'Add Sales Agent'}
+          </h2>
+          <FaTimes className="text-gray-500 hover:text-black cursor-pointer" onClick={onClose} />
         </div>
-        <div className="form-fields">
-          <div className="form-group">
-            <label>Agent Name</label>
+        <div className="space-y-4">
+          <div className="w-full">
+            <label className="block mb-2">Agent Name</label>
             <input
               type="text"
-              placeholder="Agent Name"
+              className="w-full p-2 border rounded focus:outline-none focus:ring"
               value={agentName}
               onChange={(e) => handleFieldChange('agentName', e.target.value)}
             />
-            {errors.agentName && <span className="error">{errors.agentName}</span>}
           </div>
-
-          <div className="form-group">
-            <label>Username</label>
+          <div className="w-full">
+            <label className="block mb-2">Username</label>
             <input
               type="text"
-              placeholder="Username"
+              className="w-full p-2 border rounded focus:outline-none focus:ring"
               value={userName}
               onChange={(e) => handleFieldChange('userName', e.target.value)}
             />
-            {errors.userName && <span className="error">{errors.userName}</span>}
           </div>
-
           {!agentId && (
-            <div className="form-group">
-              <label>Password</label>
+            <div className="w-full">
+              <label className="block mb-2">Password</label>
               <input
                 type="password"
-                placeholder="Password"
+                className="w-full p-2 border rounded focus:outline-none focus:ring"
                 value={password}
                 onChange={(e) => handleFieldChange('password', e.target.value)}
               />
             </div>
           )}
-
-          <div className="form-group">
-            <label>Role</label>
+          <div className="w-full">
+            <label className="block mb-2">Role</label>
             <select
+              className="w-full p-2 border rounded focus:outline-none focus:ring"
               value={role}
               onChange={(e) => handleFieldChange('role', e.target.value)}
-              className="dropdown"
             >
               <option value="">Select Role</option>
               {roles.map((r) => (
@@ -196,26 +136,23 @@ const AddSalesAgentForm = ({ isOpen, onClose, agentId, onUpdate }) => {
                 </option>
               ))}
             </select>
-            {errors.role && <span className="error">{errors.role}</span>}
           </div>
-
-          <div className="form-group">
-            <label>Active</label>
+          <div className="w-full">
+            <label className="block mb-2">Active</label>
             <select
+              className="w-full p-2 border rounded focus:outline-none focus:ring"
               value={active.toString()}
               onChange={(e) => handleFieldChange('active', e.target.value)}
-              className="dropdown"
             >
               <option value="true">Active</option>
               <option value="false">Inactive</option>
             </select>
           </div>
         </div>
-
-        <div className="form-actions">
+        <div className="mt-6 text-right">
           <button
             onClick={handleSave}
-            className={`save-btn ${!isFormValid ? 'disabled-btn' : 'enabled-btn'}`}
+            className={`px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition ${!isFormValid ? 'opacity-50 cursor-not-allowed' : ''}`}
             disabled={!isFormValid}
           >
             Save Agent

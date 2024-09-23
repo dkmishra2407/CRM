@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import './Site.css'; // CSS specific for Sites
 import axios from 'axios';
 import Sidebar from '../../components/SideBar/SideBar';
-import AddSiteForm from '../../components/Addsite/Addsite'; 
+import AddSiteForm from '../../components/Addsite/Addsite';
 import Header from '../../components/Header/Header';
-// You need to create an AddSiteForm similar to AddCustomer
 
 function Sites() {
   const [sites, setSites] = useState([]);
@@ -38,7 +36,7 @@ function Sites() {
           site.siteId === id ? { ...site, ...updatedData } : site
         )
       );
-      handleCloseModal(); // Close the modal after updating
+      handleCloseModal();
     } catch (err) {
       console.error('Failed to update site', err);
     }
@@ -50,30 +48,10 @@ function Sites() {
         await axios.delete(`${apiUrl}/api/sites/${id}`);
         setSites((prevSites) => prevSites.filter((site) => site.siteId !== id));
       } catch (err) {
-        if (err.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.error('Failed to delete site', err.response.status, err.response.data);
-          if (err.response.status === 500) {
-            alert('Failed to delete site. Please try again later. If the issue persists, please contact support.');
-          } else {
-            alert('Failed to delete site. Please try again later.');
-          }
-        } else if (err.request) {
-          // The request was made but no response was received
-          // `err.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
-          console.error('Failed to delete site', err.request);
-          alert('Failed to delete site. Please try again later.');
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.error('Failed to delete site', err.message);
-          alert('Failed to delete site. Please try again later.');
-        }
+        alert('Failed to delete site. Please try again later.');
+        console.error('Failed to delete site', err);
       }
     }
-  
-
   };
 
   const handleEdit = (id) => {
@@ -130,82 +108,106 @@ function Sites() {
   };
 
   return (
-   <>
-    <Header className="UniversalHeader"/>
-    <div className={`generate-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      <div className='heading-no-1'>
-        <h1 className="sites-page-title">Sites</h1>
-        <div className="site-add-btn" onClick={() => setIsModalOpen(true)}>
-          Add Site
-        </div>
-      </div>
-      <div className="search-bar-container">
-        <input
-          type="text"
-          placeholder="Search by name, contact, or code"
-          className="search-bar"
-          value={searchTerm}
-          onChange={handleSearchTermChange}
-        />
-        <div className="search-icon">
-          <span className="material-icons">search</span>
-        </div>
-      </div>
-      <table className="site-table">
-        <thead>
-          <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Address</th>
-            <th>Contact</th>
-            <th>Code</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredSites.length > 0 ? (
-            filteredSites.map((site) => (
-              <tr key={site.siteId}>
-                <td>{site.siteId}</td>
-                <td>{site.siteName || 'N/A'}</td>
-                <td>{site.siteAddress || 'N/A'}</td>
-                <td>{site.siteContact || 'N/A'}</td>
-                <td>{site.siteCode || 'N/A'}</td>
-                <td>
-                  <button className="action-btn view-btn" onClick={() => handleEdit(site.siteId)}>Edit</button>
-                  <button className="action-btn delete-btn" onClick={() => handleDelete(site.siteId)}>Delete</button>
-                </td>
+    <>
+      <Header className="UniversalHeader" />
+      <div className={`flex ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+        <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        <div className="main-content p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-bold">Sites</h1>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+            >
+              Add Site
+            </button>
+          </div>
+
+          <div className="mb-4 flex items-center">
+            <input
+              type="text"
+              placeholder="Search by name, contact, or code"
+              className="border p-2 rounded-lg w-full"
+              value={searchTerm}
+              onChange={handleSearchTermChange}
+            />
+            <span className="ml-2 material-icons">search</span>
+          </div>
+
+          <table className="w-full table-auto border-collapse">
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="border px-4 py-2">ID</th>
+                <th className="border px-4 py-2">Name</th>
+                <th className="border px-4 py-2">Address</th>
+                <th className="border px-4 py-2">Contact</th>
+                <th className="border px-4 py-2">Code</th>
+                <th className="border px-4 py-2">Actions</th>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="6">No sites found</td>
-            </tr>
+            </thead>
+            <tbody>
+              {filteredSites.length > 0 ? (
+                filteredSites.map((site) => (
+                  <tr key={site.siteId} className="hover:bg-gray-100">
+                    <td className="border px-4 py-2">{site.siteId}</td>
+                    <td className="border px-4 py-2">{site.siteName || 'N/A'}</td>
+                    <td className="border px-4 py-2">{site.siteAddress || 'N/A'}</td>
+                    <td className="border px-4 py-2">{site.siteContact || 'N/A'}</td>
+                    <td className="border px-4 py-2">{site.siteCode || 'N/A'}</td>
+                    <td className="border px-4 py-2">
+                      <button
+                        onClick={() => handleEdit(site.siteId)}
+                        className="bg-yellow-400 text-white px-2 py-1 rounded mr-2 hover:bg-yellow-500"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(site.siteId)}
+                        className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="text-center py-4">
+                    No sites found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+
+          <div className="flex justify-between items-center mt-4">
+            <button
+              className="px-4 py-2 bg-gray-200 rounded"
+              onClick={previousPage}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            <span className="px-4">Page {currentPage} of {totalPages}</span>
+            <button
+              className="px-4 py-2 bg-gray-200 rounded"
+              onClick={nextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
+
+          {isModalOpen && (
+            <AddSiteForm
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              siteId={selectedSiteId}
+              onUpdate={updateSite}
+            />
           )}
-        </tbody>
-      </table>
-
-      {/* Pagination Controls */}
-      <div className="pagination-controls">
-        <button className="pagination-btn" onClick={previousPage} disabled={currentPage === 1}>
-          Previous
-        </button>
-        <span className="pagination-info">Page {currentPage} of {totalPages}</span>
-        <button className="pagination-btn" onClick={nextPage} disabled={currentPage === totalPages}>
-          Next
-        </button>
+        </div>
       </div>
-
-      {isModalOpen && (
-        <AddSiteForm
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          siteId={selectedSiteId}
-          onUpdate={updateSite} // Pass the update function as a prop
-        />
-      )}
-    </div>
     </>
   );
 }

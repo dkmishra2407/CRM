@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import './Customer.css';
 import axios from 'axios';
 import Sidebar from '../../components/SideBar/SideBar';
-import AddCustomerForm from '../../components/AddCustomer/AddCustomer';
+import AddCustomerForm from '../../components/AddCustomer/AddCustomer'; 
 import Header from '../../components/Header/Header';
+import { FaSearch } from 'react-icons/fa'; // Optional icon for search
+import { toast } from 'react-toastify';
+
 function Customer() {
   const [customers, setCustomers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -11,7 +13,7 @@ function Customer() {
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const customersPerPage = 10; // Number of customers per page
+  const customersPerPage = 10; 
   const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
@@ -31,19 +33,28 @@ function Customer() {
   const updateCustomer = async (id, updatedData) => {
     try {
       await axios.put(`${apiUrl}/api/customers/${id}`, updatedData);
+      
+      // toast.success("Details updated successfully!", {
+      //   style: { backgroundColor: 'black', color: 'white' }, // Black background with white text
+      // });
+    
       setCustomers((prevCustomers) =>
         prevCustomers.map((customer) =>
           customer.customerId === id ? { ...customer, ...updatedData } : customer
         )
       );
-      handleCloseModal(); // Close the modal after updating
+      
+      handleCloseModal();
     } catch (err) {
+      toast.error("Failed to update customer", {
+        style: { backgroundColor: 'black', color: 'white' }, // Black background with white text
+      });
       console.error('Failed to update customer', err);
     }
-  };
+  }
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this customer?')) {
+  const handleDelete = async (id,name) => {
+    if (window.confirm(`Are you sure you want to delete ${name}?`)) {
       try {
         await axios.delete(`${apiUrl}/api/customers/${id}`);
         setCustomers((prevCustomers) =>
@@ -62,7 +73,7 @@ function Customer() {
 
   const handleSearchTermChange = (e) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1); // Reset to the first page when searching
+    setCurrentPage(1); 
   };
 
   const handleCloseModal = () => {
@@ -74,7 +85,6 @@ function Customer() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // Pagination logic
   const indexOfLastCustomer = currentPage * customersPerPage;
   const indexOfFirstCustomer = indexOfLastCustomer - customersPerPage;
 
@@ -110,79 +120,116 @@ function Customer() {
 
   return (
     <>
-    <Header className="UniversalHeader"/>
-    <div className={`generate-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      <div className='heading-no-1'>
-        <h1 className="customers-page-title">Customers</h1>
-        <div className="customer-add-btn" onClick={() => setIsModalOpen(true)}>
-          Add Customer
+      <Header className="UniversalHeader" />
+      <div className="flex h-screen">
+        {/* Sidebar */}
+        <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
+          <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         </div>
-      </div>
-      <div className="search-bar-container">
-        <input
-          type="text"
-          placeholder="Search by name, phone, or email"
-          className="search-bar"
-          value={searchTerm}
-          onChange={handleSearchTermChange}
-        />
-        <div className="search-icon">
-          <span className="material-icons">search</span>
-        </div>
-      </div>
-      <table className="customer-table">
-        <thead>
-          <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredCustomers.length > 0 ? (
-            filteredCustomers.map((customer) => (
-              <tr key={customer.customerId}>
-                <td>{customer.customerId}</td>
-                <td>{customer.customerName || 'N/A'}</td>
-                <td>{customer.phoneNumber || 'N/A'}</td>
-                <td>{customer.emailAddress || 'N/A'}</td>
-                <td>
-                  <button className="action-btn view-btn" onClick={() => handleEdit(customer.customerId)}>Edit</button>
-                  <button className="action-btn delete-btn" onClick={() => handleDelete(customer.customerId)}>Delete</button>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="5">No customers found</td>
-            </tr>
+
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col h-full p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-3xl font-bold">Customers</h1>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition"
+            >
+              Add Customer
+            </button>
+          </div>
+
+          {/* Search Bar */}
+          <div className="mb-6 flex items-center">
+            <input
+              type="text"
+              placeholder="Search by name, phone, or email"
+              className="border p-2 rounded-lg w-64 text-base"
+              value={searchTerm}
+              onChange={handleSearchTermChange}
+            />
+            <FaSearch className="ml-2 text-gray-600 text-lg" />
+          </div>
+
+          {/* Customer Table */}
+          <div className="flex-1 overflow-y-auto">
+            <table className="w-full table-auto border-collapse">
+              <thead>
+                <tr className="bg-gray-200 text-left">
+                  <th className="border px-4 py-2">ID</th>
+                  <th className="border px-4 py-2">Name</th>
+                  <th className="border px-4 py-2">Phone</th>
+                  <th className="border px-4 py-2">Email</th>
+                  <th className="border px-4 py-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredCustomers.length > 0 ? (
+                  filteredCustomers.map((customer) => (
+                    <tr key={customer.customerId} className="hover:bg-gray-100">
+                      <td className="border px-4 py-2">{customer.customerId}</td>
+                      <td className="border px-4 py-2">{customer.customerName || 'N/A'}</td>
+                      <td className="border px-4 py-2">{customer.phoneNumber || 'N/A'}</td>
+                      <td className="border px-4 py-2">{customer.emailAddress || 'N/A'}</td>
+                      <td className="border px-4 py-2">
+                        <button
+                          onClick={() => handleEdit(customer.customerId)}
+                          className="bg-yellow-400 text-white px-3 py-1 rounded mr-2 hover:bg-yellow-500"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(customer.customerId,customer.customerName)}
+                          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="text-center py-6">
+                      No customers found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination Controls */}
+          <div className="flex justify-between items-center mt-6">
+            <button
+              className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+              onClick={previousPage}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            <span className="text-gray-700">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+              onClick={nextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
+
+          {/* Add Customer Modal */}
+          {isModalOpen && (
+            <AddCustomerForm
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              customerId={selectedCustomerId}
+              onUpdate={updateCustomer}
+            />
           )}
-        </tbody>
-      </table>
-
-      {/* Pagination Controls */}
-      <div className="pagination-controls">
-        <button className="pagination-btn" onClick={previousPage} disabled={currentPage === 1}>
-          Previous
-        </button>
-        <span className="pagination-info">Page {currentPage} of {totalPages}</span>
-        <button className="pagination-btn" onClick={nextPage} disabled={currentPage === totalPages}>
-          Next
-        </button>
+        </div>
       </div>
-
-      {isModalOpen && (
-        <AddCustomerForm
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          customerId={selectedCustomerId}
-          onUpdate={updateCustomer} // Pass the update function as a prop
-        />
-      )}
-    </div>
     </>
   );
 }

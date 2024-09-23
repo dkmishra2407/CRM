@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import './Inventory.css';
-import ProductcardForInventory from '../../components/ProductcardForInventory/ProductcardForInventory';
-import { useCart } from '../../Context/card.context';
-import { Link } from 'react-router-dom';
-import AddProductForm from '../../components/AddProductForm/AddProductForm';
-import Sidebar from '../../components/SideBar/SideBar';
 import axios from 'axios';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { ThreeDots } from 'react-loader-spinner';
-import Categories from '../../components/Catagories/Catagories';
-import ProductDetailsModal from '../../components/ProductDetail/ProductDetal';
+import Sidebar from '../../components/SideBar/SideBar';
 import Header from '../../components/Header/Header';
+import ProductcardForInventory from '../../components/ProductcardForInventory/ProductcardForInventory';
+import AddProductForm from '../../components/AddProductForm/AddProductForm';
+import ProductDetailsModal from '../../components/ProductDetail/ProductDetal';
+import { useCart } from '../../Context/card.context';
 
 function Inventory() {
   const { state: { totalQuantity }, dispatch } = useCart();
@@ -22,8 +19,8 @@ function Inventory() {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [categories, setCategories] = useState([]); // Categories state
-  const [selectedCategory, setSelectedCategory] = useState(''); // Selected category
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -32,7 +29,6 @@ function Inventory() {
     fetchProducts();
   }, [page]);
 
-  // Fetch products from the API
   const fetchProducts = async () => {
     setLoading(true);
     try {
@@ -50,7 +46,7 @@ function Inventory() {
           availableQty: product.productQuantity?.availableQty || 0,
           rate: product.rate,
           category: product.category.categoryName,
-          categoryId: product.category.categoryId, // Store category ID for filtering
+          categoryId: product.category.categoryId,
         }));
 
         setInitialProducts(prevProducts => {
@@ -66,17 +62,15 @@ function Inventory() {
     setLoading(false);
   };
 
-  // Fetch categories from the API
   const fetchCategories = async () => {
     try {
       const response = await axios.get(`${apiUrl}/api/categories`);
-      setCategories(response.data); // Store categories
+      setCategories(response.data);
     } catch (err) {
       console.error('Failed to fetch categories', err);
     }
   };
 
-  // Fetch more data when scrolling
   const fetchMoreData = () => {
     if (!loading) {
       setPage(prevPage => prevPage + 1);
@@ -106,10 +100,9 @@ function Inventory() {
   };
 
   const handleCategoryChange = (event) => {
-    setSelectedCategory(event.target.value); // Update selected category
+    setSelectedCategory(event.target.value);
   };
 
-  // Filter products based on search query and selected category
   const filteredProducts = initialProducts.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || product.sku.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === '' || product.categoryId === parseInt(selectedCategory);
@@ -122,92 +115,88 @@ function Inventory() {
 
   return (
     <>
-    <Header className="UniversalHeader"/>
-    <div className="App">
-     <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`}>
-        <div className="top-bar">
-          <h1 style={{ color: 'black' }}>Inventory</h1>
-          <button
-            className="add-product-btn"
-            onClick={handleOpenAddProductModal}
-            style={{
-              backgroundColor: '#28a745',
-              color: 'white',
-            }}
-          >
-            Add Product
-          </button>
-        </div>
+      <Header />
+      <div className={`flex ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+        <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        <div className="p-4 w-full">
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-bold">Inventory</h1>
+            <button
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+              onClick={handleOpenAddProductModal}
+            >
+              Add Product
+            </button>
+          </div>
 
-        <div className='search-and-filter'>
-        <div className="category-dropdown-container-inventory">
-          <label htmlFor="category-select">Filter by Category: </label>
-          <select
-            id="category-select"
-            value={selectedCategory}
-            onChange={handleCategoryChange}
-          >
-            <option value="">All Categories</option>
-            {categories.map((category) => (
-              <option key={category.categoryId} value={category.categoryId}>
-                {category.categoryName}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="search-bar-container">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearchChange}
-              placeholder="Search Products"
-              className="search-bar"
-            />
-            <div className="search-icon">
-              <span className="material-icons gradient-text">search</span>
+          {/* Search and Filter Section */}
+          <div className="flex space-x-4 mb-4">
+            <div className="flex-grow">
+              <label className="block text-lg font-medium">Search Products:</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  placeholder="Search Products"
+                  className="p-2 border rounded w-full"
+                />
+                <span className="material-icons absolute top-2 right-2 text-gray-500">search</span>
+              </div>
             </div>
-        </div>
+
+            <div className="flex-grow">
+              <label htmlFor="category-select" className="block text-lg font-medium">
+                Filter by Category:
+              </label>
+              <select
+                id="category-select"
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+                className="border rounded p-2 w-full"
+              >
+                <option value="">All Categories</option>
+                {categories.map((category) => (
+                  <option key={category.categoryId} value={category.categoryId}>
+                    {category.categoryName}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <InfiniteScroll
+            dataLength={filteredProducts.length}
+            next={fetchMoreData}
+            hasMore={hasMore}
+            loader={<ThreeDots color="#000" height={80} width={80} />}
+            endMessage={<p className="text-center mt-4">No more products to display.</p>}
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4"
+          >
+            {filteredProducts.map((product) => (
+              <ProductcardForInventory
+                id={product.key}
+                key={product.key}
+                sku={product.sku}
+                name={product.name}
+                image={product.image}
+                rate={product.rate}
+                category={product.category}
+                availableQty={product.availableQty}
+                onClick={() => handleOpenProductDetailsModal(product.key)}
+              />
+            ))}
+          </InfiniteScroll>
         </div>
 
-        <InfiniteScroll
-          dataLength={filteredProducts.length}
-          next={fetchMoreData}
-          hasMore={hasMore}
-          endMessage={<p style={{ textAlign: 'center' }}>No more products to display.</p>}
-          className="product-container"
-        >
-          {filteredProducts.map((product) => (
-            <ProductcardForInventory
-              id={product.key}
-              key={product.key}
-              sku={product.sku}
-              name={product.name}
-              image={product.image}
-              rate={product.rate}
-              category={product.category}
-              availableQty={product.availableQty}
-              onClick={() => handleOpenProductDetailsModal(product.key)}
-            />
-          ))}
-        </InfiniteScroll>
-      </div>
-
-      {/* Product Details Modal */}
-      {isProductDetailsModalOpen && selectedProductId && (
-        <div className="modal" onClick={(e) => e.stopPropagation()}>
+        {isProductDetailsModalOpen && selectedProductId && (
           <ProductDetailsModal productId={selectedProductId} onClose={handleCloseProductDetailsModal} />
-        </div>
-      )}
+        )}
 
-      {/* Add Product Modal */}
-      {isAddProductModalOpen && (
-        <div className="modal" onClick={(e) => e.stopPropagation()}>
+        {isAddProductModalOpen && (
           <AddProductForm onClose={handleCloseAddProductModal} />
-        </div>
-      )}
-    </div>
+        )}
+      </div>
     </>
   );
 }

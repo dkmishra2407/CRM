@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import './Sales.css'; // CSS specific for Sales
 import axios from 'axios';
 import Sidebar from '../../components/SideBar/SideBar';
 import Header from '../../components/Header/Header';
-import SaleModal from '../../components/SaleModal/SaleModal'; // Import a Modal component for Sale details
+import SaleModal from '../../components/SaleModal/SaleModal'; 
 import { Link } from 'react-router-dom';
 import { FaTimes } from 'react-icons/fa';
 import { toast } from 'react-toastify';
@@ -13,9 +12,9 @@ function Sales() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedSale, setSelectedSale] = useState(null); // To store the selected Sale
-  const [isModalOpen, setIsModalOpen] = useState(false); // Manage modal visibility
-  const salesPerPage = 10; // Number of sales per page
+  const [selectedSale, setSelectedSale] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const salesPerPage = 10;
   const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
@@ -24,7 +23,7 @@ function Sales() {
 
   const fetchSales = async () => {
     try {
-      const response = await axios.get('http://localhost:7171/api/sales');
+      const response = await axios.get(`${apiUrl}/api/sales`);
       setSales(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       console.error('Failed to fetch sales', err);
@@ -34,7 +33,7 @@ function Sales() {
 
   const handleSearchTermChange = (e) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1); // Reset to the first page when searching
+    setCurrentPage(1);
   };
 
   const toggleSidebar = () => {
@@ -43,40 +42,30 @@ function Sales() {
 
   const handleDelete = (id) => async () => {
     try {
-      // Make an axios DELETE request to the API to delete the sale
       await axios.delete(`${apiUrl}/api/sales/${id}`);
-      
-      // Remove the deleted sale from the state
-      setSales(sales.filter(sale => sale.saleId !== id));
-  
-      // Show success message
-      toast.success("Sale deleted successfully!");
+      setSales(sales.filter((sale) => sale.saleId !== id));
+      toast.success('Sale deleted successfully!');
     } catch (err) {
       console.error('Error deleting sale:', err);
-      // Show error message
-      toast.error("Failed to delete the sale. Please try again.");
+      toast.error('Failed to delete the sale. Please try again.');
     }
   };
 
-  // Open the modal with sale details
   const openSaleModal = (sale) => {
     setSelectedSale(sale);
     setIsModalOpen(true);
   };
 
-  // Close the modal
   const closeModal = () => {
     setSelectedSale(null);
     setIsModalOpen(false);
   };
 
-  // Handle the "Sale" button click inside the modal
   const handleSale = () => {
     console.log('Processing sale for:', selectedSale);
     closeModal();
   };
 
-  // Pagination logic
   const indexOfLastSale = currentPage * salesPerPage;
   const indexOfFirstSale = indexOfLastSale - salesPerPage;
 
@@ -111,203 +100,191 @@ function Sales() {
   return (
     <>
       <Header className="UniversalHeader" />
-      <div className={`generate-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-        <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-        <div className="heading-no-1">
-          <h1 className="sales-page-title">Sales</h1>
+      <div className="flex h-screen">
+        {/* Sidebar */}
+        <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
+          <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         </div>
-        <div className="search-bar-container">
-          <input
-            type="text"
-            placeholder="Search by sale name or PO number"
-            className="search-bar"
-            value={searchTerm}
-            onChange={handleSearchTermChange}
-          />
-          <div className="search-icon">
-            <span className="material-icons">search</span>
+
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col h-full p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-3xl font-bold">Sales</h1>
           </div>
-        </div>
 
-        <table className="quotation-table">
-          <thead>
-            <tr>
-              <th>Sale ID</th>
-              <th>Sale Name</th>
-              <th>Quotation Number</th>
-              <th>Sale Date</th>
-              <th>Due Date</th>
-              <th>Purchase Order Number</th>
-              <th>Currency</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredSales.length > 0 ? (
-              filteredSales.map((sale) => (
-                <tr key={sale.saleId}>
-                  <td onClick={() => openSaleModal(sale)}>{sale.saleId}</td>
-                  <td onClick={() => openSaleModal(sale)}>{sale.saleName}</td>
-                  <td onClick={() => openSaleModal(sale)}>{sale.quotation.quotationNumber}</td>
-                  <td onClick={() => openSaleModal(sale)}>{sale.saleDate}</td>
-                  <td onClick={() => openSaleModal(sale)}>{sale.dueDate}</td>
-                  <td onClick={() => openSaleModal(sale)}>{sale.purchaseOrderNumber}</td>
-                  <td onClick={() => openSaleModal(sale)}>{sale.currency}</td>
-                  <td>
-                    <button className="delete-btn" onClick={handleDelete(sale.saleId)}>
-                      <FaTimes className="delete-icon" />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="8">No sales found</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+          {/* Search Bar */}
+          <div className="mb-6 flex items-center">
+            <input
+              type="text"
+              placeholder="Search by sale name or PO number"
+              className="border p-2 rounded-lg w-64 text-base"
+              value={searchTerm}
+              onChange={handleSearchTermChange}
+            />
+            <span className="ml-2 material-icons text-gray-600">search</span>
+          </div>
 
-        {/* Pagination Controls */}
-        <div className="pagination-controls">
-          <button className="pagination-btn" onClick={previousPage} disabled={currentPage === 1}>
-            Previous
-          </button>
-          <span className="pagination-info">Page {currentPage} of {totalPages}</span>
-          <button className="pagination-btn" onClick={nextPage} disabled={currentPage === totalPages}>
-            Next
-          </button>
-        </div>
-      </div>
-      
-      {/* Modal for Sale Details */}
-      {isModalOpen && selectedSale && (
-        <SaleModal onClose={closeModal}>
-          <div className="quotation-details-container">
-            <div className='display-flex-2'>
-              <h1>Sale Details</h1>
-              <h4>Validity Period: {selectedSale.dueDate}</h4>
-            </div>
-
-            <div className="customer-info">
-              <fieldset>
-                <legend>Customer Information</legend>
-                
-                <div className='display-flex-1'>
-                  <label>
-                    Customer Name:
-                    <input type="text" placeholder="Customer Name" value={selectedSale.quotation.customer.customerName} readOnly />
-                  </label>
-
-                  <label>
-                    Email Address:
-                    <input type="email" placeholder="Email Address" value={selectedSale.quotation.customer.emailAddress} readOnly />
-                  </label>
-
-                  <label>
-                    Phone Number:
-                    <input type="text" placeholder="Phone Number" value={selectedSale.quotation.customer.phoneNumber} readOnly />
-                  </label>
-                </div>
-
-                <div className='display-flex-1'>
-                  <label>
-                    Shipping Address:
-                    <input type="text" placeholder="Shipping Address" value={selectedSale.quotation.customer.shippingAddress} readOnly />
-                  </label>
-
-                  <label>
-                    Agent Name:
-                    <input type="text" placeholder="Agent Name" value={selectedSale.quotation.associate.associateName} readOnly />
-                  </label>
-
-                  <label>
-                    Sale Date:
-                    <input type="text" placeholder="Sale Date" value={new Date(selectedSale.saleDate).toLocaleDateString()} readOnly />
-                  </label>
-                </div>
-              </fieldset>
-            </div>
-
-            {/* Sale Summary Table */}
-            <table className="cart-table">
+          {/* Sales Table */}
+          <div className="flex-1 overflow-y-auto">
+            <table className="w-full table-auto border-collapse">
               <thead>
-                <tr>
-                  <th>No</th>
-                  <th>Quotation Number</th>
-                  <th>Subtotal</th>
-                  <th>Discount</th>
-                  <th>Tax Amount</th>
-                  <th>Total Amount</th>
-                  <th>Discount Offer</th>
-                  <th>Actions</th>
+                <tr className="bg-gray-200 text-left">
+                  <th className="border px-4 py-2">Sale ID</th>
+                  <th className="border px-4 py-2">Sale Name</th>
+                  <th className="border px-4 py-2">Quotation Number</th>
+                  <th className="border px-4 py-2">Sale Date</th>
+                  <th className="border px-4 py-2">Due Date</th>
+                  <th className="border px-4 py-2">Purchase Order Number</th>
+                  <th className="border px-4 py-2">Currency</th>
+                  <th className="border px-4 py-2">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>{selectedSale.quotation.quotationNumber}</td>
-                  <td>{selectedSale.quotation.subtotal}</td>
-                  <td>{selectedSale.quotation.discounts || 0}</td>
-                  <td>{selectedSale.quotation.taxAmount || 0}</td>
-                  <td>{selectedSale.quotation.totalAmount}</td>
-                  <td>{selectedSale.discountOffers || 0}</td>
-                  <td>
-                    <button className="delete-btn">
-                      <FaTimes className="delete-icon" />
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-
-            {/* Quotation Product Details Table */}
-            <table className="cart-table">
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>SKU</th>
-                  <th>Product Name</th>
-                  <th>Image</th>
-                  <th>Category</th>
-                  <th>Rate (INR)</th>
-                  <th>Quantity</th>
-                  <th>Tax</th>
-                  <th>Discounts</th>
-                  <th>Total</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {selectedSale.quotation.quotationItemDetails.map((item, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{item.product.sku}</td>
-                    <td>{item.product.name}</td>
-                    <td><img src={item.product.images[0].imageUrl} alt={item.product.name} width="50" /></td>
-                    <td>{item.product.category.categoryName}</td>
-                    <td>Rs {item.rate}</td>
-                    <td>{item.qty}</td>
-                    <td>Rs {item.rate * item.qty * 0.18}</td>
-                    <td>{item.discount || 0}</td>
-                    <td>Rs {item.rate * item.qty + (item.rate * item.qty * 0.18)}</td>
-                    <td>
-                      <button className="delete-btn">
-                        <FaTimes className="delete-icon" />
-                      </button>
+                {filteredSales.length > 0 ? (
+                  filteredSales.map((sale) => (
+                    <tr key={sale.saleId} className="hover:bg-gray-100">
+                      <td onClick={() => openSaleModal(sale)} className="cursor-pointer">{sale.saleId}</td>
+                      <td onClick={() => openSaleModal(sale)} className="cursor-pointer">{sale.saleName}</td>
+                      <td onClick={() => openSaleModal(sale)} className="cursor-pointer">{sale.quotation.quotationNumber}</td>
+                      <td onClick={() => openSaleModal(sale)} className="cursor-pointer">{sale.saleDate}</td>
+                      <td onClick={() => openSaleModal(sale)} className="cursor-pointer">{sale.dueDate}</td>
+                      <td onClick={() => openSaleModal(sale)} className="cursor-pointer">{sale.purchaseOrderNumber}</td>
+                      <td onClick={() => openSaleModal(sale)} className="cursor-pointer">{sale.currency}</td>
+                      <td>
+                        <button className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600" onClick={handleDelete(sale.saleId)}>
+                          <FaTimes />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" className="text-center py-6">
+                      No sales found
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
-
-            {/* Sale button */}
-            <Link to='/invoice'>
-              <button className="sale-btn" onClick={handleSale}>Process Sale</button>
-            </Link>
           </div>
-        </SaleModal>
-      )}
+
+          {/* Pagination Controls */}
+          <div className="flex justify-between items-center mt-6">
+            <button
+              className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+              onClick={previousPage}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            <span className="text-gray-700">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+              onClick={nextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
+
+          {/* Sale Modal */}
+          {isModalOpen && selectedSale && (
+            <SaleModal onClose={closeModal}>
+              <div className="quotation-details-container">
+                <div className="display-flex-2">
+                  <h1>Sale Details</h1>
+                  <h4>Validity Period: {selectedSale.dueDate}</h4>
+                </div>
+
+                {/* Customer Information */}
+                <div className="customer-info">
+                  <fieldset>
+                    <legend>Customer Information</legend>
+                    <div className="display-flex-1">
+                      <label>
+                        Customer Name:
+                        <input type="text" placeholder="Customer Name" value={selectedSale.quotation.customer.customerName} readOnly />
+                      </label>
+                      <label>
+                        Email Address:
+                        <input type="email" placeholder="Email Address" value={selectedSale.quotation.customer.emailAddress} readOnly />
+                      </label>
+                      <label>
+                        Phone Number:
+                        <input type="text" placeholder="Phone Number" value={selectedSale.quotation.customer.phoneNumber} readOnly />
+                      </label>
+                    </div>
+
+                    <div className="display-flex-1">
+                      <label>
+                        Shipping Address:
+                        <input type="text" placeholder="Shipping Address" value={selectedSale.quotation.customer.shippingAddress} readOnly />
+                      </label>
+                      <label>
+                        Agent Name:
+                        <input type="text" placeholder="Agent Name" value={selectedSale.quotation.associate.associateName} readOnly />
+                      </label>
+                      <label>
+                        Sale Date:
+                        <input type="text" placeholder="Sale Date" value={new Date(selectedSale.saleDate).toLocaleDateString()} readOnly />
+                      </label>
+                    </div>
+                  </fieldset>
+                </div>
+
+                {/* Quotation Product Details Table */}
+                <table className="cart-table">
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th>SKU</th>
+                      <th>Product Name</th>
+                      <th>Image</th>
+                      <th>Category</th>
+                      <th>Rate (INR)</th>
+                      <th>Quantity</th>
+                      <th>Tax</th>
+                      <th>Discounts</th>
+                      <th>Total</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedSale.quotation.quotationItemDetails.map((item, index) => (
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{item.product.sku}</td>
+                        <td>{item.product.name}</td>
+                        <td><img src={item.product.images[0].imageUrl} alt={item.product.name} width="50" /></td>
+                        <td>{item.product.category.categoryName}</td>
+                        <td>Rs {item.rate}</td>
+                        <td>{item.qty}</td>
+                        <td>Rs {item.rate * item.qty * 0.18}</td>
+                        <td>{item.discount || 0}</td>
+                        <td>Rs {item.rate * item.qty + (item.rate * item.qty * 0.18)}</td>
+                        <td>
+                          <button className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                            <FaTimes />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                {/* Sale Button */}
+                <Link to='/invoice'>
+                  <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-4">
+                    Process Sale
+                  </button>
+                </Link>
+              </div>
+            </SaleModal>
+          )}
+        </div>
+      </div>
     </>
   );
 }

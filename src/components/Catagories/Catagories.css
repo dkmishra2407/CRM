@@ -13,15 +13,15 @@
 .sidebar.closed {
   width: 60px;
 }
-
+/* 
 .main-content {
-  margin-left: 250px; /* Adjust this according to the sidebar width */
+  margin-left: 250px; /* Adjust this according to the sidebar width 
   transition: margin-left 0.3s ease;
 }
 
 .main-content.closed {
-  margin-left: 60px; /* Adjust based on your collapsed sidebar width */
-}
+  margin-left: 60px; /* Adjust based on your collapsed sidebar width 
+} */
 
 /* Categories Container */
 .categories-container {

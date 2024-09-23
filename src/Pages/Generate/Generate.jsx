@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import './Generate.css';
-import AddProductForm from '../../components/AddProductForm/AddProductForm';
-import ProductCard from '../../components/ProductCard/ProductCard';
-import { useCart } from '../../Context/card.context';
-import { Link } from 'react-router-dom';
-import Sidebar from '../../components/SideBar/SideBar';
 import axios from 'axios';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { Link } from 'react-router-dom';
+import AddProductForm from '../../components/AddProductForm/AddProductForm';
+import ProductCard from '../../components/ProductCard/ProductCard';
+import Sidebar from '../../components/SideBar/SideBar';
 import ProductDetailsModal from '../../components/ProductDetail/ProductDetal';
 import Header from '../../components/Header/Header';
+import { useCart } from '../../Context/card.context';
+import './Generate.css'; // Ensure this matches the styling for Inventory
 
 function Generate() {
   const { state: { totalQuantity }, dispatch } = useCart();
@@ -49,19 +49,19 @@ function Generate() {
         setHasMore(false);
       } else {
         const products = data.map(product => ({
-          productId: product.productId, // Ensure you have productId here
+          productId: product.productId,
           name: product.name,
           sku: product.sku,
-          key: product.productId, // Use productId as the key
+          key: product.productId,
           image: product.images.length > 0 ? product.images[0].imageUrl : 'https://images.unsplash.com/photo-1541471943749-e5976783f6c3?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8dGlsZXN8ZW58MHx8MHx8fDA%3D',
           availableQty: product.productQuantity?.availableQty || 0,
           rate: product.rate,
           category: product.category.categoryName,
           categoryId: product.category.categoryId,
         }));
-      
+
         setInitialProducts(prevProducts => {
-          const productSet = new Set(prevProducts.map(p => p.productId)); // Use productId as the unique key
+          const productSet = new Set(prevProducts.map(p => p.productId));
           const newProducts = products.filter(p => !productSet.has(p.productId));
           return [...prevProducts, ...newProducts];
         });
@@ -117,29 +117,44 @@ function Generate() {
 
   return (
     <>
-      <Header className="UniversalHeader" />
-      <div className="App">
+      <Header />
+      <div className={`flex ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-        <div className={`main-content ${isSidebarOpen ? 'open' : 'closed'}`}>
-          <div className="top-bar">
-            <h1>Web Store</h1>
-            <div className="actions">
-              <div className="cart-icon">
-                <Link to="/mycart">
-                  <span className="material-icons gradient-text">shopping_cart</span>
-                  <span className="cart-count">{totalQuantity}</span>
-                </Link>
-              </div>
+
+        <div className="p-4 w-full">
+          <div className="top-bar flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-bold">Web Store</h1>
+            <div className="relative inline-block">
+              <Link to="/mycart/createinvoice"><span className="material-icons gradient-text text-2xl mr-5">shopping_cart</span></Link>
+              <Link to='/mycart/createinvoice'><span className="cart-count absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {totalQuantity}
+              </span></Link>
             </div>
           </div>
 
-          <div className='search-and-filter'>
-            <div className="category-dropdown-container-inventory">
-              <label htmlFor="category-select">Filter by Category: </label>
+          {/* Search and Filter Section */}
+          <div className="flex space-x-4 mb-4">
+            <div className="flex-grow">
+              <label className="block text-lg font-medium">Search Products:</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  placeholder="Search Products"
+                  className="p-2 border rounded w-full"
+                />
+                <span className="material-icons absolute top-2 right-2 text-gray-500">search</span>
+              </div>
+            </div>
+
+            <div className="flex-grow">
+              <label htmlFor="category-select" className="block text-lg font-medium">Filter by Category:</label>
               <select
                 id="category-select"
                 value={selectedCategory}
                 onChange={handleCategoryChange}
+                className="border rounded p-2 w-full"
               >
                 <option value="">All Categories</option>
                 {categories.map((category) => (
@@ -149,58 +164,40 @@ function Generate() {
                 ))}
               </select>
             </div>
-
-            <div className="search-bar-container">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                placeholder="Search Products"
-                className="search-bar"
-              />
-              <div className="search-icon">
-                <span className="material-icons gradient-text">search</span>
-              </div>
-            </div>
           </div>
-          
+
+          {/* Product Grid */}
           <InfiniteScroll
             dataLength={filteredProducts.length}
             next={fetchMoreData}
             hasMore={hasMore}
-            endMessage={<p style={{ textAlign: 'center' }}>No more products to display.</p>}
-            className="product-container"
+            endMessage={<p className="text-center mt-4">No more products to display.</p>}
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-4"
           >
             {filteredProducts.map((product) => (
               <ProductCard
-                key={product.productId} // Use productId as the key
-                id={product.productId} // Pass productId to the ProductCard
+                key={product.productId}
+                id={product.productId}
                 sku={product.sku}
                 name={product.name}
                 image={product.image}
                 rate={product.rate}
                 category={product.category}
                 availableQty={product.availableQty}
-                onClick={() => handleOpenProductDetailsModal(product.productId)} // Pass correct productId
+                onClick={() => handleOpenProductDetailsModal(product.productId)}
               />
             ))}
           </InfiniteScroll>
         </div>
 
+        {/* Product Details Modal */}
         {isProductDetailsModalOpen && selectedProductId && (
-          <div className="modal-overlay" onClick={handleCloseProductDetailsModal}>
-            <div className="modal" onClick={(e) => e.stopPropagation()}>
-              <ProductDetailsModal productId={selectedProductId} onClose={handleCloseProductDetailsModal} />
-            </div>
-          </div>
+          <ProductDetailsModal productId={selectedProductId} onClose={handleCloseProductDetailsModal} />
         )}
 
+        {/* Add Product Modal */}
         {isAddProductModalOpen && (
-          <div className="modal-overlay" onClick={handleCloseAddProductModal}>
-            <div className="modal" onClick={(e) => e.stopPropagation()}>
-              <AddProductForm onClose={handleCloseAddProductModal} />
-            </div>
-          </div>
+          <AddProductForm onClose={handleCloseAddProductModal} />
         )}
       </div>
     </>

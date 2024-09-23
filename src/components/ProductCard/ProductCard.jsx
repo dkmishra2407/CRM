@@ -96,7 +96,7 @@
 // export default ProductCard;
 import React, { useState } from 'react';
 import '../ProductcardForInventory/ProductcardForInventory.css';
-import { useCart } from '../../Context/cart.context'; // Fix the correct context import
+import { useCart } from '../../Context/card.context'; // Fix the correct context import
 import { toast } from 'react-toastify';
 import AspectRatio from '@mui/joy/AspectRatio';
 import Card from '@mui/joy/Card';
@@ -173,7 +173,7 @@ const ProductCard = ({ id, sku, name, image, rate, category, availableQty }) => 
 
   return (
     <div className='Inventory-wala-card'>
-      <Card variant="outlined" sx={{ width: 370, height: 350 }} className="centre" onClick={handleOpenModal}>
+      <Card variant="outlined" sx={{ width: 200, height: 320 }} className="centre" onClick={handleOpenModal}>
         <CardOverflow>
           <AspectRatio ratio="1.5">
             <img

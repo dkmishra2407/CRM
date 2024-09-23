@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import './Role.css'; 
 import axios from 'axios';
 import Sidebar from '../../components/SideBar/SideBar';
-import AddRoleForm from '../../components/AddRole/AddRole'; 
+import AddRoleForm from '../../components/AddRole/AddRole'; // AddRoleForm component
 import Header from '../../components/Header/Header';
+
 function Roles() {
   const [roles, setRoles] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -107,70 +107,112 @@ function Roles() {
 
   return (
     <>
-    <Header className="UniversalHeader"/>
-    <div className={`generate-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      <div className='heading-no-1'>
-        <h1 className="roles-page-title">Roles</h1>
-        <div className="role-add-btn" onClick={() => setIsModalOpen(true)}>
-          Add Role
+      <Header className="UniversalHeader" />
+      <div className="flex h-screen">
+        {/* Sidebar */}
+        <div className={`transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
+          <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         </div>
-      </div>
-      <div className="search-bar-container">
-        <input
-          type="text"
-          placeholder="Search by role name or description"
-          className="search-bar"
-          value={searchTerm}
-          onChange={handleSearchTermChange}
-        />
-        <div className="search-icon">
-          <span className="material-icons">search</span>
-        </div>
-      </div>
-      <table className="role-table">
-        <thead>
-          <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredRoles.length > 0 ? (
-            filteredRoles.map((role) => (
-              <tr key={role.roleId}>
-                <td>{role.roleId}</td>
-                <td>{role.roleName || 'N/A'}</td>
-                <td>{role.roleDescription || 'N/A'}</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="4">No roles found</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-      <div className="pagination-controls">
-        <button className="pagination-btn" onClick={previousPage} disabled={currentPage === 1}>
-          Previous
-        </button>
-        <span className="pagination-info">Page {currentPage} of {totalPages}</span>
-        <button className="pagination-btn" onClick={nextPage} disabled={currentPage === totalPages}>
-          Next
-        </button>
-      </div>
 
-      {isModalOpen && (
-        <AddRoleForm
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          roleId={selectedRoleId}
-          onUpdate={updateRole} 
-        />
-      )}
-    </div>
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col h-full p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-3xl font-bold">Roles</h1>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition"
+            >
+              Add Role
+            </button>
+          </div>
+
+          <div className="mb-6 flex items-center">
+            <input
+              type="text"
+              placeholder="Search by role name or description"
+              className="border p-2 rounded-lg w-64 text-base"
+              value={searchTerm}
+              onChange={handleSearchTermChange}
+            />
+            <span className="ml-2 material-icons text-gray-600">search</span>
+          </div>
+
+          <div className="flex-1 overflow-y-auto">
+            <table className="w-full table-auto border-collapse">
+              <thead>
+                <tr className="bg-gray-200 text-left">
+                  <th className="border px-4 py-2">ID</th>
+                  <th className="border px-4 py-2">Name</th>
+                  <th className="border px-4 py-2">Description</th>
+                  <th className="border px-4 py-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredRoles.length > 0 ? (
+                  filteredRoles.map((role) => (
+                    <tr key={role.roleId} className="hover:bg-gray-100">
+                      <td className="border px-4 py-2">{role.roleId}</td>
+                      <td className="border px-4 py-2">{role.roleName || 'N/A'}</td>
+                      <td className="border px-4 py-2">{role.roleDescription || 'N/A'}</td>
+                      <td className="border px-4 py-2">
+                        <button
+                          onClick={() => handleEdit(role.roleId)}
+                          className="bg-yellow-400 text-white px-3 py-1 rounded mr-2 hover:bg-yellow-500"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(role.roleId)}
+                          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" className="text-center py-6">
+                      No roles found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination Controls */}
+          <div className="flex justify-between items-center mt-6">
+            <button
+              className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+              onClick={previousPage}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            <span className="text-gray-700">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+              onClick={nextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
+
+          {/* Add Role Modal */}
+          {isModalOpen && (
+            <AddRoleForm
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              roleId={selectedRoleId}
+              onUpdate={updateRole}
+            />
+          )}
+        </div>
+      </div>
     </>
   );
 }

@@ -12,9 +12,9 @@
     gap: 0px;
 } */
 
-.main-content.open {
+/* .main-content.open {
     margin-left: 250px; 
-}
+} */
 
 .main-content.closed {
     margin-left: 60px; /* Adjust margin for closed sidebar */

@@ -1,9 +1,8 @@
-import React, { useState , useEffect } from 'react';
-import './Addsite.css';
+import React, { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-import { FaTimes } from 'react-icons/fa'; // Close icon from react-icons
+import { FaTimes } from 'react-icons/fa'; // Importing the close icon from react-icons
 
 const Addsites = ({ isOpen, onClose, siteId, onUpdate }) => {
     const [siteName, setSiteName] = useState('');
@@ -13,7 +12,6 @@ const Addsites = ({ isOpen, onClose, siteId, onUpdate }) => {
 
     const apiUrl = process.env.REACT_APP_API_URL;
 
-    // If editing, fetch the site data based on siteId
     useEffect(() => {
         if (siteId) {
             fetchSiteData(siteId);
@@ -50,7 +48,6 @@ const Addsites = ({ isOpen, onClose, siteId, onUpdate }) => {
             siteCode,
         };
 
-        // Validate site contact number to be 10 digits
         if (siteContact.length !== 10) {
             alert("Please enter a valid 10-digit phone number.");
             toast.error('Failed to Add the Site. Please Enter a valid phone number.');
@@ -59,12 +56,10 @@ const Addsites = ({ isOpen, onClose, siteId, onUpdate }) => {
 
         try {
             if (siteId) {
-                // Update site if siteId exists
                 await axios.put(`${apiUrl}/api/sites/${siteId}`, siteData);
                 toast.success('Site Updated Successfully!');
-                onUpdate(siteId, siteData); // Update the parent component
+                onUpdate(siteId, siteData);
             } else {
-                // Add new site
                 await axios.post(`${apiUrl}/api/sites`, siteData, {
                     headers: {
                         'Content-Type': 'application/json',
@@ -72,8 +67,8 @@ const Addsites = ({ isOpen, onClose, siteId, onUpdate }) => {
                 });
                 toast.success('Site Added Successfully!');
             }
-            handleClear();  // Clear the form after saving
-            onClose();  // Close the modal after adding/updating the site
+            handleClear();
+            onClose();
             window.location.reload();
         } catch (err) {
             console.error('Error saving the site', err);
@@ -81,42 +76,46 @@ const Addsites = ({ isOpen, onClose, siteId, onUpdate }) => {
         }
     };
 
-    if (!isOpen) return null; // Return null if the modal is not open
+    if (!isOpen) return null;
 
     return (
-        <div className="modal-overlay">
-            <div className="modal-content">
-                <div className="modal-header">
-                    <h2>{siteId ? 'Edit Site' : 'Add New Site'}</h2>
-                    <FaTimes className="close-icon" onClick={onClose} /> {/* Close icon */}
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
+            <div className="bg-white rounded-lg w-full max-w-lg p-6 shadow-lg relative overflow-y-auto max-h-[90vh]">
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-xl font-semibold">{siteId ? 'Edit Site' : 'Add New Site'}</h2>
+                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                        <FaTimes className="w-6 h-6" />
+                    </button>
                 </div>
-                <form onSubmit={handleSubmit} className="add-sites-form">
+                <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="form-group">
-                        <label htmlFor="siteName">Site Name</label>
+                        <label htmlFor="siteName" className="block text-gray-700">Site Name</label>
                         <input
                             type="text"
                             id="siteName"
                             value={siteName}
                             onChange={(e) => setSiteName(e.target.value)}
                             placeholder="Enter site name"
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
                             required
                         />
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="siteAddress">Site Address</label>
+                        <label htmlFor="siteAddress" className="block text-gray-700">Site Address</label>
                         <textarea
                             id="siteAddress"
                             value={siteAddress}
                             onChange={(e) => setSiteAddress(e.target.value)}
                             placeholder="Enter site address"
                             rows="4"
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
                             required
                         ></textarea>
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="siteContact">Site Contact</label>
+                        <label htmlFor="siteContact" className="block text-gray-700">Site Contact</label>
                         <input
                             type="text"
                             id="siteContact"
@@ -124,12 +123,13 @@ const Addsites = ({ isOpen, onClose, siteId, onUpdate }) => {
                             onChange={(e) => setSiteContact(e.target.value)}
                             placeholder="Enter site contact"
                             maxLength={10}
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
                             required
                         />
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="siteCode">Site Code</label>
+                        <label htmlFor="siteCode" className="block text-gray-700">Site Code</label>
                         <input
                             type="text"
                             id="siteCode"
@@ -137,16 +137,22 @@ const Addsites = ({ isOpen, onClose, siteId, onUpdate }) => {
                             onChange={(e) => setSiteCode(e.target.value)}
                             placeholder="Enter site code"
                             maxLength={10}
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
                             required
                         />
                     </div>
 
-                    <div className="form-actions">
-                        <button type="submit" className="submit-btn">{siteId ? 'Update Site' : 'Add Site'}</button>
-                        {/* <button type="button" className="clear-btn" onClick={onClose}>Cancel</button> */}
+                    <div className="flex justify-end space-x-3">
+                        
+                        <button
+                            type="submit"
+                            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                        >
+                            {siteId ? 'Update Site' : 'Add Site'}
+                        </button>
                     </div>
                 </form>
-                <ToastContainer />  {/* Correctly render the ToastContainer */}
+                <ToastContainer />
             </div>
         </div>
     );

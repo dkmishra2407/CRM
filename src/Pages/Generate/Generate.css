@@ -20,14 +20,14 @@ h1 {
   flex-direction: column;
   transition: margin-left 0.3s ease;
 }
-
+/* 
 .main-content.open {
   margin-left: 250px;
 }
 
 .main-content.closed {
   margin-left: 60px;
-}
+} */
 .cart-count {
   position: absolute;
   background-color: red;
@@ -87,7 +87,7 @@ h1 {
 
 .product-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 2px;
 }
 

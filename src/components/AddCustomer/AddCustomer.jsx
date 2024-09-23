@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './AddCustomer.css';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
@@ -13,7 +12,6 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
   const [billingAddress, setBillingAddress] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
   const [customerType, setCustomerType] = useState('Retail');
-  const [image, setImage] = useState(null);
   const [sameAsBilling, setSameAsBilling] = useState(false);
   
   const apiUrl = process.env.REACT_APP_API_URL;
@@ -44,16 +42,9 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
       setShippingAddress(customer.shippingAddress);
       setEmailAddress(customer.emailAddress);
       setCustomerType(customer.customerType);
-      setImage(customer.imageUrl || null);
     } catch (err) {
       console.error('Failed to fetch customer data', err);
       toast.error('Failed to load customer data. Please try again.');
-    }
-  };
-
-  const handleImageChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setImage(URL.createObjectURL(e.target.files[0]));
     }
   };
 
@@ -65,7 +56,6 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
     setShippingAddress('');
     setEmailAddress('');
     setCustomerType('Retail');
-    setImage(null);
     setSameAsBilling(false);
     setErrors({});
     setIsFormValid(false);
@@ -73,43 +63,36 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
 
   const handleFieldChange = (field, value) => {
     const newErrors = { ...errors };
-    if (field === 'customerName') setCustomerName(value);
-    if (field === 'contact') setContact(value);
-    if (field === 'site') setSite(value);
-    if (field === 'shippingAddress') setShippingAddress(value);
-    if (field === 'billingAddress') setBillingAddress(value);
-    if (field === 'emailAddress') setEmailAddress(value);
-
     switch (field) {
       case 'customerName':
+        setCustomerName(value);
         if (!value) newErrors.customerName = 'Customer Name is required.';
         else delete newErrors.customerName;
         break;
       case 'contact':
+        setContact(value);
         if (!value) newErrors.contact = 'Contact number is required.';
         else if (value.length !== 10) newErrors.contact = 'Please enter a valid 10-digit contact number.';
         else delete newErrors.contact;
         break;
-      case 'site':
-        if (!value) newErrors.site = 'Site is required.';
-        else delete newErrors.site;
-        break;
-      case 'shippingAddress':
-        if (!value && !sameAsBilling) newErrors.shippingAddress = 'Shipping address is required.';
-        else delete newErrors.shippingAddress;
-        break;
       case 'billingAddress':
+        setBillingAddress(value);
         if (!value) newErrors.billingAddress = 'Billing address is required.';
         else delete newErrors.billingAddress;
         break;
+      case 'shippingAddress':
+        setShippingAddress(value);
+        if (!value && !sameAsBilling) newErrors.shippingAddress = 'Shipping address is required.';
+        else delete newErrors.shippingAddress;
+        break;
       case 'emailAddress':
+        setEmailAddress(value);
         if (!/\S+@\S+\.\S+/.test(value)) newErrors.emailAddress = 'Email Address is invalid.';
         else delete newErrors.emailAddress;
         break;
       default:
         break;
     }
-
     setErrors(newErrors);
     setIsFormValid(Object.keys(newErrors).length === 0);
   };
@@ -141,9 +124,8 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
       }
       handleClear();
       onClose();
-      // window.location.reload();
     } catch (err) {
-      console.error('Error saving the form', err);
+      console.error('Error saving the customer', err);
       toast.error('Failed to save the customer. Please try again.');
     }
   };
@@ -151,92 +133,107 @@ const AddCustomerForm = ({ isOpen, onClose, customerId, onUpdate }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="add-customer-modal-overlay">
-      <div className="add-customer-modal-content">
-        <div className="add-customer-modal-header">
-          <h2 className="add-customer-form-title">{customerId ? 'Edit Customer' : 'Add Customer'}</h2>
-          <FaTimes className="add-customer-close-icon" onClick={onClose} />
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000] overflow-y-auto">
+      <div className="bg-white rounded-lg w-full max-w-3xl p-6 shadow-lg relative overflow-y-auto max-h-[90vh]">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold">{customerId ? 'Edit Customer' : 'Add Customer'}</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <FaTimes className="w-6 h-6" />
+          </button>
         </div>
-        <div className="add-customer-form-fields">
-          <div className="add-customer-left-section">
-            <div className="add-customer-form-group">
-              <label>Customer Name</label>
-              <input
-                type="text"
-                placeholder="Customer Name"
-                value={customerName}
-                onChange={(e) => handleFieldChange('customerName', e.target.value)}
-              />
-              {errors.customerName && <span className="add-customer-error">{errors.customerName}</span>}
-            </div>
-            <div className="add-customer-form-group">
-              <label>Contact</label>
-              <input
-                type="text"
-                placeholder="Enter Contact No"
-                value={contact}
-                onChange={(e) => handleFieldChange('contact', e.target.value)}
-                maxLength={10}
-              />
-              {errors.contact && <span className="add-customer-error">{errors.contact}</span>}
-            </div>
-            <div className="add-customer-form-group">
-              <label>Billing Address</label>
-              <input
-                type="text"
-                placeholder="Enter Billing Address"
-                value={billingAddress}
-                onChange={(e) => handleFieldChange('billingAddress', e.target.value)}
-              />
-              {errors.billingAddress && <span className="add-customer-error">{errors.billingAddress}</span>}
-            </div>
-            <div className="checkbox">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={sameAsBilling}
-                  onChange={() => setSameAsBilling(!sameAsBilling)}
-                /> Same as Billing Address
-              </label>
-            </div>
-            <div className="add-customer-form-group">
-              <label>Shipping Address</label>
-              <input
-                type="text"
-                placeholder="Enter Shipping Address"
-                value={shippingAddress}
-                onChange={(e) => handleFieldChange('shippingAddress', e.target.value)}
-                disabled={sameAsBilling}
-              />
-              {errors.shippingAddress && <span className="add-customer-error">{errors.shippingAddress}</span>}
-            </div>
-            <div className="add-customer-form-group">
-              <label>Email Address</label>
-              <input
-                type="email"
-                placeholder="Enter Email Address"
-                value={emailAddress}
-                onChange={(e) => handleFieldChange('emailAddress', e.target.value)}
-              />
-              {errors.emailAddress && <span className="add-customer-error">{errors.emailAddress}</span>}
-            </div>
-            <div className="add-customer-form-group">
-              <label>Customer Type</label>
-              <select
-                value={customerType}
-                onChange={(e) => setCustomerType(e.target.value)}
-              >
-                <option value="Retail">Retail</option>
-                <option value="Wholesale">Wholesale</option>
-                <option value="Walk-in">Walk-in</option>
-              </select>
-            </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="form-group">
+            <label className="block text-gray-700">Customer Name</label>
+            <input
+              type="text"
+              value={customerName}
+              onChange={(e) => handleFieldChange('customerName', e.target.value)}
+              placeholder="Customer Name"
+              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+            />
+            {errors.customerName && <span className="text-red-500 text-sm">{errors.customerName}</span>}
           </div>
+
+          <div className="form-group">
+            <label className="block text-gray-700">Contact</label>
+            <input
+              type="text"
+              value={contact}
+              onChange={(e) => handleFieldChange('contact', e.target.value)}
+              placeholder="Enter Contact No"
+              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+              maxLength={10}
+            />
+            {errors.contact && <span className="text-red-500 text-sm">{errors.contact}</span>}
+          </div>
+
+          <div className="form-group">
+            <label className="block text-gray-700">Billing Address</label>
+            <input
+              type="text"
+              value={billingAddress}
+              onChange={(e) => handleFieldChange('billingAddress', e.target.value)}
+              placeholder="Enter Billing Address"
+              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+            />
+            {errors.billingAddress && <span className="text-red-500 text-sm">{errors.billingAddress}</span>}
+          </div>
+
+          <div className="form-group">
+            <label className="block text-gray-700">Shipping Address</label>
+            <input
+              type="text"
+              value={shippingAddress}
+              onChange={(e) => handleFieldChange('shippingAddress', e.target.value)}
+              placeholder="Enter Shipping Address"
+              disabled={sameAsBilling}
+              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+            />
+            {errors.shippingAddress && <span className="text-red-500 text-sm">{errors.shippingAddress}</span>}
+          </div>
+          <div className="form-group flex items-center col-span-2">
+            <input
+              type="checkbox"
+              checked={sameAsBilling}
+              onChange={() => setSameAsBilling(!sameAsBilling)}
+              className="mr-2"
+            />
+            <label className="block text-gray-700">Same as Billing Address</label>
+          </div>
+          
+          <div className="form-group col-span-2">
+            <label className="block text-gray-700">Email Address</label>
+            <input
+              type="email"
+              value={emailAddress}
+              onChange={(e) => handleFieldChange('emailAddress', e.target.value)}
+              placeholder="Enter Email Address"
+              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+            />
+            {errors.emailAddress && <span className="text-red-500 text-sm">{errors.emailAddress}</span>}
+          </div>
+
+          <div className="form-group col-span-2">
+            <label className="block text-gray-700">Customer Type</label>
+            <select
+              value={customerType}
+              onChange={(e) => setCustomerType(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+            >
+              <option value="Retail">Retail</option>
+              <option value="Wholesale">Wholesale</option>
+              <option value="Walk-in">Walk-in</option>
+            </select>
+          </div>
+
+          
         </div>
-        <div className="add-customer-form-actions">
+
+        <div className="flex justify-end mt-4">
           <button
             onClick={handleSave}
-            className="add-customer-save-btn"
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
           >
             Save Customer
           </button>
