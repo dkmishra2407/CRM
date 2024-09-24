@@ -125,8 +125,8 @@ function Generate() {
           <div className="top-bar flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold">Web Store</h1>
             <div className="relative inline-block">
-              <Link to="/mycart/createinvoice"><span className="material-icons gradient-text text-2xl mr-5">shopping_cart</span></Link>
-              <Link to='/mycart/createinvoice'><span className="cart-count absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              <Link to="/mycart"><span className="material-icons gradient-text text-2xl mr-5">shopping_cart</span></Link>
+              <Link to='/mycart'><span className="cart-count absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                 {totalQuantity}
               </span></Link>
             </div>

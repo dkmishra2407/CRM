@@ -3,7 +3,7 @@ import axios from 'axios';
 import Sidebar from '../../components/SideBar/SideBar';
 import AddCustomerForm from '../../components/AddCustomer/AddCustomer'; 
 import Header from '../../components/Header/Header';
-import { FaSearch } from 'react-icons/fa'; // Optional icon for search
+import { FaSearch } from 'react-icons/fa'; 
 import { toast } from 'react-toastify';
 
 function Customer() {

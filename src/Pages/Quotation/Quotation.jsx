@@ -191,8 +191,8 @@ function Quotation() {
       {isModalOpen && selectedQuotation && (
         <QoutationModal onClose={closeModal}>
           <div className="p-4">
-            <h2 className="text-2xl font-bold mb-4">Quotation Details</h2>
-            <div className="mb-4">
+            <h2 className="text-2xl font-bold mb-2">Quotation Details</h2>
+            <div className="mb-2">
               <p><strong>Validity Period:</strong> {selectedQuotation.validityPeriod}</p>
             </div>
             <div className="mb-4">

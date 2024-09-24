@@ -1,215 +1,6 @@
-// import React, { useState, useEffect } from 'react';
-// import './ProductDetail.css';
-// import axios from 'axios';
-
-// const ProductDetailsModal = ({ id, onClose, image }) => {
-//   const [productDetails, setProductDetail] = useState(null);
-//   const apiUrl = process.env.REACT_APP_API_URL;
-
-//   const fetchProductDetails = async () => {
-//     try {
-//       const response = await axios.get(`${apiUrl}/api/products/${id}`);
-//       setProductDetail(response.data);
-//     } catch (err) {
-//       console.log(err);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchProductDetails();
-//   }, [id]);
-
-//   if (!productDetails) {
-//     return <div>Loading...</div>;
-//   }
-
-//   const { sku, name, rate, productQuantity, images } = productDetails;
-//   const availableQty = productQuantity ? productQuantity.availableQty : 0;
-
-//   return (
-//     <div className="product-details-modal show">
-//       <div className="modal-content">
-//         <nav aria-label="Breadcrumb">
-//           <ol className="breadcrumb-list">
-//             <li className="breadcrumb-item">
-//               <div className="flex items-center">
-//                 <svg className="breadcrumb-icon" viewBox="0 0 16 20" fill="currentColor" aria-hidden="true">
-//                   <path d="M5.697 4.34L8.98 16.532h1.327L7.025 4.341H5.697z" />
-//                 </svg>
-//               </div>
-//             </li>
-//             <li className="breadcrumb-item">
-//               <div className="flex items-center">
-//                 <svg className="breadcrumb-icon" viewBox="0 0 16 20" fill="currentColor" aria-hidden="true">
-//                   <path d="M5.697 4.34L8.98 16.532h1.327L7.025 4.341H5.697z" />
-//                 </svg>
-//               </div>
-//             </li>
-//             <li className="breadcrumb-item">
-//               <a href="#" className="breadcrumb-link">{name}</a>
-//             </li>
-//           </ol>
-//         </nav>
-
-//         {/* Product Section */}
-//         <section className="product">
-//           <div className="product__photo">
-//             <div className="photo-container">
-//               <div className="photo-main">
-//                 <img src={image} alt={name} className="gallery-image" />
-//               </div>
-//               <div className="photo-album">
-//                 <ul>
-//                   {images.map((img, index) => (
-//                     <li key={index}>
-//                       <img src={img.imageUrl} alt={name} />
-//                     </li>
-//                   ))}
-//                 </ul>
-//               </div>
-//             </div>
-//           </div>
-
-//           {/* Product Information */}
-//           <div className="product__info">
-//             <div className="title">
-//               <h1>{name}</h1>
-//               <span>COD: {sku}</span>
-//             </div>
-//             <div className="price">
-//               RS <span>{rate.toFixed(2)}</span>
-//             </div>
-
-//             <div className="description">
-//               <h3>Details</h3>
-//               <ul>
-//                 <li>Category: {productDetails.category.categoryName}</li>
-//                 <li>Quantity: {availableQty}</li>
-//                 <li>Description: {productDetails.category.categoryDescription}</li>
-//                 <li>Available at Site: {productDetails.site.siteName}</li>
-//               </ul>
-//             </div>
-//           </div>
-//         </section>
-
-//         <button onClick={onClose} className="close-button">
-//           Close
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ProductDetailsModal;
-
-// import React, { useState, useEffect } from 'react';
-// import './ProductDetail.css';
-// import axios from 'axios';
-// import { FaTimes } from 'react-icons/fa'; // Importing the close icon
-
-// const ProductDetailsModal = ({ id, onClose, image }) => {
-//   const [productDetails, setProductDetail] = useState(null);
-//   const apiUrl = process.env.REACT_APP_API_URL;
-//   console.log(id)
-//   const fetchProductDetails = async () => {
-//     try {
-//       const response = await axios.get(`${apiUrl}/api/products/${id}`);
-//       setProductDetail(response.data);
-//     } catch (err) {
-//       console.log(err);
-//     }
-//   };
-
-  
-//   useEffect(() => {
-//     fetchProductDetails();
-//   }, [id]);
-
-  
-
-//   const { sku, name, rate, productQuantity, images } = productDetails;
-//   const availableQty = productQuantity ? productQuantity.availableQty : 0;
-//   return (
-//     <div className="product-details-modal show">
-//        <div className="modal-content small-modal">
-//         {/*<nav aria-label="Breadcrumb">
-//           <ol className="breadcrumb-list">
-//             <li className="breadcrumb-item">
-//               <div className="flex items-center">
-//                 <svg className="breadcrumb-icon" viewBox="0 0 16 20" fill="currentColor" aria-hidden="true">
-//                   <path d="M5.697 4.34L8.98 16.532h1.327L7.025 4.341H5.697z" />
-//                 </svg>
-//               </div>
-//             </li>
-//             <li className="breadcrumb-item">
-//               <div className="flex items-center">
-//                 <svg className="breadcrumb-icon" viewBox="0 0 16 20" fill="currentColor" aria-hidden="true">
-//                   <path d="M5.697 4.34L8.98 16.532h1.327L7.025 4.341H5.697z" />
-//                 </svg>
-//               </div>
-//             </li>
-//             <li className="breadcrumb-item">
-//               <a href="#" className="breadcrumb-link">{name}</a>
-//             </li>
-//           </ol>
-//         </nav> */}
-
-//         {/* Product Section */}
-//         <section className="product">
-//           <div className="product__photo">
-//             <div className="photo-container">
-//               <div className="photo-main">
-//                 <img src={image} alt={name} className="gallery-image" />
-//               </div>
-//               <div className="photo-album">
-//                 <ul>
-//                   {images.map((img, index) => (
-//                     <li key={index}>
-//                       <img src={img.imageUrl} alt={name} />
-//                     </li>
-//                   ))}
-//                 </ul>
-//               </div>
-//             </div>
-//           </div>
-
-//           {/* Product Information */}
-//           <div className="product__info">
-//             <div className="title">
-//               <h1>{name}</h1>
-//               <span>COD: {sku}</span>
-//             </div>
-//             <div className="price">
-//               RS <span>{rate.toFixed(2)}</span>
-//             </div>
-
-//             <div className="description">
-//               <h3>Details</h3>
-//               <ul>
-//                 <li>Category: {productDetails.category.categoryName}</li>
-//                 <li>Quantity: {availableQty}</li>
-//                 <li>Description: {productDetails.category.categoryDescription}</li>
-//                 <li>Available at Site: {productDetails.site.siteName}</li>
-//               </ul>
-//             </div>
-            
-//           </div>
-//         </section>
-//         <button onClick={handleAddMore}>Add More</button>
-//         {/* Close Icon */}
-//         <FaTimes onClick={onClose} className="close-icon" /> {/* Replace button with close icon */}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ProductDetailsModal;
-
-
 import React, { useState, useEffect } from 'react';
-import './ProductDetail.css';
 import axios from 'axios';
-import { FaTimes } from 'react-icons/fa'; // Importing the close icon
+import { FaTimes } from 'react-icons/fa';
 
 const ProductDetailsModal = ({ id, onClose, image }) => {
   const [productDetails, setProductDetail] = useState(null);
@@ -225,89 +16,100 @@ const ProductDetailsModal = ({ id, onClose, image }) => {
     }
   };
 
-  
+  // Handle delete product function
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`${apiUrl}/api/products/${id}`);
+      alert("Product deleted successfully!");
+      onClose(); // Close the modal after deletion
+    } catch (err) {
+      console.error("Failed to delete product", err);
+    }
+  };
+
+  // Handle updating product quantity
   const handleAddMore = async () => {
-    // Prompt the user for the updated quantity
     const updatedQuantity = prompt("Enter the updated quantity");
-  
-    // Check if the user entered a valid value
-    if (updatedQuantity === null || isNaN(updatedQuantity)) {
+
+    if (!updatedQuantity || isNaN(updatedQuantity)) {
       alert("Please enter a valid number.");
       return;
     }
-  
+
     try {
-      // Make the PATCH request with the updated quantity
-      const response = await axios.patch(`${apiUrl}/api/products/${id}/quantity?quantity=${updatedQuantity}`);
-      
-      // Log the response data
-      console.log(response.data);
+      await axios.patch(`${apiUrl}/api/products/${id}/quantity?quantity=${updatedQuantity}`);
+      alert("Product quantity updated successfully!");
     } catch (err) {
-      // Log any errors
-      console.error(err);
-   }
+      console.error("Failed to update product quantity", err);
+    }
   };
 
   useEffect(() => {
     fetchProductDetails();
   }, [id]);
 
-  // Ensure productDetails is loaded before destructuring
   if (!productDetails) {
     return <div>Loading...</div>;
   }
 
-  // Destructure properties once productDetails is available
   const { sku, name, rate, productQuantity, images, category, site } = productDetails;
   const availableQty = productQuantity ? productQuantity.availableQty : 0;
 
   return (
-    <div className="product-details-modal show">
-      <div className="modal-content small-modal">
-        {/* Product Section */}
-        <section className="product">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[10000] overflow-y-auto">
+      <div className="bg-white rounded-lg w-full max-w-3xl p-6 relative">
+        {/* Close Icon */}
+        <FaTimes onClick={onClose} className="text-gray-500 hover:text-black cursor-pointer absolute top-4 right-4 text-2xl" />
+
+        {/* Product Details Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="product__photo">
             <div className="photo-container">
-              <div className="photo-main">
-                <img src={image} alt={name} className="gallery-image" />
-              </div>
-              <div className="photo-album">
-                <ul>
-                  {images.map((img, index) => (
-                    <li key={index}>
-                      <img src={img.imageUrl} alt={name} />
-                    </li>
-                  ))}
-                </ul>
+              <img src={image} alt={name} className="w-full h-auto rounded-lg object-cover" />
+              <div className="photo-album mt-4 flex space-x-2">
+                {images.map((img, index) => (
+                  <img key={index} src={img.imageUrl} alt={name} className="w-16 h-16 object-cover rounded-lg" />
+                ))}
               </div>
             </div>
           </div>
 
-          {/* Product Information */}
           <div className="product__info">
-            <div className="title">
-              <h1>{name}</h1>
-              <span>COD: {sku}</span>
+            <div className="title mb-4">
+              <h1 className="text-2xl font-semibold">{name}</h1>
+              <span className="text-gray-500">SKU: {sku}</span>
             </div>
-            <div className="price">
-              RS <span>{rate.toFixed(2)}</span>
+            <div className="price mb-4">
+              <h2 className="text-xl font-bold">RS {rate.toFixed(2)}</h2>
             </div>
 
             <div className="description">
-              <h3>Details</h3>
-              <ul>
+              <h3 className="text-lg font-semibold mb-2">Details</h3>
+              <ul className="space-y-2">
                 <li><strong>Category:</strong> {category.categoryName}</li>
-                <li><strong>Quantity:</strong> {availableQty}</li>
+                <li><strong>Quantity Available:</strong> {availableQty}</li>
                 <li><strong>Description:</strong> {category.categoryDescription}</li>
                 <li><strong>Available at Site:</strong> {site.siteName}</li>
               </ul>
             </div>
           </div>
-        </section>
+        </div>
 
-        <button onClick={handleAddMore}>Add More</button>
-        {/* Close Icon */}
-        <FaTimes onClick={onClose} className="close-icon" />
+        {/* Buttons */}
+        <div className="mt-6 flex justify-between">
+          <button
+            onClick={handleAddMore}
+            className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition"
+          >
+            Add More
+          </button>
+          <button
+            onClick={handleDelete}
+            className="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 transition"
+          >
+            Delete
+          </button>
+        </div>
       </div>
     </div>
   );

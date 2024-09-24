@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './Invoice.css';
 import Sidebar from '../../components/SideBar/SideBar';
 import { useCart } from '../../Context/card.context';
 import axios from 'axios';
@@ -47,6 +46,9 @@ const InvoicePage = () => {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
+  const user = localStorage.getItem('user');
+  const agentId = user.associateId;
 
   const handleDownload = () => {
     const props = {
@@ -140,97 +142,110 @@ const InvoicePage = () => {
   return (
     <>
       <Header className="header" />
-      <div className={`invoice-container ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <div className={`flex ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-        <div className="invoice-page">
-          <div className="invoice-header">
-            <div className="invoice-header-left">
-              <h2>Invoice {invoiceNo}</h2>
-            </div>
-            <div className="invoice-header-right">
-              <h2>RS {subtotal}.00</h2>
-            </div>
+
+        <div className="p-6 w-full">
+          {/* Invoice Header */}
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold">Invoice {invoiceNo}</h2>
+            <h2 className="text-2xl font-bold">RS {subtotal}.00</h2>
           </div>
 
-          <div className="customer-info">
-            <div className="customer-info-left">
+          {/* Customer Information */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div>
               <input
                 type="text"
                 placeholder="Enter Customer ID"
                 value={customerId}
                 onChange={(e) => setCustomerId(e.target.value)}
+                className="p-2 border rounded w-full"
               />
-              <button onClick={handleCustomer}>Check</button>
+              <button
+                onClick={handleCustomer}
+                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
+              >
+                Check
+              </button>
               <input
                 type="text"
                 placeholder="Customer Name"
                 value={customerData.customerName || ''}
                 readOnly
+                className="mt-2 p-2 border rounded w-full"
               />
               <input
                 type="text"
                 placeholder="Address"
                 value={customerData.billingAddress || ''}
                 readOnly
+                className="mt-2 p-2 border rounded w-full"
               />
               <input
                 type="text"
                 placeholder="Contact No"
                 value={customerData.phoneNumber || ''}
                 readOnly
+                className="mt-2 p-2 border rounded w-full"
               />
             </div>
-            <div className="customer-info-right">
+
+            <div>
               <input
                 type="email"
                 placeholder="Email Address"
                 value={customerData.emailAddress || ''}
                 readOnly
+                className="p-2 border rounded w-full"
               />
-              <label>Invoice Date</label>
+              <label className="block mt-4">Invoice Date</label>
               <input
                 type="date"
                 value={invoiceDate || ''}
                 onChange={(e) => setInvoiceDate(e.target.value)}
+                className="p-2 border rounded w-full"
               />
-              <label>Due Date</label>
+              <label className="block mt-4">Due Date</label>
               <input
                 type="date"
                 value={dueDate || ''}
                 onChange={(e) => setDueDate(e.target.value)}
+                className="p-2 border rounded w-full"
               />
             </div>
           </div>
 
-          <div className="details-section">
-            <h3>Details</h3>
-            <table className="details-table">
-              <thead>
+          {/* Details Section */}
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold mb-4">Details</h3>
+            <table className="min-w-full border-collapse border border-gray-200">
+              <thead className="bg-gray-100">
                 <tr>
-                  <th>Products</th>
-                  <th>Description</th>
-                  <th>Category</th>
-                  <th>SKU/HSN</th>
-                  <th>Qty</th>
-                  <th>Rate</th>
-                  <th>Amount</th>
-                  <th></th>
+                  <th className="border px-4 py-2">Products</th>
+                  <th className="border px-4 py-2">Description</th>
+                  <th className="border px-4 py-2">Category</th>
+                  <th className="border px-4 py-2">SKU/HSN</th>
+                  <th className="border px-4 py-2">Qty</th>
+                  <th className="border px-4 py-2">Rate</th>
+                  <th className="border px-4 py-2">Amount</th>
+                  <th className="border px-4 py-2"></th>
                 </tr>
               </thead>
               <tbody>
                 {ShoppingCart.map((item, index) => (
-                  <tr key={item.sku}>
-                    <td>
-                      <img src={item.image} alt={item.sku} className="product-image" />
+                  <tr key={item.sku} className="hover:bg-gray-100">
+                    <td className="border px-4 py-2">
+                      <img src={item.image} alt={item.sku} className="w-12 h-12" />
                     </td>
-                    <td>{item.name}</td>
-                    <td>{item.category}</td>
-                    <td>{item.sku}</td>
-                    <td>{item.quantity}</td>
-                    <td>{item.rate}</td>
-                    <td>{item.rate * item.quantity}</td>
-                    <td>
-                      <button className="delete-button">🗑️</button>
+                    <td className="border px-4 py-2">{item.name}</td>
+                    <td className="border px-4 py-2">{item.category}</td>
+                    <td className="border px-4 py-2">{item.sku}</td>
+                    <td className="border px-4 py-2">{item.quantity}</td>
+                    <td className="border px-4 py-2">Rs {item.rate}</td>
+                    <td className="border px-4 py-2">Rs {item.rate * item.quantity}</td>
+                    <td className="border px-4 py-2">
+                      <button className="text-red-500 hover:text-red-700">🗑️</button>
                     </td>
                   </tr>
                 ))}
@@ -238,36 +253,52 @@ const InvoicePage = () => {
             </table>
           </div>
 
-          <div className="footer-section">
-            <div className="footer-left">
+          {/* Footer Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div>
               <input
                 type="text"
                 placeholder="Agent ID"
+                value={localStorage.getItem('user').associateId}
                 readOnly
-                className="agent-input"
+                className="p-2 border rounded w-full"
               />
-              <textarea placeholder="Terms & Conditions"></textarea>
+              <textarea
+                placeholder="Terms & Conditions"
+                className="mt-4 p-2 border rounded w-full"
+              />
             </div>
-            <div className="footer-right">
-              <label>
-                <input type="checkbox" /> Apply GST
+            <div className="flex flex-col justify-end">
+              <label className="inline-flex items-center">
+                <input type="checkbox" className="form-checkbox" /> Apply GST
               </label>
-              <input type="text" placeholder="Amount" className="gst-input" />
+              <input
+                type="text"
+                placeholder="Amount"
+                className="mt-2 p-2 border rounded w-full"
+              />
             </div>
           </div>
 
-          <div className="invoice-summary">
-            <p>Total <span>RS {subtotal}.00</span></p>
-            <p>Balance Due <span>RS {balanceDue}.00</span></p>
+          {/* Invoice Summary */}
+          <div className="flex justify-between items-center mb-6">
+            <p className="text-lg font-semibold">Total: <span>RS {subtotal}.00</span></p>
+            <p className="text-lg font-semibold">Balance Due: <span>RS {balanceDue}.00</span></p>
           </div>
 
-          <div className="action-buttons">
-            <button onClick={handleDownload} className="print-button">PRINT</button>
-            <button className="save-button">SAVE</button>
+          {/* Action Buttons */}
+          <div className="flex space-x-4">
+            <button onClick={handleDownload} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+              PRINT
+            </button>
+            <button className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+              SAVE
+            </button>
           </div>
         </div>
       </div>
     </>
+
   );
 };
 

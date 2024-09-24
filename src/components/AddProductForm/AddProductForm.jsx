@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import './AddProductForm.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaTimes } from 'react-icons/fa';
 
